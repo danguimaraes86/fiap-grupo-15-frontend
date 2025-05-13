@@ -1,7 +1,35 @@
+.cardContainer {
+  height: 200px;
+  max-width: 900px;
+}
+
 .card {
-  background-color: #004c5b;
+  background-color: #004D61;
   color: white;
-  padding: 1rem;
+  display: flex;
+  flex-direction: column;
   border-radius: 8px;
-  margin-bottom: 1rem;
+  overflow: hidden;
+}
+
+.colunaEsquerda,
+.colunaDireita {
+  padding: 1.5rem;
+  flex: 1;
+}
+
+.label {
+  font-size: 25px;
+  margin-right: 50px;
+  font-weight: 500;
+}
+
+.hr {
+  border: 1px solid #FF5031;
+}
+
+@media (min-width: 768px) {
+  .card {
+    flex-direction: row;
+  }
 }

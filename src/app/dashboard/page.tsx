@@ -55,14 +55,14 @@ export default function DashboardView() {
       <MobileMenu items={menuItems} />
       <TabletMenu items={menuItems} />
 
-      <div className="container-xl mt-4">
+      <div className="container-xxl mt-4">
         <div className="row justify-content-center">
-          <div className="col-12 col-lg-10">
+          <div className="col-12">
             <div className="row">
-              <div className="col-lg-2 d-none d-lg-block">
+              <div className="col-2 d-none d-lg-block">
                 <Sidebar items={menuItems} />
               </div>
-              <div className="col-12 col-lg-7">
+              <div className="col-7">
                 <DashboardCard {...dashboardCardList} />
                 <TransactionForm
                   title="Nova transação"
@@ -74,7 +74,7 @@ export default function DashboardView() {
                   onSubmit={handleSubmit}
                 />
               </div>
-              <div className="col-12 col-lg-3">
+              <div className="col-3">
                 <StatementBox title="Extrato" items={statementData} />
               </div>
             </div>
