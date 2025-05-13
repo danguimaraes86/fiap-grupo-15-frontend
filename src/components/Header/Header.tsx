@@ -1,29 +1,21 @@
-
-import './Header.css'
 export function Header() {
-    return (
-        <header className="header">
-            {/* <div className=" row d-flex flex-row-reverse bd-highlight">
-                <div className=''>
-                    aqui
-                </div>
-            </div> */}
-            <div className="container">
-            <div className='row'>
-                <div className='col-3 align-content-around'>
-                    Joana da Silva Oliveira
-                    <img src="ima.png" alt="" width='200'/>
-                </div>
-            </div>
-
-            </div>
-            {/* <div className="row">
-      
-                <div className="col-12">
-                    aqui
-                </div>
-            </div> */}
-        </header>
-    );
-  }
-   
+  return (
+    <header className="bg-dark text-white px-3 py-2 d-flex justify-content-between align-items-center">
+      <div className="d-md-none">
+        <button
+          className="btn btn-light btn-sm"
+          data-bs-toggle="offcanvas"
+          data-bs-target="#mobileMenu"
+        >
+          ☰
+        </button>
+      </div>
+      <div className="text-center flex-grow-1">
+        <strong>Joana da Silva Oliveira</strong>
+      </div>
+      <div className="d-none d-md-block">
+        <i className="bi bi-person-circle"></i>
+      </div>
+    </header>
+  );
+}

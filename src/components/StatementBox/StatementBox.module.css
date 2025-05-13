@@ -1,0 +1,10 @@
+.box {
+  background-color: white;
+  padding: 1rem;
+  border-radius: 8px;
+}
+
+.item {
+  border-bottom: 1px solid #ddd;
+  padding: 0.5rem 0;
+}

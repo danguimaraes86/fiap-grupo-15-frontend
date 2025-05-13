@@ -8,6 +8,49 @@
   --bs-secondary-rgb: 46, 204, 113;
 }
 
-main {
-  max-width: 1200px;
+/* .card {
+  margin: 2rem auto;
+  background-color: #F5F5F5;
+  border-radius: 8px;
+  padding: 32px 34px;
+  
+} */
+
+body {
+  background-color: #eaf2e4;
+}
+
+.top-nav .nav-link {
+  color: black;
+  font-weight: 500;
+}
+
+.top-nav .nav-link.active {
+  color: green;
+  font-weight: bold;
+  position: relative;
+}
+
+.top-nav .nav-link.active::after {
+  content: "";
+  display: block;
+  width: 60%;
+  margin: 0 auto;
+  border-bottom: 2px solid green;
+  padding-top: 2px;
+}
+
+.offcanvas-start {
+  background-color: #f1f7ed;
+}
+
+.offcanvas .nav-link {
+  color: black;
+  font-weight: 500;
+  border-bottom: 1px solid black;
+}
+
+.offcanvas .nav-link.active {
+  color: #e74c3c;
+  font-weight: bold;
 }
