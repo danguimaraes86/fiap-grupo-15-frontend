@@ -1,3 +1,4 @@
+'use client';
 import Header from '@/components/home-view/header';
 import HeroBannerComponent from '../components/home-view/banner-image';
 import HeroTextComponent from '../components/home-view/banner-text';
@@ -6,11 +7,27 @@ import ButtonRegularComponent from '../components/home-view/buttons/regular';
 import CardComponent from '../components/home-view/card';
 import styles from './home-view.module.css';
 import Footer from '@/components/home-view/footer';
+import Register from '@/components/modal/register';
+import { useState } from 'react';
+import Login from '@/components/modal/login';
 
 export default function HomeView() {
+  const [login, setLogin] = useState<Boolean>(false);
+  const [register, setRegister] = useState<Boolean>(false);
+
+  const handleLogin = () => {
+    setLogin(login ? false : true);
+  };
+
+  const handleRegister = () => {
+    setRegister(register ? false : true);
+  };
+
   return (
     <>
-      <Header />
+      {login && <Login setLogin={handleLogin} />}
+      {register && <Register setRegister={handleRegister} />}
+      <Header setRegister={handleRegister} setLogin={handleLogin} />
       <main className={styles.home_background}>
         {/* Banner Central */}
         <section
@@ -25,10 +42,13 @@ export default function HomeView() {
           className={`${styles.media_sm_screen} ${styles.media_md_screen} ${styles.media_lg_screen} row d-sm-none mt-3 g-0 justify-content-between align-items-center`}
         >
           <div className="col">
-            <ButtonRegularComponent text="Abir Conta" />
+            <ButtonRegularComponent text="Abir Conta" onClick={handleLogin} />
           </div>
           <div className="col ms-3">
-            <ButtonOutlineComponent text="Já tenho conta" />
+            <ButtonOutlineComponent
+              text="Já tenho conta"
+              onClick={handleRegister}
+            />
           </div>
         </section>
 

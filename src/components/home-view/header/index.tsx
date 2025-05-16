@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import ButtonOutlineComponent from '../buttons/outline';
 import ButtonRegularComponent from '../buttons/regular';
 
-export default function Header() {
+export default function Header({setRegister, setLogin}: any) {
   const [menuOpen, setMenuOpen] = useState(false);
 
   const toggleMenu = () => setMenuOpen(!menuOpen);
@@ -89,8 +89,8 @@ export default function Header() {
       </div>
 
       <div className="d-flex gap-3 d-none d-md-flex">
-        <ButtonRegularComponent text="Abrir minha conta" />
-        <ButtonOutlineComponent text="Já tenho conta" />
+        <ButtonRegularComponent text="Abrir minha conta" onClick={setLogin}/>
+        <ButtonOutlineComponent text="Já tenho conta" onClick={setRegister}/>
       </div>
     </header>
   );
