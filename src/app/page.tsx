@@ -1,28 +1,29 @@
+import Header from '@/components/home-view/header';
 import HeroBannerComponent from '../components/home-view/banner-image';
 import HeroTextComponent from '../components/home-view/banner-text';
 import ButtonOutlineComponent from '../components/home-view/buttons/outline';
 import ButtonRegularComponent from '../components/home-view/buttons/regular';
 import CardComponent from '../components/home-view/card';
 import styles from './home-view.module.css';
+import Footer from '@/components/home-view/footer';
 
 export default function HomeView() {
   return (
     <>
-      <nav
-        style={{
-          height: '96px',
-          background: 'black',
-        }}
-      ></nav>
+      <Header />
       <main className={styles.home_background}>
         {/* Banner Central */}
-        <section className={`${styles.media_sm_screen} ${styles.media_md_screen} ${styles.media_lg_screen} row g-3`}>
+        <section
+          className={`${styles.media_sm_screen} ${styles.media_md_screen} ${styles.media_lg_screen} row g-3`}
+        >
           <HeroTextComponent />
           <HeroBannerComponent />
         </section>
 
         {/* Botões Conta - Mobile */}
-        <section className={`${styles.media_sm_screen} ${styles.media_md_screen} ${styles.media_lg_screen} row d-sm-none mt-3 g-0 justify-content-between align-items-center`}>
+        <section
+          className={`${styles.media_sm_screen} ${styles.media_md_screen} ${styles.media_lg_screen} row d-sm-none mt-3 g-0 justify-content-between align-items-center`}
+        >
           <div className="col">
             <ButtonRegularComponent text="Abir Conta" />
           </div>
@@ -32,7 +33,9 @@ export default function HomeView() {
         </section>
 
         {/* Seção Vantagens */}
-        <section className={`${styles.media_sm_screen} ${styles.media_md_screen} ${styles.media_lg_screen} row mt-3`}>
+        <section
+          className={`${styles.media_sm_screen} ${styles.media_md_screen} ${styles.media_lg_screen} row mt-3`}
+        >
           <div
             style={{ color: '#47A138' }}
             className="col-12 mb-4 fs-6 fs-md-5 fw-bold text-center"
@@ -84,12 +87,7 @@ export default function HomeView() {
           </div>
         </section>
       </main>
-      <footer
-        style={{
-          height: '224px',
-          background: 'black',
-        }}
-      ></footer>
+      <Footer />
     </>
   );
 }
