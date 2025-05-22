@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Header,
   Sidebar,
@@ -9,6 +9,10 @@ import {
   TransactionForm,
   StatementBox
 } from '@components';
+import { criarTransacao } from '@services/transacoes';
+import { getUsuario } from '@services/usuarios';
+import { getSaldo } from '@services/saldos';
+import { formatCurrencyBRL, parseDate } from '@utils';
 
 const menuItems = [
   { label: "Início", href: "#" },
@@ -18,10 +22,7 @@ const menuItems = [
 ];
 
 const dashboardCardList = {
-  name: "Joana",
-  date: "Quinta-feira, 08/08/2024",
   accountType: "Conta Corrente",
-  balance: "R$ 2.520,00"
 };
 
 const transactionOptions = ['Transferência', 'Depósito'];
@@ -44,26 +45,80 @@ const statementData = [
 export default function DashboardView() {
   const [selectedOption, setSelectedOption] = useState('');
   const [amount, setAmount] = useState('');
+  const [user, setUser] = useState('');
+  const [balance, setBalance] = useState('');
+  const [formError, setFormError] = useState('');
+  const [formSuccess, setformSuccess] = useState('');
 
-  const handleSubmit = () => {
-    console.log("Transação:", { tipo: selectedOption, valor: amount });
+  const handleSubmit = async () => {
+    if (!selectedOption || !amount) {
+      setFormError("Preencha todos os campos para concluir a transação.");
+      return;
+    }
+
+    try {
+      await criarTransacao({
+        usuarioId: 1,
+        tipo: selectedOption,
+        valor: parseFloat(amount),
+        data: new Date().toISOString().split('T')[0]
+      });
+
+      setformSuccess("Transação enviada com sucesso!");
+      setAmount('');
+      setSelectedOption('');
+
+      setTimeout(() => {
+        setformSuccess('')
+        setFormError('');
+      }, 2500);
+      await fetchBalance();
+    } catch (error) {
+      setFormError("Erro ao enviar transação. Tente novamente."+ error);
+    }
   };
+
+  const fetchUser = async () => {
+    try {
+      const data = await getUsuario()
+      setUser(data.nome)
+    } catch (error) {
+      setFormError("Falha ao enviar transação."+ error);
+    }
+  }
+
+  const fetchBalance = async () => {
+    try {
+      const data = await getSaldo()
+      setBalance(data[0].saldo)
+    } catch (error) {
+      setFormError("Falha ao enviar transação."+ error);
+    }
+  }
+
+  useEffect(() => {
+    fetchUser()
+    fetchBalance()
+  }, [])
 
   return (
     <main className="bg-[#eaf2e4] min-h-screen">
-      <Header />
+      <Header userName={user}/>
       <MobileMenu items={menuItems} />
       <TabletMenu items={menuItems} />
 
       <div className="container-xl mt-4">
         <div className="row justify-content-center">
-          <div className="col-12 col-lg-10">
-            <div className="row">
-              <div className="col-lg-2 d-none d-lg-block">
+          <div className="col-12 col-xl-10">
+            <div className="row gx-4">
+              <div className="col-xl-2 d-none d-xl-block">
                 <Sidebar items={menuItems} />
               </div>
-              <div className="col-12 col-lg-7">
-                <DashboardCard {...dashboardCardList} />
+              <div className="col-12 col-md-10 col-xl-7 mx-auto">
+                <DashboardCard name={user}
+                  date={parseDate(new Date())}
+                  accountType={dashboardCardList.accountType}
+                  balance={formatCurrencyBRL(balance)}/>
                 <TransactionForm
                   title="Nova transação"
                   options={transactionOptions}
@@ -73,8 +128,20 @@ export default function DashboardView() {
                   onChangeValue={setAmount}
                   onSubmit={handleSubmit}
                 />
+                {formError && (
+                  <div className="alert alert-danger mt-2" role="alert">
+                    {formError}
+                  </div>
+                )}
+
+                {formSuccess && (
+                  <div className="alert alert-success mt-2" role="alert">
+                    {formSuccess}
+                  </div>
+                )}
               </div>
-              <div className="12 col-lg-3">
+
+              <div className="col-12 col-md-10 col-xl-3 mx-auto">
                 <StatementBox title="Extrato" items={statementData} />
               </div>
             </div>

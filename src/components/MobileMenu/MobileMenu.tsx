@@ -1,12 +1,19 @@
-type MenuItem = { label: string; href: string };
-type Props = { items: MenuItem[]; active?: string };
+import styles from './MobileMenu.module.css';
 
-export function MobileMenu({ items, active }: Props) {
+export function MobileMenu({ items, active, forceVisible }: Props) {
+  const offcanvasClass = forceVisible
+    ? `offcanvas offcanvas-start show ${styles.customMobileWidth}`
+    : `offcanvas offcanvas-start ${styles.customMobileWidth}`;
+
+  const style = forceVisible
+    ? { visibility: 'visible', position: 'relative', transform: 'none' }
+    : {};
+
   return (
-    <div className="offcanvas offcanvas-start d-md-none" tabIndex={-1} id="mobileMenu">
+    <div className={offcanvasClass} tabIndex={-1} id="mobileMenu" style={style}>
       <div className="offcanvas-header">
         <h5 className="offcanvas-title">Menu</h5>
-        <button type="button" className="btn-close" data-bs-dismiss="offcanvas"></button>
+        <button type="button" className="btn-close" data-bs-dismiss="offcanvas" />
       </div>
       <div className="offcanvas-body">
         <ul className="nav flex-column">

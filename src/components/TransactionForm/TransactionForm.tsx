@@ -20,7 +20,7 @@ export function TransactionForm({
   onSubmit
 }: Props) {
   return (
-    <div className={`${styles.box} mb-4`}>
+    <div className={`${styles.box}`}>
       <h6>{title}</h6>
       <select
         className="form-select mb-2"

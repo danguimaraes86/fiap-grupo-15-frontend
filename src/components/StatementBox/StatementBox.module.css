@@ -1,5 +1,5 @@
 .box {
-  background-color: white;
+  background-color: var(--custom-red);
   padding: 1rem;
   border-radius: 8px;
 }

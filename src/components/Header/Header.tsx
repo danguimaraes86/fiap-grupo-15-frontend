@@ -1,20 +1,29 @@
-export function Header() {
+type Props = {
+  userName: string;
+};
+
+export function Header({ userName }: Props) {
   return (
-    <header className="bg-dark text-white px-3 py-2 d-flex justify-content-between align-items-center">
-      <div className="d-md-none">
-        <button
-          className="btn btn-light btn-sm"
-          data-bs-toggle="offcanvas"
-          data-bs-target="#mobileMenu"
-        >
-          ☰
-        </button>
-      </div>
-      <div className="text-center flex-grow-1">
-        <strong>Joana da Silva Oliveira</strong>
-      </div>
-      <div className="d-none d-md-block">
-        <i className="bi bi-person-circle"></i>
+    <header className="bg-dark text-white py-2">
+      <div className="container">
+        <div className="row justify-content-center">
+          <div className="col-12 col-md-10 col-xl-10 d-flex justify-content-between align-items-center px-3">
+            <div className="d-md-none">
+              <button
+                className="btn btn-light btn-sm"
+                data-bs-toggle="offcanvas"
+                data-bs-target="#mobileMenu"
+              >
+                ☰
+              </button>
+            </div>
+
+            <div className="d-none d-md-flex align-items-center gap-2 ms-auto">
+              <span>{userName}</span>
+              <i className="bi bi-person-circle fs-5"></i>
+            </div>
+          </div>
+        </div>
       </div>
     </header>
   );

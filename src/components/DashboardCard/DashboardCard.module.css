@@ -1,6 +1,7 @@
 .cardContainer {
   height: 200px;
   max-width: 900px;
+  margin-bottom: 1rem;
 }
 
 .card {
@@ -33,3 +34,11 @@
     flex-direction: row;
   }
 }
+
+/* Espaçamento extra embaixo do card para telas menores que 768px */
+@media (max-width: 767.98px) {
+  .cardContainer {
+    margin-bottom: 8rem;
+  }
+}
+
