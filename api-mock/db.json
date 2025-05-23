@@ -307,12 +307,26 @@
       "valor": 50,
       "data": "2025-05-22",
       "id": 43
+    },
+    {
+      "usuarioId": 1,
+      "tipo": "Depósito",
+      "valor": 100,
+      "data": "2025-05-22",
+      "id": 44
+    },
+    {
+      "usuarioId": 1,
+      "tipo": "Depósito",
+      "valor": 10,
+      "data": "2025-05-22",
+      "id": 45
     }
   ],
   "saldos": [
     {
       "usuarioId": 1,
-      "saldo": 1050
+      "saldo": 1160
     }
   ]
 }

@@ -9,7 +9,7 @@ import {
   TransactionForm,
   StatementBox
 } from '@components';
-import { criarTransacao } from '@services/transacoes';
+import { criarTransacao, listarTransacoes } from '@services/transacoes';
 import { getUsuario } from '@services/usuarios';
 import { getSaldo } from '@services/saldos';
 import { formatCurrencyBRL, parseDate } from '@utils';
@@ -27,20 +27,20 @@ const dashboardCardList = {
 
 const transactionOptions = ['Transferência', 'Depósito'];
 
-const statementData = [
-  {
-    month: "Setembro",
-    transactions: ["Transferência - R$ 23232,00", "Transferência - R$ 58,00"]
-  },
-  {
-    month: "Agosto",
-    transactions: ["Transferência - R$ 50,00", "Depósito - R$ 120,00", "Depósito - R$ 40,00"]
-  },
-  {
-    month: "Julho",
-    transactions: ["Transferência - R$ 420,00", "Transferência - R$ 180,00", "Depósito - R$ 60,00"]
-  }
-];
+// const statementData = [
+//   {
+//     month: "Setembro",
+//     transactions: ["Transferência - R$ 23232,00", "Transferência - R$ 58,00"]
+//   },
+//   {
+//     month: "Agosto",
+//     transactions: ["Transferência - R$ 50,00", "Depósito - R$ 120,00", "Depósito - R$ 40,00"]
+//   },
+//   {
+//     month: "Julho",
+//     transactions: ["Transferência - R$ 420,00", "Transferência - R$ 180,00", "Depósito - R$ 60,00"]
+//   }
+// ];
 
 export default function DashboardView() {
   const [selectedOption, setSelectedOption] = useState('');
@@ -49,7 +49,7 @@ export default function DashboardView() {
   const [balance, setBalance] = useState('');
   const [formError, setFormError] = useState('');
   const [formSuccess, setformSuccess] = useState('');
-
+  const [listTransactions, setListTransactions] = useState('');
   const handleSubmit = async () => {
     if (!selectedOption || !amount) {
       setFormError("Preencha todos os campos para concluir a transação.");
@@ -67,7 +67,7 @@ export default function DashboardView() {
       setformSuccess("Transação enviada com sucesso!");
       setAmount('');
       setSelectedOption('');
-
+      await transactionsList()
       setTimeout(() => {
         setformSuccess('')
         setFormError('');
@@ -96,9 +96,19 @@ export default function DashboardView() {
     }
   }
 
+  const transactionsList = async () => {
+    try {
+      const data = await listarTransacoes()
+      setListTransactions(data)
+    } catch (error) {
+      setFormError("Falha ao enviar transação."+ error);
+    }
+  }
+
   useEffect(() => {
     fetchUser()
     fetchBalance()
+    transactionsList()
   }, [])
 
   return (
@@ -142,7 +152,7 @@ export default function DashboardView() {
               </div>
 
               <div className="col-12 col-md-10 col-xl-3 mx-auto">
-                <StatementBox title="Extrato" items={statementData} />
+                <StatementBox title="Extrato" items={listTransactions} />
               </div>
             </div>
           </div>
