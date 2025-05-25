@@ -35,6 +35,7 @@ export default function DashboardView() {
   const [formError, setFormError] = useState('');
   const [formSuccess, setformSuccess] = useState('');
   const [listTransactions, setListTransactions] = useState('');
+  const [currentDate, setCurrentDate] = useState('');
   const handleSubmit = async () => {
     if (!selectedOption || !amount) {
       setFormError("Preencha todos os campos para concluir a transação.");
@@ -94,6 +95,7 @@ export default function DashboardView() {
     fetchUser()
     fetchBalance()
     transactionsList()
+    setCurrentDate(parseDate(new Date()));
   }, [])
 
   return (
@@ -111,7 +113,7 @@ export default function DashboardView() {
               </div>
               <div className="col-12 col-md-10 col-xl-7 mx-auto">
                 <DashboardCard name={user}
-                  date={parseDate(new Date())}
+                  date={currentDate}
                   accountType={dashboardCardList.accountType}
                   balance={formatCurrencyBRL(balance)}/>
                 <TransactionForm
