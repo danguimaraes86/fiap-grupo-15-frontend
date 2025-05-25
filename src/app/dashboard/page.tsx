@@ -27,21 +27,6 @@ const dashboardCardList = {
 
 const transactionOptions = ['Transferência', 'Depósito'];
 
-// const statementData = [
-//   {
-//     month: "Setembro",
-//     transactions: ["Transferência - R$ 23232,00", "Transferência - R$ 58,00"]
-//   },
-//   {
-//     month: "Agosto",
-//     transactions: ["Transferência - R$ 50,00", "Depósito - R$ 120,00", "Depósito - R$ 40,00"]
-//   },
-//   {
-//     month: "Julho",
-//     transactions: ["Transferência - R$ 420,00", "Transferência - R$ 180,00", "Depósito - R$ 60,00"]
-//   }
-// ];
-
 export default function DashboardView() {
   const [selectedOption, setSelectedOption] = useState('');
   const [amount, setAmount] = useState('');

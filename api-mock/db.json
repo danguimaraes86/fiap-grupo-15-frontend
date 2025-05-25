@@ -321,12 +321,26 @@
       "valor": 10,
       "data": "2025-05-22",
       "id": 45
+    },
+    {
+      "usuarioId": 1,
+      "tipo": "Transferência",
+      "valor": 12,
+      "data": "2025-05-23",
+      "id": 46
+    },
+    {
+      "usuarioId": 1,
+      "tipo": "Transferência",
+      "valor": 12,
+      "data": "2025-05-23",
+      "id": 47
     }
   ],
   "saldos": [
     {
       "usuarioId": 1,
-      "saldo": 1160
+      "saldo": 1136
     }
   ]
 }
