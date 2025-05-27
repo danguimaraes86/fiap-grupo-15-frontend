@@ -1,12 +1,15 @@
 'use Client';
 import { useState } from 'react';
 import './index.css';
+import { useRouter } from 'next/navigation';
 
 export default function Login({setLogin}: any) {
+
+  const router = useRouter()
+
   const [formData, setFormData] = useState({
     email: '',
     senha: '',
-    aceitaPolitica: false,
   });
   const [errors, setErrors] = useState({
     email: '',
@@ -44,8 +47,8 @@ export default function Login({setLogin}: any) {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (validate()) {
-      alert('Formulário enviado com sucesso!');
       // Aqui você pode fazer o envio real do formulário
+      router.push('/dashboard')
     }
   };
 
