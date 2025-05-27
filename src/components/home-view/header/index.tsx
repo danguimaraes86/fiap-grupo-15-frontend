@@ -89,8 +89,8 @@ export default function Header({setRegister, setLogin}: any) {
       </div>
 
       <div className="d-flex gap-3 d-none d-md-flex">
-        <ButtonRegularComponent text="Abrir minha conta" onClick={setLogin}/>
-        <ButtonOutlineComponent text="Já tenho conta" onClick={setRegister}/>
+        <ButtonRegularComponent text="Abrir minha conta" onClick={setRegister}/>
+        <ButtonOutlineComponent text="Já tenho conta" onClick={setLogin}/>
       </div>
     </header>
   );

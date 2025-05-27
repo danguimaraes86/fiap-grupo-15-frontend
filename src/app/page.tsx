@@ -16,11 +16,11 @@ export default function HomeView() {
   const [register, setRegister] = useState<Boolean>(false);
 
   const handleLogin = () => {
-    setLogin(login ? false : true);
+    setLogin(!login);
   };
 
   const handleRegister = () => {
-    setRegister(register ? false : true);
+    setRegister(!register);
   };
 
   return (
