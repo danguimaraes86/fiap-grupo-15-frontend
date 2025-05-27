@@ -7,7 +7,7 @@ export function Sidebar({ items, active }: Props) {
   return (
       <div className={styles.sidebar}>
       <ul className="nav flex-column text-start">
-        {items.map((item) => {
+        {items.map((item, index, arr) => {
           const isActive = active === item.label;
           const className = `nav-link ${isActive ? styles.active : styles.navLink}`;
 
@@ -16,7 +16,7 @@ export function Sidebar({ items, active }: Props) {
               <a className={className} href={item.href}>
                 {item.label}
               </a>
-               <hr className={styles.hrDivider} />
+              { (index < arr.length - 1) && <hr className={styles.hrDivider} /> }
             </li>
           );
         })}
