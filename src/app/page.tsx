@@ -42,12 +42,12 @@ export default function HomeView() {
           className={`${styles.media_sm_screen} ${styles.media_md_screen} ${styles.media_lg_screen} row d-sm-none mt-3 g-0 justify-content-between align-items-center`}
         >
           <div className="col">
-            <ButtonRegularComponent text="Abir Conta" onClick={handleLogin} />
+            <ButtonRegularComponent text="Abir Conta" onClick={handleRegister} />
           </div>
           <div className="col ms-3">
             <ButtonOutlineComponent
               text="Já tenho conta"
-              onClick={handleRegister}
+              onClick={handleLogin}
             />
           </div>
         </section>

@@ -5,16 +5,16 @@
   }
 }
 
-@media (max-width: 1200px) and (min-width: 431px) {
+@media (max-width: 1199px) and (min-width: 431px) {
   .media_md_screen {
-    max-width: 600px;
+    max-width: 80%;
     width: 100%;
     margin-left: auto;
     margin-right: auto;
   }
 }
 
-@media (min-width: 1201px) {
+@media (min-width: 1200px) {
   .media_lg_screen {
     max-width: 1200px;
     width: 100%;

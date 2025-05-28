@@ -65,10 +65,10 @@ export function StatementBox({ items, title, onUpdate, onBalanceUpdate }: Props)
 
                   <div className="d-flex gap-2 justify-content-end">
                     <span onClick={() => openModal('edit', id, valor)}>
-                      <i className="bi bi-pencil-fill"></i>
+                      <i style={{cursor: 'pointer'}} className="bi bi-pencil-fill"></i>
                     </span>
                     <span onClick={() => openModal('delete', id)}>
-                      <i className="bi bi-trash3-fill"></i>
+                      <i style={{cursor: 'pointer'}} className="bi bi-trash3-fill"></i>
                     </span>
                   </div>
                 </div>

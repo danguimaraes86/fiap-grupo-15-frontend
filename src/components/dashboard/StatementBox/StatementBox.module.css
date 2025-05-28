@@ -8,3 +8,8 @@
   border-bottom: 1px solid #ddd;
   padding: 0.5rem 0;
 }
+
+.item:last-child {
+  border: 0px;
+  padding: 0.5rem 0;
+}

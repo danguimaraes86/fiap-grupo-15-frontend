@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import ButtonOutlineComponent from '../buttons/outline';
 import ButtonRegularComponent from '../buttons/regular';
+import styles from './styles.module.css'
 
 export default function Header({setRegister, setLogin}: any) {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -17,7 +18,7 @@ export default function Header({setRegister, setLogin}: any) {
         background: 'black',
       }}
     >
-      <div className="d-flex align-items-center gap-5">
+      <div className={`${styles.media_sm_screen} d-flex align-items-center justify-content-between gap-5`} >
         <img
           className="d-block d-md-none d-lg-block order-2 order-md-1"
           src="/icons/logo-green.svg"

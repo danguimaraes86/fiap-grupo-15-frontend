@@ -13,7 +13,7 @@ export default function ButtonOutlineComponent({
     <button
       type="button"
       style={{ borderColor: '#47A138', color: '#47A138' }}
-      className="btn w-100"
+      className="btn w-100 text-nowrap p-3"
       onClick={onClick}
     >
       {text}
