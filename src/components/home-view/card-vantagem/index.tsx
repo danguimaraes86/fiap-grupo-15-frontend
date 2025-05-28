@@ -7,7 +7,7 @@ interface CardProps {
   description: string;
 }
 
-export default function CardComponent({
+export default function CardVantagemComponent({
   icon_src,
   alt_text,
   title,

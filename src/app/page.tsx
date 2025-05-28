@@ -4,7 +4,7 @@ import HeroBannerComponent from '../components/home-view/banner-image';
 import HeroTextComponent from '../components/home-view/banner-text';
 import ButtonOutlineComponent from '../components/home-view/buttons/outline';
 import ButtonRegularComponent from '../components/home-view/buttons/regular';
-import CardComponent from '../components/home-view/card';
+import CardVantagemComponent from '../components/home-view/card-vantagem';
 import styles from './home-view.module.css';
 import Footer from '@components/home-view/footer';
 import Register from '@components/modal/register';
@@ -65,7 +65,7 @@ export default function HomeView() {
           <div className="col-12">
             <div style={{ color: '#47A138' }} className="row g-5 text-center">
               {/* Gifts */}
-              <CardComponent
+              <CardVantagemComponent
                 icon_src={'/icons/gift.png'}
                 alt_text={'ícone de presente'}
                 title={'Conta e cartão gratuitos'}
@@ -75,7 +75,7 @@ export default function HomeView() {
               />
 
               {/* Cash */}
-              <CardComponent
+              <CardVantagemComponent
                 icon_src={'/icons/cash.png'}
                 alt_text={'ícone de pessoa sacando dinheiro'}
                 title={'Saques sem custo'}
@@ -85,7 +85,7 @@ export default function HomeView() {
               />
 
               {/* Star */}
-              <CardComponent
+              <CardVantagemComponent
                 icon_src={'icons/star.png'}
                 alt_text={'ícone de estrela'}
                 title={'Programa de pontos'}
@@ -95,7 +95,7 @@ export default function HomeView() {
               />
 
               {/* Devices */}
-              <CardComponent
+              <CardVantagemComponent
                 icon_src={'/icons/devices.png'}
                 alt_text={'ícone de dispositivos'}
                 title={'Seguro Dispositivos'}
