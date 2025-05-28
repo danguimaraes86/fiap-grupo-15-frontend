@@ -6,7 +6,6 @@ const middlewares = jsonServer.defaults();
 server.use(jsonServer.bodyParser);
 server.use(middlewares);
 
-// Middleware: atualiza saldo com base na transação criada
 server.post('/transacoes', (req, res, next) => {
   const { usuarioId, tipo, valor } = req.body;
   const db = router.db;
@@ -25,7 +24,61 @@ server.post('/transacoes', (req, res, next) => {
       .write();
   }
 
-  next(); // continua para salvar a transação normalmente
+  next();
+});
+
+server.delete('/transacoes/:id', (req, res, next) => {
+  const db = router.db;
+  const transacaoId = Number(req.params.id);
+  const transacao = db.get('transacoes').find({ id: transacaoId }).value();
+
+  if (transacao) {
+    const { usuarioId, tipo, valor } = transacao;
+    const saldo = db.get('saldos').find({ usuarioId }).value();
+
+    if (saldo) {
+      const novoSaldo = tipo === 'Depósito'
+        ? saldo.saldo - valor
+        : saldo.saldo + valor;
+
+      db.get('saldos')
+        .find({ usuarioId })
+        .assign({ saldo: novoSaldo })
+        .write();
+    }
+  }
+
+  next();
+});
+
+server.put('/transacoes/:id', (req, res, next) => {
+  const db = router.db;
+  const transacaoId = Number(req.params.id);
+  const novaTransacao = req.body;
+
+  const transacaoAntiga = db.get('transacoes').find({ id: transacaoId }).value();
+
+  if (transacaoAntiga) {
+    const { usuarioId, valor: valorAntigo } = transacaoAntiga;
+    const { valor: valorNovo } = novaTransacao;
+
+    const saldo = db.get('saldos').find({ usuarioId }).value();
+
+    if (saldo) {
+      const diferenca = valorNovo - valorAntigo;
+
+      const novoSaldo = transacaoAntiga.tipo === 'Depósito'
+        ? saldo.saldo + diferenca
+        : saldo.saldo - diferenca;
+
+      db.get('saldos')
+        .find({ usuarioId })
+        .assign({ saldo: novoSaldo })
+        .write();
+    }
+  }
+
+  next();
 });
 
 server.use(router);
