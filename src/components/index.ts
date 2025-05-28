@@ -5,3 +5,4 @@ export * from './layout/MobileMenu';
 export * from './dashboard/DashboardCard';
 export * from './forms/TransactionForm';
 export * from './dashboard/StatementBox';
+export * from './forms/TransactionForm/TransactionModal/TransactionModal';

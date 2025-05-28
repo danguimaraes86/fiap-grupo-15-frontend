@@ -12,7 +12,7 @@ import {
 import { criarTransacao, listarTransacoes } from '@services/transacoes';
 import { getUsuario } from '@services/usuarios';
 import { getSaldo } from '@services/saldos';
-import { formatCurrencyBRL, parseDate } from '@utils';
+import { formatCurrencyBRL, parseDate, agruparTransacoesPorMes } from '@utils';
 
 const menuItems = [
   { label: "Início", href: "#" },
@@ -34,7 +34,7 @@ export default function DashboardView() {
   const [balance, setBalance] = useState('');
   const [formError, setFormError] = useState('');
   const [formSuccess, setformSuccess] = useState('');
-  const [listTransactions, setListTransactions] = useState('');
+  const [listTransactions, setListTransactions] = useState<any[]>([]);
   const [currentDate, setCurrentDate] = useState('');
   const handleSubmit = async () => {
     if (!selectedOption || !amount) {
@@ -75,8 +75,8 @@ export default function DashboardView() {
 
   const fetchBalance = async () => {
     try {
-      const data = await getSaldo()
-      setBalance(data[0].saldo)
+      const data = await getSaldo();
+      setBalance(data[0].saldo);
     } catch (error) {
       setFormError("Falha ao enviar transação."+ error);
     }
@@ -85,16 +85,20 @@ export default function DashboardView() {
   const transactionsList = async () => {
     try {
       const data = await listarTransacoes()
-      setListTransactions(data)
+      if (!Array.isArray(data)) {
+        throw new Error('Resposta da API não é uma lista.');
+      }
+      const agrupadas = agruparTransacoesPorMes(data);
+      setListTransactions(agrupadas)
     } catch (error) {
       setFormError("Falha ao enviar transação."+ error);
     }
   }
 
   useEffect(() => {
-    fetchUser()
-    fetchBalance()
-    transactionsList()
+    fetchUser();
+    fetchBalance();
+    transactionsList();
     setCurrentDate(parseDate(new Date()));
   }, [])
 
@@ -139,7 +143,7 @@ export default function DashboardView() {
               </div>
 
               <div className="col-12 col-md-10 col-xl-3 mx-auto">
-                <StatementBox title="Extrato" items={listTransactions} />
+                <StatementBox title="Extrato" items={listTransactions} onUpdate={transactionsList} onBalanceUpdate={fetchBalance}/>
               </div>
             </div>
           </div>
