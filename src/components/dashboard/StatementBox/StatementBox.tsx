@@ -40,14 +40,14 @@ export function StatementBox({ items, title, onUpdate, onBalanceUpdate }: Props)
   return (
     <div className={styles.box}>
       <div className="d-flex justify-content-between align-items-center mb-2">
-        <h6 className="mb-0">{title}</h6>
+        <h4 className="mb-3">{title}</h4>
       </div>
 
       {items.length === 0 && <p>Nenhum item encontrado.</p>}
 
       {items.map(({ mesAno, transacoes }) => (
         <div key={mesAno}>
-          <div className="fw-bold text-primary small">{mesAno}</div>
+          <div className="fw-bold small" style={{ color: '#004D61' }}>{mesAno}</div>
 
           {transacoes.map(({ id, tipo, valor, data }) => (
             <div key={id} className={`${styles.item} mt-2`}>
