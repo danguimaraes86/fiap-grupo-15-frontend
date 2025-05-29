@@ -2,7 +2,11 @@
 import { useState } from 'react';
 import './index.css';
 
-export default function Register({ setRegister }: any) {
+interface Props {
+  closeModal: () => void;
+}
+
+export default function Register({ closeModal }: Props) {
   const [isChecked, setIsChecked] = useState<string>(' ');
   const [formData, setFormData] = useState({
     nome: '',
@@ -77,20 +81,13 @@ export default function Register({ setRegister }: any) {
             background: 'rgba(0,0,0,0)',
             marginLeft: 'auto',
           }}
-          onClick={setRegister}
+          onClick={closeModal}
         >
           X
         </button>
-        <img
-          className="col "
-          src="images/register_img.png"
-          alt="Banner de cadastro"
-          style={{maxHeight: '267px'}}
-        />
+        <img className="col " src="images/register_img.png" alt="Banner de cadastro" style={{ maxHeight: '267px' }} />
         <h5>
-          <strong>
-            Preencha os campos abaixo para criar sua conta corrente!
-          </strong>
+          <strong>Preencha os campos abaixo para criar sua conta corrente!</strong>
         </h5>
         <form onSubmit={handleSubmit} noValidate>
           <div className="row mb-3">
@@ -106,9 +103,7 @@ export default function Register({ setRegister }: any) {
                 value={formData.nome}
                 onChange={handleChange}
               />
-              {errors.nome && (
-                <div className="invalid-feedback">{errors.nome}</div>
-              )}
+              {errors.nome && <div className="invalid-feedback">{errors.nome}</div>}
             </div>
 
             <div className="col-md-12 inputForm">
@@ -123,9 +118,7 @@ export default function Register({ setRegister }: any) {
                 value={formData.email}
                 onChange={handleChange}
               />
-              {errors.email && (
-                <div className="invalid-feedback">{errors.email}</div>
-              )}
+              {errors.email && <div className="invalid-feedback">{errors.email}</div>}
             </div>
           </div>
 
@@ -142,9 +135,7 @@ export default function Register({ setRegister }: any) {
                 value={formData.senha}
                 onChange={handleChange}
               />
-              {errors.senha && (
-                <div className="invalid-feedback">{errors.senha}</div>
-              )}
+              {errors.senha && <div className="invalid-feedback">{errors.senha}</div>}
             </div>
           </div>
 
@@ -180,15 +171,11 @@ export default function Register({ setRegister }: any) {
               {isChecked}
             </button>
             <p style={{ marginBottom: 0, marginLeft: '5px' }}>
-              Li e estou ciente quanto às condições de tratamento dos meus dados
-              conforme descrito na Política de Privacidade do banco.
+              Li e estou ciente quanto às condições de tratamento dos meus dados conforme descrito na Política de
+              Privacidade do banco.
             </p>
           </div>
-          {errors.aceitaPolitica && (
-            <div style={{ color: 'red', marginBottom: '10px' }}>
-              {errors.aceitaPolitica}
-            </div>
-          )}
+          {errors.aceitaPolitica && <div style={{ color: 'red', marginBottom: '10px' }}>{errors.aceitaPolitica}</div>}
 
           <button
             type="submit"

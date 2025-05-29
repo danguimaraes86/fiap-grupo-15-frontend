@@ -1,33 +1,26 @@
 'use client';
+import Footer from '@components/home-view/footer';
 import Header from '@components/home-view/header';
+import Login from '@components/modal/login';
+import Register from '@components/modal/register';
+import { useState } from 'react';
 import HeroBannerComponent from '../components/home-view/banner-image';
 import HeroTextComponent from '../components/home-view/banner-text';
 import ButtonOutlineComponent from '../components/home-view/buttons/outline';
 import ButtonRegularComponent from '../components/home-view/buttons/regular';
 import CardVantagemComponent from '../components/home-view/card-vantagem';
 import styles from './home-view.module.css';
-import Footer from '@components/home-view/footer';
-import Register from '@components/modal/register';
-import { useState } from 'react';
-import Login from '@components/modal/login';
 
 export default function HomeView() {
-  const [login, setLogin] = useState<Boolean>(false);
-  const [register, setRegister] = useState<Boolean>(false);
+  const [modalCLient, setModalClient] = useState<'login' | 'register' | null>(null);
 
-  const handleLogin = () => {
-    setLogin(!login);
-  };
-
-  const handleRegister = () => {
-    setRegister(!register);
-  };
+  const closeModal = () => setModalClient(null);
 
   return (
     <>
-      {login && <Login setLogin={handleLogin} />}
-      {register && <Register setRegister={handleRegister} />}
-      <Header setRegister={handleRegister} setLogin={handleLogin} />
+      {modalCLient === 'login' && <Login closeModal={closeModal} />}
+      {modalCLient === 'register' && <Register closeModal={closeModal} />}
+      <Header setModalClient={setModalClient} />
       <main className={styles.home_background}>
         {/* Banner Central */}
         <section
@@ -39,16 +32,17 @@ export default function HomeView() {
 
         {/* Botões Conta - Mobile */}
         <section
-          className={`${styles.media_sm_screen} ${styles.media_md_screen} ${styles.media_lg_screen} row d-sm-none mt-3 g-0 justify-content-between align-items-center`}
+          className={`${styles.media_sm_screen}
+            ${styles.media_md_screen}
+            ${styles.media_lg_screen}
+            row d-sm-none mt-3 g-0 justify-content-between align-items-center
+          `}
         >
           <div className="col">
-            <ButtonRegularComponent text="Abir Conta" onClick={handleRegister} />
+            <ButtonRegularComponent text="Abir Conta" onClick={() => setModalClient('register')} />
           </div>
           <div className="col ms-3">
-            <ButtonOutlineComponent
-              text="Já tenho conta"
-              onClick={handleLogin}
-            />
+            <ButtonOutlineComponent text="Já tenho conta" onClick={() => setModalClient('login')} />
           </div>
         </section>
 
@@ -79,9 +73,7 @@ export default function HomeView() {
                 icon_src={'/icons/cash.png'}
                 alt_text={'ícone de pessoa sacando dinheiro'}
                 title={'Saques sem custo'}
-                description={
-                  'Você pode sacar gratuitamente 4x por mês de qualquer Banco 24h.'
-                }
+                description={'Você pode sacar gratuitamente 4x por mês de qualquer Banco 24h.'}
               />
 
               {/* Star */}

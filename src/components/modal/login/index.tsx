@@ -1,11 +1,14 @@
 'use Client';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import './index.css';
-import { useRouter } from 'next/navigation';
 
-export default function Login({setLogin}: any) {
+interface Props {
+  closeModal: () => void;
+}
 
-  const router = useRouter()
+export default function Login({ closeModal }: Props) {
+  const router = useRouter();
 
   const [formData, setFormData] = useState({
     email: '',
@@ -48,27 +51,22 @@ export default function Login({setLogin}: any) {
     e.preventDefault();
     if (validate()) {
       // Aqui você pode fazer o envio real do formulário
-      router.push('/dashboard')
+      router.push('/dashboard');
     }
   };
 
   return (
     <div className="register-overlay">
       <div className="register-container">
-        <button style={{border: 'none', background: 'rgba(0,0,0,0)', marginLeft: 'auto'}} onClick={setLogin}>X</button>
-        <img
-            
-          className="col"
-          src="images/login_img.png"
-          alt="Banner de login"
-          style={{maxHeight: '267px'}}
-        />
-        <h5 style={{marginTop: '20px', marginBottom: '20px'}}>
+        <button style={{ border: 'none', background: 'rgba(0,0,0,0)', marginLeft: 'auto' }} onClick={closeModal}>
+          X
+        </button>
+        <img className="col" src="images/login_img.png" alt="Banner de login" style={{ maxHeight: '267px' }} />
+        <h5 style={{ marginTop: '20px', marginBottom: '20px' }}>
           <strong>Login</strong>
         </h5>
         <form onSubmit={handleSubmit} noValidate style={{ width: '100%' }}>
           <div className="row mb-3">
-    
             <div className="col-md-12 inputForm">
               <label htmlFor="email" className="form-label">
                 Email
@@ -109,9 +107,10 @@ export default function Login({setLogin}: any) {
               alignItems: 'center',
               marginBottom: '10px',
             }}
-          >
-          </div>
-          <a href='' className="link-personalizado">Esqueci a senha!</a>
+          ></div>
+          <a href="" className="link-personalizado">
+            Esqueci a senha!
+          </a>
           <button
             type="submit"
             className="btn "

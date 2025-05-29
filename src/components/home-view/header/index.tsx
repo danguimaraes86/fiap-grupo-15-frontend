@@ -1,11 +1,15 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { Dispatch, SetStateAction, useState } from 'react';
 import ButtonOutlineComponent from '../buttons/outline';
 import ButtonRegularComponent from '../buttons/regular';
-import styles from './styles.module.css'
+import styles from './styles.module.css';
 
-export default function Header({setRegister, setLogin}: any) {
+interface Props {
+  setModalClient: Dispatch<SetStateAction<'login' | 'register' | null>>;
+}
+
+export default function Header({ setModalClient }: Props) {
   const [menuOpen, setMenuOpen] = useState(false);
 
   const toggleMenu = () => setMenuOpen(!menuOpen);
@@ -18,7 +22,9 @@ export default function Header({setRegister, setLogin}: any) {
         background: 'black',
       }}
     >
-      <div className={`${styles.media_sm_screen} d-flex align-items-center justify-content-between gap-5`} >
+      <div
+        className={`${styles.media_sm_screen} d-flex align-items-center justify-content-between gap-5`}
+      >
         <img
           className="d-block d-md-none d-lg-block order-2 order-md-1"
           src="/icons/logo-green.svg"
@@ -31,18 +37,10 @@ export default function Header({setRegister, setLogin}: any) {
         />
         <nav className="d-flex gap-5 order-1 order-md-2 align-items-center position-relative">
           <div className="d-none d-md-flex gap-5">
-            <a
-              className="text-decoration-none"
-              style={{ color: '#47A138' }}
-              href="#home"
-            >
+            <a className="text-decoration-none" style={{ color: '#47A138' }} href="#home">
               Sobre
             </a>
-            <a
-              className="text-decoration-none"
-              style={{ color: '#47A138' }}
-              href="#home"
-            >
+            <a className="text-decoration-none" style={{ color: '#47A138' }} href="#home">
               Serviços
             </a>
           </div>
@@ -90,8 +88,14 @@ export default function Header({setRegister, setLogin}: any) {
       </div>
 
       <div className="d-flex gap-3 d-none d-md-flex">
-        <ButtonRegularComponent text="Abrir minha conta" onClick={setRegister}/>
-        <ButtonOutlineComponent text="Já tenho conta" onClick={setLogin}/>
+        <ButtonRegularComponent
+          text="Abrir minha conta"
+          onClick={() => setModalClient('register')}
+        />
+        <ButtonOutlineComponent 
+          text="Já tenho conta" 
+          onClick={() => setModalClient('login')}
+        />
       </div>
     </header>
   );
