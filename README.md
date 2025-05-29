@@ -66,7 +66,7 @@ Abra a url [http://localhost:3000](http://localhost:3000) no seu navegador.
 
 Rode o JSON Server:
 ```bash
-npx json-server --watch db.json --port 5000
+npm run api
 ```
 
 Rode o Storybook:
