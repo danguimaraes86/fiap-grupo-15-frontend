@@ -58,7 +58,13 @@ export function TransactionForm({
           value={value}
           onChange={(e) => onChangeValue(e.target.value)}
         />
-        <button className="btn btn-dark w-100" onClick={onSubmit}>
+        <button
+          className="btn btn-dark w-100"
+          onClick={(e) => {
+            e.preventDefault();
+            onSubmit();
+          }}
+        >
           Concluir transação
         </button>
       </form>
