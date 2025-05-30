@@ -34,7 +34,11 @@ export function TransactionForm({
 
       <h6 className={styles.title}>{title}</h6>
 
-      <form className={styles.transactionForm}>
+      <form className={styles.transactionForm} 
+        onSubmit={(e) => {
+          e.preventDefault();
+          onSubmit();
+        }}>
         <select
           className="form-select mb-2"
           value={selectedOption}

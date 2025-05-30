@@ -3,7 +3,7 @@ import { formatCurrencyBRL } from '@utils';
 import { format, parseISO } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { useState } from 'react';
-import { TransactionModal } from '@components';
+import { TransactionModal, ToastMessage } from '@components';
 import { deleteTransacao, updateTransacao } from '@services/transacoes';
 
 type Props = {
@@ -27,10 +27,22 @@ export function StatementBox({ items, title, onUpdate, onBalanceUpdate }: Props)
   const [modalType, setModalType] = useState<'edit' | 'delete'>('edit');
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [selectedValue, setSelectedValue] = useState<number>(0);
+  const [toastMessage, setToastMessage] = useState('');
+  const [toastType, setToastType] = useState<'success' | 'error'>('success');
+  const [showToast, setShowToast] = useState(false);
+
+  const showToastMsg = (msg: string, type: 'success' | 'error') => {
+    setShowToast(false);
+    setTimeout(() => {
+      setToastMessage(msg);
+      setToastType(type);
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 3000);
+    }, 10);
+  };
 
   // abrir modal
   const openModal = (type: 'edit' | 'delete', id: number, value?: number) => {
-    console.log(type)
     setModalType(type);
     setSelectedId(id);
     setSelectedValue(value || 0);
@@ -54,86 +66,84 @@ export function StatementBox({ items, title, onUpdate, onBalanceUpdate }: Props)
               <div className="d-flex justify-content-between align-items-start">
                 <div>
                   <div>{tipo}</div>
-                
-                  <div className="fw-bold">{tipo === 'Transferência' ? `- ${formatCurrencyBRL(valor)}` : formatCurrencyBRL(valor)}</div>
-                  
+                  <div className="fw-bold">
+                    {tipo === 'Transferência' ? `- ${formatCurrencyBRL(valor)}` : formatCurrencyBRL(valor)}
+                  </div>
                 </div>
                 <div className="text-end small text-muted">
                   {!isNaN(new Date(data).getTime())
-                      ? format(new Date(parseISO(data)), 'dd/MM/yyyy', { locale: ptBR })
-                      : 'Data inválida'}
+                    ? format(new Date(parseISO(data)), 'dd/MM/yyyy', { locale: ptBR })
+                    : 'Data inválida'}
 
                   <div className="d-flex gap-2 justify-content-end">
                     <span onClick={() => openModal('edit', id, valor)}>
-                      <i style={{cursor: 'pointer'}} className="bi bi-pencil-fill"></i>
+                      <i style={{ cursor: 'pointer' }} className="bi bi-pencil-fill"></i>
                     </span>
                     <span onClick={() => openModal('delete', id)}>
-                      <i style={{cursor: 'pointer'}} className="bi bi-trash3-fill"></i>
+                      <i style={{ cursor: 'pointer' }} className="bi bi-trash3-fill"></i>
                     </span>
                   </div>
                 </div>
-                
               </div>
             </div>
           ))}
         </div>
       ))}
+
       <TransactionModal
-      show={modalShow}
-      onClose={() => setModalShow(false)}
-      onConfirm={async (value) => {
-        if (modalType === 'edit') {
-          if (selectedId !== null && value !== undefined) {
-            // Buscar a transação atual pelos dados existentes
-            const transacaoOriginal = items
-              .flatMap((item) => item.transacoes)
-              .find((t) => t.id === selectedId);
+        show={modalShow}
+        onClose={() => setModalShow(false)}
+        onConfirm={async (value) => {
+          if (modalType === 'edit') {
+            if (selectedId !== null && value !== undefined) {
+              const transacaoOriginal = items
+                .flatMap((item) => item.transacoes)
+                .find((t) => t.id === selectedId);
 
-            if (!transacaoOriginal) {
-              alert('Transação não encontrada.');
-              return;
+              if (!transacaoOriginal) {
+                showToastMsg('Transação não encontrada.', 'error');
+                return;
+              }
+
+              const payload = {
+                usuarioId: transacaoOriginal.usuarioId,
+                tipo: transacaoOriginal.tipo,
+                valor: value,
+                data: new Date().toISOString().split('T')[0],
+                id: selectedId
+              };
+
+              try {
+                await updateTransacao(selectedId, payload);
+                onUpdate();
+                onBalanceUpdate();
+                showToastMsg(`Transação ${selectedId} atualizada com sucesso!`, 'success');
+              } catch (error) {
+                console.error(error);
+                showToastMsg('Erro ao atualizar transação.', 'error');
+              }
             }
-
-            const payload = {
-              usuarioId: transacaoOriginal.usuarioId,
-              tipo: transacaoOriginal.tipo,
-              valor: value,
-              data: new Date().toISOString().split('T')[0], // data atual
-              id: selectedId
-            };
-
-            try {
-              await updateTransacao(selectedId, payload);
-              onUpdate();
-              onBalanceUpdate();
-              // alert(`Transação ${selectedId} atualizada com sucesso!`);
-              // Ideal: atualizar lista após o sucesso
-            } catch (error) {
-              console.error(error);
-              alert("Erro ao atualizar transação.");
-            }
-          }
-        } else {
-          if (selectedId !== null) {
-            try {
-              await deleteTransacao(selectedId);
-              onUpdate();
-              onBalanceUpdate();
-              // alert(`Transação ${selectedId} excluída com sucesso!`);
-              // Ideal: atualizar lista após exclusão
-            } catch (error) {
-              console.error(error);
-              alert("Erro ao excluir transação.");
+          } else {
+            if (selectedId !== null) {
+              try {
+                await deleteTransacao(selectedId);
+                onUpdate();
+                onBalanceUpdate();
+                showToastMsg(`Transação ${selectedId} excluída com sucesso!`, 'success');
+              } catch (error) {
+                console.error(error);
+                showToastMsg('Erro ao excluir transação.', 'error');
+              }
             }
           }
-        }
-        setModalShow(false);
-      }}
-      type={modalType}
-      currentValue={selectedValue}
-    />
+
+          setModalShow(false);
+        }}
+        type={modalType}
+        currentValue={selectedValue}
+      />
+
+      <ToastMessage message={toastMessage} type={toastType} show={showToast} />
     </div>
-    
   );
 }
-
