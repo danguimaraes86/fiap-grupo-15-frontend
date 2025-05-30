@@ -40,7 +40,7 @@ export default function Header({ setModalClient }: Props) {
             <a className="text-decoration-none" style={{ color: '#47A138' }} href="#home">
               Sobre
             </a>
-            <a className="text-decoration-none" style={{ color: '#47A138' }} href="#home">
+            <a className="text-decoration-none" style={{ color: '#47A138' }} href="/servicos">
               Serviços
             </a>
           </div>
