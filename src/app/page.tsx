@@ -26,8 +26,11 @@ export default function HomeView() {
         <section
           className={`${styles.media_sm_screen} ${styles.media_md_screen} ${styles.media_lg_screen} row g-3`}
         >
-          <HeroTextComponent />
-          <HeroBannerComponent />
+          <HeroTextComponent text="Experimente mais liberdade no controle da sua vida financeira. Crie sua conta com a gente!" />
+          <HeroBannerComponent
+            imageSrc="/images/home_view_banner.png"
+            altText="Banner da Home Page"
+          />
         </section>
 
         {/* Botões Conta - Mobile */}
