@@ -46,6 +46,8 @@ O sistema permite que o usuário:
 - Storybook
 - Design System
 
+Clique [aqui](https://www.figma.com/design/c1hvZBQNoN9TwePrjJqVTL/Projeto-Financeiro-do-Grupo-15?node-id=80-199&m=dev) para acessar nosso figma.
+
 ## Como clonar o repositório
 ```bash
 $ git clone https://github.com/danguimaraes86/fiap-grupo-15-frontend.git
