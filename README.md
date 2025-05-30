@@ -48,7 +48,7 @@ O sistema permite que o usuário:
 
 ## Como clonar o repositório
 ```bash
-$ git clone https://github.com/JacquelinBB/isw-implementacao.git
+$ git clone https://github.com/danguimaraes86/fiap-grupo-15-frontend.git
 ```
 
 ## Como rodar o projeto
