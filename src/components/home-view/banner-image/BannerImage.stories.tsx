@@ -12,5 +12,8 @@ export default meta;
 type Story = StoryObj<typeof HeroBannerComponent>;
 
 export const Default: Story = {
-  args: {},
+  args: {
+    imageSrc: '/images/home_view_banner.png',
+    altText: 'Banner da Home Page',
+  },
 };

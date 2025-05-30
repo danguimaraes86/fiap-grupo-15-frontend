@@ -12,5 +12,7 @@ export default meta;
 type Story = StoryObj<typeof HeroTextComponent>;
 
 export const Default: Story = {
-  args: {},
+  args: {
+    text: 'Experimente mais liberdade no controle da sua vida financeira. Crie sua conta com a gente!',
+  },
 };
