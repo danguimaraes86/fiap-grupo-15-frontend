@@ -1,0 +1,25 @@
+.sidebar {
+  background-color: #fff;
+  border-radius: 8px;
+  height: 900px
+}
+
+.navLink {
+  color: #1a5a68;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  padding-bottom: 0.3rem;
+  text-align: center;
+}
+
+.active {
+  font-weight: bold;
+  color: #00324f;
+}
+
+.hrDivider {
+  border: none;
+  border-bottom: 1px solid #004D61;
+  width: 80%;
+  margin: 0.5rem auto;
+}

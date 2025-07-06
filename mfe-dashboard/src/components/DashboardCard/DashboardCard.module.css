@@ -1,0 +1,72 @@
+.cardContainer {
+  height: 200px;
+  max-width: 900px;
+  margin-bottom: 7rem;
+}
+
+.card {
+  background-color: #004D61;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  border-radius: 8px;
+  overflow: hidden;
+  min-height: 280px;
+}
+
+
+.colunaDireita,
+.colunaEsquerda {
+  padding: 1.5rem;
+  flex: 1;
+}
+
+.headerSaldo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.label {
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.botaoOlho {
+  margin-left: 20px;
+  padding-top: 5px;
+  cursor: pointer;
+  font-size: 1.1rem;
+  color: #FF5031;
+}
+
+.hr {
+  border: none;
+  border-bottom: 2px solid #FF5031;
+  width: 80%;
+  margin: 0.4rem 0 1rem;
+}
+
+.colunaDireita h5 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 400;
+}
+
+.colunaDireita h3 {
+  margin: 0;
+  font-size: 2rem;
+  font-weight: 600;
+}
+
+@media (min-width: 768px) {
+  .card {
+    flex-direction: row;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .cardContainer {
+    margin-bottom: 8rem;
+  }
+}
