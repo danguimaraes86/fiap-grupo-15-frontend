@@ -1,0 +1,53 @@
+/* Define estilo geral do body para evitar rolagem e margens */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+}
+
+/* Estiliza o fundo escurecido */
+.register-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Estiliza o card central */
+.register-container {
+  height: 100vh;
+  width: 600px;
+  background-color: #e6e6e6;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  overflow-y: auto;
+  max-width: 90%;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* centraliza horizontalmente */
+  justify-content: center;
+}
+
+/* Estiliza os inputs */
+.inputForm {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+}
+
+.inputForm label {
+  text-align: left;
+  width: 100%;
+  margin-bottom: 0.3rem;
+}
+
+.inputForm input {
+  width: 100%;
+}
