@@ -1,0 +1,28 @@
+spring:
+  application:
+    name: bytebank-backend
+  web:
+    locale: pt_BR
+  datasource:
+    url: ${DATABASE_POSTGRES_URL}
+    username: ${DATABASE_POSTGRES_USER}
+    password: ${DATABASE_POSTGRES_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+server:
+  port: ${PORT:3001}
+
+cors:
+  allowed-origins:
+    ${CORS_WHITELIST}
+
+oauth:
+  jwt:
+    secret: ${JWT_SECRET}
+
+logging:
+  level:
+    root: info
