@@ -7,6 +7,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+import java.util.List;
+
 @Entity
 @Getter
 @Builder
@@ -25,9 +28,28 @@ public class Usuario {
     @NotBlank
     private String password;
     private String token;
+    private BigDecimal saldo;
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<Transacao> transacoes;
 
     public void updateToken(String token) {
         this.token = token;
+    }
+
+    public void addTransacao(Transacao transacao) {
+        this.transacoes.add(transacao);
+    }
+
+    public void removeTransacao(Transacao transacao) {
+        this.transacoes.remove(transacao);
+    }
+
+    public void adicionarSaldo(BigDecimal saldo) {
+        this.saldo = this.saldo.add(saldo);
+    }
+
+    public void subtrairSaldo(BigDecimal saldo) {
+        this.saldo = this.saldo.subtract(saldo);
     }
 
 }

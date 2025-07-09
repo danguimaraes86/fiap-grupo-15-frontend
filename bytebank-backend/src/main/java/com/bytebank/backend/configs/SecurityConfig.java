@@ -14,6 +14,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.jwt.JwtValidators;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.web.SecurityFilterChain;
 
@@ -41,8 +42,9 @@ public class SecurityConfig {
 //                    return corsConfiguration;
 //                }))
                 .authorizeHttpRequests(requests -> requests
-                        .requestMatchers(HttpMethod.POST, "/user").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/user/token").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/usuario").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/usuario/token").permitAll()
+                        .requestMatchers("/config/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .oauth2ResourceServer(oauth ->
@@ -55,7 +57,7 @@ public class SecurityConfig {
     @Bean
     public JwtDecoder jwtDecoder(UsuarioRepository usuarioRepository) {
         NimbusJwtDecoder jwtDecoder = NimbusJwtDecoder.withSecretKey(Keys.hmacShaKeyFor(secretKey.getBytes())).build();
-//        jwtDecoder.setJwtValidator(JwtValidators.createDefaultWithValidators(new JwtCustomValidator(userRepository)));
+        jwtDecoder.setJwtValidator(JwtValidators.createDefaultWithValidators(new JwtCustomValidator(usuarioRepository)));
         return jwtDecoder;
     }
 

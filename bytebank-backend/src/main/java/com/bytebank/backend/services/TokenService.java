@@ -1,6 +1,5 @@
 package com.bytebank.backend.services;
 
-import com.bytebank.backend.models.Usuario;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,8 +16,8 @@ public class TokenService {
     @Value("${oauth.jwt.secret}")
     private String secretKey;
 
-    public String generateAccessToken(Usuario usuario) {
-        return getTokenString(usuario.getEmail());
+    public String generateAccessToken(String email) {
+        return getTokenString(email);
     }
 
     private String getTokenString(String subject) {
@@ -26,7 +25,7 @@ public class TokenService {
                 .subject(subject)
                 .issuedAt(Date.from(Instant.now()))
                 .expiration(Date.from(Instant.now().plus(3, ChronoUnit.HOURS)))
-                .issuer("com.bytebank")
+                .issuer("com.bytebank.grupo-15")
                 .signWith(getSignInKey())
                 .compact();
     }

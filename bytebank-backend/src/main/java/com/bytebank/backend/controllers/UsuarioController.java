@@ -7,16 +7,17 @@ import com.bytebank.backend.models.Usuario;
 import com.bytebank.backend.services.UsuarioService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.util.UriComponentsBuilder;
 
-import java.net.URI;
+import java.math.BigDecimal;
 import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/usuario")
 public class UsuarioController {
 
     private final UsuarioService usuarioService;
@@ -28,20 +29,23 @@ public class UsuarioController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Usuario> getUsuarioById(@PathVariable Long id) {
-        return ResponseEntity.ofNullable(usuarioService.findUsuarioById(id));
+        return ResponseEntity.ofNullable(usuarioService.findUsuarioById(id).orElse(null));
     }
 
     @PostMapping
     public ResponseEntity<AuthResponse> createUsuario(@RequestBody @Valid RegistrationRequest request) {
         Usuario novoUsuario = usuarioService.createNovoUsuario(request);
-        URI uri = UriComponentsBuilder.newInstance()
-                .path("/user/{id}").buildAndExpand(novoUsuario.getId()).toUri();
-        return ResponseEntity.created(uri).body(new AuthResponse(novoUsuario.getToken()));
+        return ResponseEntity.status(HttpStatus.CREATED).body(new AuthResponse(novoUsuario.getToken()));
     }
 
     @PostMapping("/token")
     public ResponseEntity<AuthResponse> createToken(@RequestBody @Valid LoginRequest loginRequest) {
         String token = usuarioService.handleLoginUsuario(loginRequest);
         return ResponseEntity.ok(new AuthResponse(token));
+    }
+
+    @GetMapping("/saldo")
+    public ResponseEntity<BigDecimal> getSaldo(Authentication authentication) {
+        return ResponseEntity.ok(usuarioService.getSaldo(authentication.getName()));
     }
 }
