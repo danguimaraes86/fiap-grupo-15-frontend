@@ -1,6 +1,8 @@
 import { useState } from "react";
 import img_modal_register from "../../../assets/images/register.png";
+import { postCreateUsuario } from "../../../services/http-usuario.service";
 import "./index.css";
+import { AuthErrorComponent } from "../../auth-error";
 
 interface Props {
   closeModal: () => void;
@@ -20,6 +22,8 @@ export default function Register({ closeModal }: Props) {
     senha: "",
     aceitaPolitica: "",
   });
+  const [loading, setLoading] = useState(false);
+  const [authError, setAuthError] = useState("");
 
   const handleIsChecked = () => {
     setIsChecked((prev) => (prev === " " ? "X" : " "));
@@ -64,11 +68,24 @@ export default function Register({ closeModal }: Props) {
     return valid;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setAuthError("");
     if (validate()) {
-      alert("Formulário enviado com sucesso!");
-      // Aqui você pode fazer o envio real do formulário
+      setLoading(true);
+      try {
+        const { token } = await postCreateUsuario({
+          nome: formData.nome,
+          email: formData.email,
+          password: formData.senha,
+        });
+        sessionStorage.setItem("token", token);
+        window.location.href = "/dashboard";
+      } catch (error) {
+        setAuthError(error as string);
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
@@ -97,6 +114,7 @@ export default function Register({ closeModal }: Props) {
           </strong>
         </h5>
         <form onSubmit={handleSubmit} noValidate>
+          {authError && <AuthErrorComponent mensagem={authError} />}
           <div className="row mb-3">
             <div className="col-md-12 inputForm">
               <label htmlFor="nome" className="form-label">
@@ -197,6 +215,7 @@ export default function Register({ closeModal }: Props) {
           <button
             type="submit"
             className="btn btn-primary"
+            disabled={loading}
             style={{
               marginTop: "10px",
               display: "block",
@@ -206,7 +225,7 @@ export default function Register({ closeModal }: Props) {
               color: "white",
             }}
           >
-            Criar conta
+            {loading ? "Carregando..." : "Criar conta"}
           </button>
         </form>
       </div>

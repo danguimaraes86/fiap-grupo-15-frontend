@@ -1,5 +1,7 @@
 import { useState } from "react";
 import img_modal_login from "../../../assets/images/login.png";
+import { postLogin } from "../../../services/http-usuario.service";
+import { AuthErrorComponent } from "../../auth-error";
 import "./index.css";
 
 interface Props {
@@ -15,6 +17,8 @@ export default function Login({ closeModal }: Props) {
     email: "",
     senha: "",
   });
+  const [loading, setLoading] = useState(false);
+  const [authError, setAuthError] = useState("");
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
@@ -44,11 +48,23 @@ export default function Login({ closeModal }: Props) {
     return valid;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setAuthError("");
     if (validate()) {
-      // Aqui você pode fazer o envio real do formulário
-      window.location.href = "/dashboard";
+      setLoading(true);
+      try {
+        const { token } = await postLogin({
+          email: formData.email,
+          password: formData.senha,
+        });
+        sessionStorage.setItem("token", token);
+        window.location.href = "/dashboard";
+      } catch (error) {
+        setAuthError(error as string);
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
@@ -75,6 +91,7 @@ export default function Login({ closeModal }: Props) {
           <strong>Login</strong>
         </h5>
         <form onSubmit={handleSubmit} noValidate style={{ width: "100%" }}>
+          {authError && <AuthErrorComponent mensagem={authError} />}
           <div className="row mb-3">
             <div className="col-md-12 inputForm">
               <label htmlFor="email" className="form-label">
@@ -126,7 +143,8 @@ export default function Login({ closeModal }: Props) {
           </a>
           <button
             type="submit"
-            className="btn "
+            className="btn"
+            disabled={loading}
             style={{
               marginTop: "10px",
               display: "block",
@@ -138,7 +156,7 @@ export default function Login({ closeModal }: Props) {
               color: "white",
             }}
           >
-            Acessar
+            {loading ? "Acessando..." : "Acessar"}
           </button>
         </form>
       </div>

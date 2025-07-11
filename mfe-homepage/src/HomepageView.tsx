@@ -4,6 +4,7 @@ import icon_devices from "./assets/icons/devices.png";
 import icon_gift from "./assets/icons/gift.png";
 import icon_star from "./assets/icons/star.png";
 import img_home_view_banner from "./assets/images/home_view_banner.png";
+
 import HeroBannerComponent from "./components/banner-image";
 import HeroTextComponent from "./components/banner-text";
 import ButtonOutlineComponent from "./components/buttons/outline";
