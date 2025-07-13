@@ -3,6 +3,7 @@ package com.bytebank.backend.services;
 import com.bytebank.backend.controllers.dtos.TransacaoRequest;
 import com.bytebank.backend.controllers.dtos.TransacaoResponse;
 import com.bytebank.backend.exceptions.TransacaoNaoAutorizadaException;
+import com.bytebank.backend.models.Categoria;
 import com.bytebank.backend.models.TipoTransacao;
 import com.bytebank.backend.models.Transacao;
 import com.bytebank.backend.models.Usuario;
@@ -29,23 +30,23 @@ public class TransacaoService {
 
     public TransacaoResponse createTransacao(TransacaoRequest request, String email) {
         Usuario usuario = usuarioService.getUsuarioByEmail(email);
-        Transacao transacao = handleNovaTransacao(request);
+        Transacao transacao = buildNovaTransacao(request);
         handleNovaTransacao(usuario, transacao);
-        return handleTransacaoResponse(transacao, usuario);
+        return buildTransacaoResponse(transacao, usuario);
     }
 
     public TransacaoResponse deleteTransacao(Long id, String email) {
         Usuario usuario = usuarioService.getUsuarioByEmail(email);
         Transacao transacao = transacaoRepository.findTransacaoById(id);
         handleDeleteTransacao(usuario, transacao);
-        return handleTransacaoResponse(transacao, usuario);
+        return buildTransacaoResponse(transacao, usuario);
     }
 
     public TransacaoResponse updateTransacao(Long id, TransacaoRequest request, String email) {
         Usuario usuario = usuarioService.getUsuarioByEmail(email);
         Transacao transacao = transacaoRepository.findTransacaoById(id);
         handleUpdateTransacao(usuario, transacao, request);
-        return handleTransacaoResponse(transacao, usuario);
+        return buildTransacaoResponse(transacao, usuario);
     }
 
     private void handleUpdateTransacao(Usuario usuario, Transacao transacao, TransacaoRequest request) {
@@ -81,7 +82,7 @@ public class TransacaoService {
             BigDecimal diferenca = valorAtual.subtract(novoValor);
             usuario.adicionarSaldo(diferenca);
         }
-        transacao.updateDados(request);
+        transacao.updateDados(request.descricao(), request.valor(), request.categoria());
         usuarioRepository.save(usuario);
     }
 
@@ -104,7 +105,7 @@ public class TransacaoService {
             }
             usuario.subtrairSaldo(diferenca);
         }
-        transacao.updateDados(request);
+        transacao.updateDados(request.descricao(), request.valor(), Categoria.ENTRADA);
         usuarioRepository.save(usuario);
     }
 
@@ -143,17 +144,31 @@ public class TransacaoService {
         }
     }
 
-    private TransacaoResponse handleTransacaoResponse(Transacao transacao, Usuario usuario) {
-        return new TransacaoResponse(transacao.getDescricao(), transacao.getValor(), transacao.getTipoTransacao().getDescricao(), usuario.getSaldo());
+    private TransacaoResponse buildTransacaoResponse(Transacao transacao, Usuario usuario) {
+        return new TransacaoResponse(
+                transacao.getDescricao(),
+                transacao.getValor(),
+                transacao.getTipoTransacao().getDescricao(),
+                transacao.getCategoria().getDescricao(),
+                usuario.getSaldo()
+        );
     }
 
-    private Transacao handleNovaTransacao(TransacaoRequest transacao) {
+    private Transacao buildNovaTransacao(TransacaoRequest transacao) {
         return Transacao.builder()
                 .valor(transacao.valor())
                 .descricao(transacao.descricao())
                 .tipoTransacao(TipoTransacao.valueOf(transacao.tipoTransacao().toUpperCase()))
+                .categoria(handleCategoriaTransacao((transacao)))
                 .dataCriacao(LocalDateTime.now())
                 .build();
+    }
+
+    private Categoria handleCategoriaTransacao(TransacaoRequest transacao) {
+        if (transacao.tipoTransacao().equals(TipoTransacao.DEPOSITO.getDescricao())) {
+            return Categoria.ENTRADA;
+        }
+        return transacao.categoria() == null ? Categoria.NAO_CLASSIFICADO : transacao.categoria();
     }
 
 }

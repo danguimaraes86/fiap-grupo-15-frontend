@@ -6,6 +6,7 @@ public record TransacaoResponse(
         String descricao,
         BigDecimal valor,
         String tipoTransacao,
+        String categoria,
         BigDecimal saldo
 ) {
 }

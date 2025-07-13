@@ -1,5 +1,6 @@
 package com.bytebank.backend.controllers;
 
+import com.bytebank.backend.models.Categoria;
 import com.bytebank.backend.models.TipoTransacao;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,5 +17,10 @@ public class ConfigurationController {
     @GetMapping("/transacao")
     public ResponseEntity<List<String>> transacao() {
         return ResponseEntity.ok(Arrays.stream(TipoTransacao.values()).map(TipoTransacao::getDescricao).toList());
+    }
+
+    @GetMapping("/categoria")
+    public ResponseEntity<List<String>> categoria() {
+        return ResponseEntity.ok(Arrays.stream(Categoria.values()).map(Categoria::getDescricao).toList());
     }
 }

@@ -1,6 +1,5 @@
 package com.bytebank.backend.models;
 
-import com.bytebank.backend.controllers.dtos.TransacaoRequest;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.PositiveOrZero;
@@ -29,9 +28,12 @@ public class Transacao {
     private LocalDateTime dataCriacao;
     @Enumerated(EnumType.STRING)
     private TipoTransacao tipoTransacao;
+    @Enumerated(EnumType.STRING)
+    private Categoria categoria;
 
-    public void updateDados(TransacaoRequest request) {
-        this.descricao = request.descricao();
-        this.valor = request.valor();
+    public void updateDados(String descricao, BigDecimal valor, Categoria categoria) {
+        this.descricao = descricao;
+        this.valor = valor;
+        this.categoria = categoria;
     }
 }
