@@ -1,42 +1,66 @@
-import { API_URL } from "../lib/api";
+import type { AxiosError } from "axios";
+import { http } from "../lib/api";
 
-export async function criarTransacao(payload: {
-  usuarioId: number;
-  tipo: string;
-  valor: number;
-  data: string;
-}) {
-  const res = await fetch(`${API_URL}/transacoes`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload),
-  });
-
-  if (!res.ok) throw new Error('Erro ao criar transação');
-  return res.json();
+export interface TransacaoRequest {
+  descricao: string
+  valor: number
+  tipoTransacao: string
+  categoria?: string
 }
 
-export async function listarTransacoes() {
-  const res = await fetch(`${API_URL}/transacoes?_sort=id&_order=desc`);
-  return res.json();
+export interface TransacaoResponse {
+  id: number
+  descricao: string
+  valor: number
+  dataCriacao: string
+  tipoTransacao: 'deposito' | 'transferencia'
+  categoria: string
+}
+
+export async function createTransacao(payload: TransacaoRequest) {
+  try {
+    return (await http.post<TransacaoResponse>('/transacao', payload)).data
+  } catch (err) {
+    const error = err as AxiosError
+    if (!error.status) {
+      throw "erro de conexão"
+    }
+    throw error.response?.data
+  }
+}
+
+export async function getTransacaoList() {
+  try {
+    return (await http.get<TransacaoResponse[]>('/transacao')).data
+  } catch (err) {
+    const error = err as AxiosError
+    if (!error.status) {
+      throw "erro de conexão"
+    }
+    throw error.response?.data
+  }
 }
 
 export async function deleteTransacao(id: number) {
-  const res = await fetch(`${API_URL}/transacoes/${id}`, {
-    method: 'DELETE',
-  });
-
-  if (!res.ok) throw new Error(`Erro ao excluir transação com id ${id}`);
-  return true;
+  try {
+    return (await http.delete<TransacaoResponse[]>('/transacao/' + id)).data
+  } catch (err) {
+    const error = err as AxiosError
+    if (!error.status) {
+      throw "erro de conexão"
+    }
+    throw error.response?.data
+  }
 }
 
-export async function updateTransacao(id: number, payload: { valor: number }) {
-  const res = await fetch(`${API_URL}/transacoes/${id}`, {
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload),
-  });
-
-  if (!res.ok) throw new Error('Erro ao atualizar transação');
-  return res.json();
+export async function updateTransacao(id: number, payload: TransacaoRequest) {
+  try {
+    return (await http.put<TransacaoResponse>('/transacao/' + id, payload)).data
+  } catch (err) {
+    const error = err as AxiosError
+    if (!error.status) {
+      throw "erro de conexão"
+    }
+    throw error.response?.data
+  }
 }

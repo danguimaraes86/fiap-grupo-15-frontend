@@ -1,6 +1,15 @@
-import { API_URL } from "../lib/api";
+import { AxiosError } from "axios";
+import { http } from "../lib/api";
 
-export async function getSaldo() {
-  const res = await fetch(`${API_URL}/saldos`);
-  return res.json();
+export async function getSaldoUsuario() {
+  try {
+    return (await http.get<number>('/usuario/saldo')).data
+  } catch (err) {
+    const error = err as AxiosError
+    if (!error.status) {
+      throw "erro de conexão"
+    }
+    throw error.response?.data
+  }
+
 }
