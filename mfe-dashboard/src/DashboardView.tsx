@@ -7,9 +7,9 @@ import { TabletMenu } from "./components/layout/TabletMenu";
 import { StatementBox } from "./components/StatementBox";
 import { ToastMessage } from "./components/toast";
 import { TransactionForm } from "./components/TransactionForm";
-import { getSaldo } from "./services/saldos";
-import { criarTransacao, listarTransacoes } from "./services/transacoes";
-import { getUsuario } from "./services/usuarios";
+import { getSaldoUsuario } from "./services/saldos";
+import { createTransacao, getTransacaoList } from "./services/transacoes";
+import { getUsuarioLogado } from "./services/usuarios";
 import { agruparTransacoesPorMes, formatCurrencyBRL, parseDate } from "./utils";
 
 const menuItems = [
@@ -23,13 +23,10 @@ const dashboardCardList = {
   accountType: "Conta Corrente",
 };
 
-const transactionOptions = ["Transferência", "Depósito"];
+const usuario = await getUsuarioLogado();
 
 export default function DashboardView() {
-  const [selectedOption, setSelectedOption] = useState("");
-  const [amount, setAmount] = useState("");
-  const [user, setUser] = useState("Daniel");
-  const [balance, setBalance] = useState("");
+  const [balance, setBalance] = useState<number>(0);
   const [listTransactions, setListTransactions] = useState<any[]>([]);
   const [currentDate, setCurrentDate] = useState("");
 
@@ -44,43 +41,34 @@ export default function DashboardView() {
     }, 10); // pequeno delay para garantir novo ciclo de renderização
   };
 
-  const handleSubmit = async () => {
-    if (!selectedOption || !amount) {
+  const handleSubmit = async (
+    selectedOption: string,
+    transactionValue: string
+  ) => {
+    if (!selectedOption || !transactionValue) {
       showToast("Preencha todos os campos para concluir a transação.", "error");
       return;
     }
 
     try {
-      await criarTransacao({
-        usuarioId: 1,
-        tipo: selectedOption,
-        valor: parseFloat(amount),
-        data: new Date().toISOString().split("T")[0],
+      await createTransacao({
+        descricao: "descrição",
+        valor: parseFloat(transactionValue),
+        tipoTransacao: selectedOption,
       });
 
       showToast("Transação enviada com sucesso!", "success");
-      setAmount("");
-      setSelectedOption("");
       await transactionsList();
       await fetchBalance();
     } catch (error) {
-      showToast("Erro ao enviar transação. Tente novamente.", "error");
-    }
-  };
-
-  const fetchUser = async () => {
-    try {
-      const data = await getUsuario();
-      setUser(data.nome);
-    } catch (error) {
-      showToast("Erro ao obter dados do usuário.", "error");
+      showToast(error as string, "error");
     }
   };
 
   const fetchBalance = async () => {
     try {
-      const data = await getSaldo();
-      setBalance(data[0].saldo);
+      const saldo = await getSaldoUsuario();
+      setBalance(saldo);
     } catch (error) {
       showToast("Erro ao carregar saldo.", "error");
     }
@@ -88,9 +76,9 @@ export default function DashboardView() {
 
   const transactionsList = async () => {
     try {
-      const data = await listarTransacoes();
-      if (!Array.isArray(data)) throw new Error("Resposta inválida");
-      const agrupadas = agruparTransacoesPorMes(data);
+      const transacaoList = await getTransacaoList();
+      if (!Array.isArray(transacaoList)) throw new Error("Resposta inválida");
+      const agrupadas = agruparTransacoesPorMes(transacaoList);
       setListTransactions(agrupadas);
     } catch (error) {
       showToast("Erro ao carregar transações.", "error");
@@ -98,7 +86,6 @@ export default function DashboardView() {
   };
 
   useEffect(() => {
-    fetchUser();
     fetchBalance();
     transactionsList();
     setCurrentDate(parseDate(new Date()));
@@ -106,8 +93,12 @@ export default function DashboardView() {
 
   return (
     <main className="bg-[#eaf2e4] min-h-screen">
-      <Header userName={user} />
-      <MobileMenu items={menuItems} active={undefined} forceVisible={undefined} />
+      <Header userName={usuario.nome} />
+      <MobileMenu
+        items={menuItems}
+        active={undefined}
+        forceVisible={undefined}
+      />
       <TabletMenu items={menuItems} />
 
       <div className="container-xl mt-4">
@@ -119,20 +110,12 @@ export default function DashboardView() {
               </div>
               <div className="col-12 col-md-10 col-xl-7 mx-auto">
                 <DashboardCard
-                  name={user}
+                  name={usuario.nome}
                   date={currentDate}
                   accountType={dashboardCardList.accountType}
                   balance={formatCurrencyBRL(balance)}
                 />
-                <TransactionForm
-                  title="Nova transação"
-                  options={transactionOptions}
-                  selectedOption={selectedOption}
-                  onChangeOption={setSelectedOption}
-                  value={amount}
-                  onChangeValue={setAmount}
-                  onSubmit={handleSubmit}
-                />
+                <TransactionForm onSubmit={handleSubmit} />
               </div>
 
               <div className="col-12 col-md-10 col-xl-3 mx-auto">

@@ -1,3 +1,4 @@
+import type { TransacaoResponse } from "../../services/transacoes";
 import { capitalizeFirstLetter } from "../capitalize/capitalize";
 
 export type Transacao = {
@@ -12,14 +13,13 @@ export type TransacoesAgrupadas = {
   mesAno: string;
   transacoes: {
     id: number;
-    usuarioId: number;
     tipo: string;
     valor: number;
     data: string;
   }[];
 };
 
-export function agruparTransacoesPorMes(transacoes: Transacao[]): TransacoesAgrupadas[] {
+export function agruparTransacoesPorMes(transacoes: TransacaoResponse[]): TransacoesAgrupadas[] {
   const formatador = new Intl.DateTimeFormat('pt-BR', {
     month: 'long',
   });
@@ -27,7 +27,7 @@ export function agruparTransacoesPorMes(transacoes: Transacao[]): TransacoesAgru
   const mapa = new Map<string, TransacoesAgrupadas>();
 
   for (const t of transacoes) {
-    const dataObj = new Date(t.data);
+    const dataObj = new Date(t.dataCriacao);
 
     const nomeMes = formatador.format(dataObj);
     const mesCapitalizado = capitalizeFirstLetter(nomeMes);
@@ -38,10 +38,9 @@ export function agruparTransacoesPorMes(transacoes: Transacao[]): TransacoesAgru
 
     mapa.get(mesCapitalizado)!.transacoes.push({
       id: t.id,
-      usuarioId: t.usuarioId,
-      tipo: t.tipo,
+      tipo: t.tipoTransacao,
       valor: t.valor,
-      data: t.data,
+      data: t.dataCriacao,
     });
   }
 
