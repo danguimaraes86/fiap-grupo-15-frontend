@@ -11,7 +11,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -21,10 +20,6 @@ public class UsuarioService {
     private final UsuarioRepository usuarioRepository;
     private final PasswordEncoder passwordEncoder;
     private final TokenService tokenService;
-
-    public List<Usuario> findAllUsuarios() {
-        return usuarioRepository.findAll();
-    }
 
     public Optional<Usuario> findUsuarioById(Long id) {
         return usuarioRepository.findById(id);

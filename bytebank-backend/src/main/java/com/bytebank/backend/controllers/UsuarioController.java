@@ -3,6 +3,7 @@ package com.bytebank.backend.controllers;
 import com.bytebank.backend.controllers.dtos.AuthResponse;
 import com.bytebank.backend.controllers.dtos.LoginRequest;
 import com.bytebank.backend.controllers.dtos.RegistrationRequest;
+import com.bytebank.backend.controllers.dtos.UsuarioResponse;
 import com.bytebank.backend.models.Usuario;
 import com.bytebank.backend.services.UsuarioService;
 import jakarta.validation.Valid;
@@ -13,7 +14,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
-import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
@@ -23,13 +23,9 @@ public class UsuarioController {
     private final UsuarioService usuarioService;
 
     @GetMapping
-    public ResponseEntity<List<Usuario>> getAllUsers() {
-        return ResponseEntity.ok(usuarioService.findAllUsuarios());
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<Usuario> getUsuarioById(@PathVariable Long id) {
-        return ResponseEntity.ofNullable(usuarioService.findUsuarioById(id).orElse(null));
+    public ResponseEntity<UsuarioResponse> getUsuario(Authentication authentication) {
+        Usuario usuario = usuarioService.getUsuarioByEmail(authentication.getName());
+        return ResponseEntity.ok(new UsuarioResponse(usuario.getId(), usuario.getNome(), usuario.getEmail()));
     }
 
     @PostMapping
