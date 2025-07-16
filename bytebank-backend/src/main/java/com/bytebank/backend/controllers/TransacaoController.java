@@ -21,7 +21,7 @@ public class TransacaoController {
     private final TransacaoService transacaoService;
 
     @GetMapping
-    public ResponseEntity<List<Transacao>> getTransacoes(Authentication authentication) {
+    public ResponseEntity<List<TransacaoResponse>> getTransacoes(Authentication authentication) {
         return ResponseEntity.ofNullable(transacaoService.findTransacoesByUsuario(authentication.getName()));
     }
 

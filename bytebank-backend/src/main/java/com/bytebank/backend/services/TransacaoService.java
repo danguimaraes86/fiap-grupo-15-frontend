@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -24,29 +25,29 @@ public class TransacaoService {
     private final UsuarioRepository usuarioRepository;
     private final TransacaoRepository transacaoRepository;
 
-    public List<Transacao> findTransacoesByUsuario(String email) {
-        return usuarioService.getUsuarioByEmail(email).getTransacoes();
+    public List<TransacaoResponse> findTransacoesByUsuario(String email) {
+        return usuarioService.getUsuarioByEmail(email).getTransacoes().stream().map(this::buildTransacaoResponse).toList();
     }
 
     public TransacaoResponse createTransacao(TransacaoRequest request, String email) {
         Usuario usuario = usuarioService.getUsuarioByEmail(email);
         Transacao transacao = buildNovaTransacao(request);
         handleNovaTransacao(usuario, transacao);
-        return buildTransacaoResponse(transacao, usuario);
+        return buildTransacaoResponse(transacao);
     }
 
     public TransacaoResponse deleteTransacao(Long id, String email) {
         Usuario usuario = usuarioService.getUsuarioByEmail(email);
         Transacao transacao = transacaoRepository.findTransacaoById(id);
         handleDeleteTransacao(usuario, transacao);
-        return buildTransacaoResponse(transacao, usuario);
+        return buildTransacaoResponse(transacao);
     }
 
     public TransacaoResponse updateTransacao(Long id, TransacaoRequest request, String email) {
         Usuario usuario = usuarioService.getUsuarioByEmail(email);
         Transacao transacao = transacaoRepository.findTransacaoById(id);
         handleUpdateTransacao(usuario, transacao, request);
-        return buildTransacaoResponse(transacao, usuario);
+        return buildTransacaoResponse(transacao);
     }
 
     private void handleUpdateTransacao(Usuario usuario, Transacao transacao, TransacaoRequest request) {
@@ -82,7 +83,7 @@ public class TransacaoService {
             BigDecimal diferenca = valorAtual.subtract(novoValor);
             usuario.adicionarSaldo(diferenca);
         }
-        transacao.updateDados(request.descricao(), request.valor(), request.categoria());
+        transacao.updateDados(request.descricao(), request.valor(), handleCategoriaTransacao(request));
         usuarioRepository.save(usuario);
     }
 
@@ -144,13 +145,14 @@ public class TransacaoService {
         }
     }
 
-    private TransacaoResponse buildTransacaoResponse(Transacao transacao, Usuario usuario) {
+    private TransacaoResponse buildTransacaoResponse(Transacao transacao) {
         return new TransacaoResponse(
+                transacao.getId(),
                 transacao.getDescricao(),
                 transacao.getValor(),
                 transacao.getTipoTransacao().getDescricao(),
-                transacao.getCategoria().getDescricao(),
-                usuario.getSaldo()
+                transacao.getDataCriacao().toString(),
+                transacao.getCategoria().getDescricao()
         );
     }
 
