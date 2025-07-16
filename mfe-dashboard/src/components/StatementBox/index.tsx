@@ -1,11 +1,12 @@
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
 import { useState } from "react";
+import { TipoTransacao } from "../../services/configs";
 import { deleteTransacao, updateTransacao } from "../../services/transacoes";
 import { formatCurrencyBRL } from "../../utils/currency/formatCurrency";
 import { ToastMessage } from "../toast";
 import { TransactionModal } from "../TransactionForm/TransactionModal/TransactionModal";
 import styles from "./StatementBox.module.css";
-import { format } from "date-fns";
-import { ptBR } from "date-fns/locale";
 
 type Props = {
   title: string;
@@ -13,8 +14,7 @@ type Props = {
     mesAno: string;
     transacoes: {
       id: number;
-      usuarioId: number;
-      tipo: string;
+      tipo: TipoTransacao;
       valor: number;
       data: string;
     }[];
@@ -55,8 +55,8 @@ export function StatementBox({
     setModalShow(true);
   };
 
-  function parseISO(data: string): string | number | Date {
-    throw new Error("Function not implemented.");
+  function normalizarTipoTransacao(tipo: string) {
+    return TipoTransacao.deposito == tipo ? "deposito" : "transferencia";
   }
 
   return (
@@ -86,7 +86,7 @@ export function StatementBox({
                 </div>
                 <div className="text-end small text-muted">
                   {!isNaN(new Date(data).getTime())
-                    ? format(new Date(parseISO(data)), "dd/MM/yyyy", {
+                    ? format(new Date(data), "dd/MM/yyyy", {
                         locale: ptBR,
                       })
                     : "Data inválida"}
@@ -127,16 +127,14 @@ export function StatementBox({
                 return;
               }
 
-              const payload = {
-                usuarioId: transacaoOriginal.usuarioId,
-                tipo: transacaoOriginal.tipo,
-                valor: value,
-                data: new Date().toISOString().split("T")[0],
-                id: selectedId,
-              };
-
               try {
-                await updateTransacao(selectedId, payload);
+                await updateTransacao(selectedId, {
+                  descricao: "descrição",
+                  valor: value,
+                  tipoTransacao: normalizarTipoTransacao(
+                    transacaoOriginal.tipo
+                  ),
+                });
                 onUpdate();
                 onBalanceUpdate();
                 showToastMsg(
@@ -144,7 +142,6 @@ export function StatementBox({
                   "success"
                 );
               } catch (error) {
-                console.error(error);
                 showToastMsg("Erro ao atualizar transação.", "error");
               }
             }
@@ -159,8 +156,7 @@ export function StatementBox({
                   "success"
                 );
               } catch (error) {
-                console.error(error);
-                showToastMsg("Erro ao excluir transação.", "error");
+                showToastMsg("Erro ao excluir transação. " + error, "error");
               }
             }
           }
