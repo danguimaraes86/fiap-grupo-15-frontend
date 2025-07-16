@@ -8,19 +8,30 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Arrays;
-import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/config")
 public class ConfigurationController {
 
     @GetMapping("/transacao")
-    public ResponseEntity<List<String>> transacao() {
-        return ResponseEntity.ok(Arrays.stream(TipoTransacao.values()).map(TipoTransacao::getDescricao).toList());
+    public ResponseEntity<Map<String, String>> transacao() {
+        Map<String, String> result = Arrays.stream(TipoTransacao.values())
+                .collect(Collectors.toMap(
+                        t -> t.name().toLowerCase(),
+                        TipoTransacao::getDescricao
+                ));
+        return ResponseEntity.ok(result);
     }
 
     @GetMapping("/categoria")
-    public ResponseEntity<List<String>> categoria() {
-        return ResponseEntity.ok(Arrays.stream(Categoria.values()).map(Categoria::getDescricao).toList());
+    public ResponseEntity<Map<String, String>> categoria() {
+        Map<String, String> result = Arrays.stream(Categoria.values())
+                .collect(Collectors.toMap(
+                        c -> c.name().toLowerCase(),
+                        Categoria::getDescricao
+                ));
+        return ResponseEntity.ok(result);
     }
 }
