@@ -30,10 +30,16 @@ public class Transacao {
     private TipoTransacao tipoTransacao;
     @Enumerated(EnumType.STRING)
     private Categoria categoria;
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Anexo anexo;
 
     public void updateDados(String descricao, BigDecimal valor, Categoria categoria) {
         this.descricao = descricao;
         this.valor = valor;
         this.categoria = categoria;
+    }
+
+    public void addAnexo(Anexo anexo) {
+        this.anexo = anexo;
     }
 }

@@ -8,6 +8,7 @@ public record TransacaoResponse(
         BigDecimal valor,
         String tipoTransacao,
         String dataCriacao,
-        String categoria
+        String categoria,
+        String anexoId
 ) {
 }
