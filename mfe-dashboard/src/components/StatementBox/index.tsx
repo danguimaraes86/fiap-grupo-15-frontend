@@ -37,6 +37,12 @@ export function StatementBox({
   const [toastType, setToastType] = useState<"success" | "error">("success");
   const [showToast, setShowToast] = useState(false);
 
+  // filtros
+  const [showFilters, setShowFilters] = useState(false);
+  const [filtroTipo, setFiltroTipo] = useState("");
+  const [filtroMes, setFiltroMes] = useState("");
+  const [filtroValor, setFiltroValor] = useState("");
+
   const showToastMsg = (msg: string, type: "success" | "error") => {
     setShowToast(false);
     setTimeout(() => {
@@ -47,7 +53,6 @@ export function StatementBox({
     }, 10);
   };
 
-  // abrir modal
   const openModal = (type: "edit" | "delete", id: number, value?: number) => {
     setModalType(type);
     setSelectedId(id);
@@ -59,15 +64,69 @@ export function StatementBox({
     return TipoTransacao.deposito == tipo ? "deposito" : "transferencia";
   }
 
+  // aplicar filtros
+  const transacoesFiltradas = items.map(({ mesAno, transacoes }) => ({
+    mesAno,
+    transacoes: transacoes.filter(({ tipo, valor }) => {
+      const tipoMatch = !filtroTipo || tipo.toLowerCase() === filtroTipo.toLowerCase();
+      const mesMatch = !filtroMes || mesAno.toLowerCase() === filtroMes.toLowerCase();
+      const valorMatch = !filtroValor || valor >= Number(filtroValor);
+      return tipoMatch && mesMatch && valorMatch;
+    }),
+  })).filter((item) => item.transacoes.length > 0);
+
   return (
     <div className={styles.box}>
       <div className="d-flex justify-content-between align-items-center mb-2">
-        <h4 className="mb-3">{title}</h4>
+        <h4 className="mb-1">{title}</h4>
+        <button
+          onClick={() => setShowFilters(!showFilters)}
+          className="btn btn-sm"
+        >
+          {showFilters ? "Ocultar ▲" : "Filtrar ▼"}
+        </button>
       </div>
 
-      {items.length === 0 && <p>Nenhum item encontrado.</p>}
+      {showFilters && (
+        <div className="mb-3">
+          <div className="d-flex gap-2 flex-wrap">
+            <select
+              className="form-select form-select-sm"
+              value={filtroTipo}
+              onChange={(e) => setFiltroTipo(e.target.value)}
+            >
+              <option value="">Tipo (todos)</option>
+              <option value="Depósito">Depósito</option>
+              <option value="Transferência">Transferência</option>
+            </select>
 
-      {items.map(({ mesAno, transacoes }) => (
+            <select
+              className="form-select form-select-sm"
+              value={filtroMes}
+              onChange={(e) => setFiltroMes(e.target.value)}
+            >
+              <option value="">Mês (todos)</option>
+              {items.map(({ mesAno }) => (
+                <option key={mesAno} value={mesAno}>
+                  {mesAno}
+                </option>
+              ))}
+            </select>
+
+            <input
+              className="form-control form-control-sm"
+              type="number"
+              placeholder="Valor mínimo"
+              value={filtroValor}
+              onChange={(e) => setFiltroValor(e.target.value)}
+            />
+          </div>
+        </div>
+      )}
+
+      {transacoesFiltradas.length === 0 && <p>Nenhum item encontrado.</p>}
+
+      {transacoesFiltradas.map(({ mesAno, transacoes }) => (
         <div key={mesAno}>
           <div className="fw-bold small" style={{ color: "#004D61" }}>
             {mesAno}
