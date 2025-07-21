@@ -17,15 +17,29 @@ export interface TransacaoResponse {
   categoria: string
 }
 
-export async function createTransacao(payload: TransacaoRequest) {
+export async function createTransacao(
+  payload: TransacaoRequest,
+  anexo: File | null
+) {
   try {
-    return (await http.post<TransacaoResponse>('/transacao', payload)).data
-  } catch (err) {
-    const error = err as AxiosError
-    if (!error.status) {
-      throw "erro de conexão"
+    const transacao = new Blob([JSON.stringify(payload)], {
+      type: "application/json",
+    });
+
+    const formData = new FormData();
+    formData.append("transacao", transacao);
+
+    if (anexo) {
+      formData.append("anexo", anexo);
     }
-    throw error.response?.data
+
+    return (await http.post<TransacaoResponse>("/transacao", formData)).data;
+  } catch (err) {
+    const error = err as AxiosError;
+    if (!error.status) {
+      throw "erro de conexão";
+    }
+    throw error.response?.data;
   }
 }
 
