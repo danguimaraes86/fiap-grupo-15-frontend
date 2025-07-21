@@ -23,6 +23,7 @@ export const Default: Story = {
             tipo: 'Depósito',
             valor: 2500,
             data: '2025-05-20',
+            categoria: "Não Classificado",
           },
           {
             id: 2,
@@ -30,6 +31,7 @@ export const Default: Story = {
             tipo: 'Transferência',
             valor: 500,
             data: '2025-05-22',
+            categoria: "Não Classificado",
           },
         ],
       },
@@ -42,6 +44,7 @@ export const Default: Story = {
             tipo: 'Depósito',
             valor: 1200,
             data: '2025-04-15',
+            categoria: "Não Classificado",
           },
         ],
       },

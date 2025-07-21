@@ -17,13 +17,14 @@ type Props = {
       tipo: string;
       valor: number;
       data: string;
+      categoria: string
     }[];
   }[];
   onUpdate: () => void;
   onBalanceUpdate: () => void;
 };
 
-const PAGE_SIZE = 7;
+const PAGE_SIZE = 6;
 
 export function StatementBox({
   items,
@@ -42,6 +43,7 @@ export function StatementBox({
   const [filtroTipo, setFiltroTipo] = useState("");
   const [filtroMes, setFiltroMes] = useState("");
   const [filtroValor, setFiltroValor] = useState("");
+  const [filtroCategoria, setFiltroCategoria] = useState("");
 
   const [paginaAtual, setPaginaAtual] = useState(1);
 
@@ -69,17 +71,17 @@ export function StatementBox({
   const transacoesFiltradas = items
     .map(({ mesAno, transacoes }) =>
       transacoes
-        .filter(({ tipo, valor }) => {
-          const tipoMatch =
-            !filtroTipo || tipo.toLowerCase() === filtroTipo.toLowerCase();
-          const mesMatch =
-            !filtroMes || mesAno.toLowerCase() === filtroMes.toLowerCase();
+        .filter(({ tipo, valor, categoria }) => {
+          const tipoMatch = !filtroTipo || tipo.toLowerCase() === filtroTipo.toLowerCase();
+          const mesMatch = !filtroMes || mesAno.toLowerCase() === filtroMes.toLowerCase();
           const valorMatch = !filtroValor || valor >= Number(filtroValor);
-          return tipoMatch && mesMatch && valorMatch;
+          const categoriaMatch = !filtroCategoria || categoria === filtroCategoria;
+          return tipoMatch && mesMatch && valorMatch && categoriaMatch;
         })
         .map((t) => ({ ...t, mesAno }))
     )
     .flat();
+
 
   const totalPaginas = Math.ceil(transacoesFiltradas.length / PAGE_SIZE);
 
@@ -142,6 +144,22 @@ export function StatementBox({
               ))}
             </select>
 
+            <select
+              className="form-select form-select-sm"
+              value={filtroCategoria}
+              onChange={(e) => {
+                setFiltroCategoria(e.target.value);
+                setPaginaAtual(1);
+              }}
+            >
+              <option value="">Categoria (todas)</option>
+              {Array.from(new Set(items.flatMap(i => i.transacoes.map(t => t.categoria))))
+                .filter(Boolean)
+                .map((cat) => (
+                  <option key={cat} value={cat}>{cat}</option>
+                ))}
+            </select>
+
             <input
               className="form-control form-control-sm"
               type="number"
@@ -164,7 +182,7 @@ export function StatementBox({
             {mesAno}
           </div>
 
-          {transacoes.map(({ id, tipo, valor, data }) => (
+          {transacoes.map(({ id, tipo, valor, data, categoria }) => (
             <div key={id} className={`${styles.item} mt-2`}>
               <div className="d-flex justify-content-between align-items-start">
                 <div>
@@ -174,6 +192,11 @@ export function StatementBox({
                       ? `- ${formatCurrencyBRL(valor)}`
                       : formatCurrencyBRL(valor)}
                   </div>
+                  {categoria && (
+                    <div className="text-muted small" style={{ fontSize: 12 }}>
+                      {categoria}
+                    </div>
+                  )}
                 </div>
                 <div className="text-end small text-muted">
                   {!isNaN(new Date(data).getTime())
@@ -219,7 +242,7 @@ export function StatementBox({
           disabled={pagina === 1}
           title="Anterior"
         >
-          <i className="bi bi-arrow-left-circle-fill"></i>
+          <i className="bi bi-chevron-left"></i>
         </button>
         <span style={{ minWidth: 70, textAlign: "center" }}>
           {pagina} / {totalPaginas}
@@ -232,7 +255,7 @@ export function StatementBox({
           disabled={pagina === totalPaginas}
           title="Próxima"
         >
-          <i className="bi bi-arrow-right-circle-fill"></i>
+          <i className="bi bi-chevron-right"></i>
         </button>
         <button
           className="btn btn-light btn-sm"
