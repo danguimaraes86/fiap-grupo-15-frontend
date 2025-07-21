@@ -14,7 +14,7 @@ type Props = {
     mesAno: string;
     transacoes: {
       id: number;
-      tipo: TipoTransacao;
+      tipo: string;
       valor: number;
       data: string;
     }[];
@@ -22,6 +22,8 @@ type Props = {
   onUpdate: () => void;
   onBalanceUpdate: () => void;
 };
+
+const PAGE_SIZE = 7;
 
 export function StatementBox({
   items,
@@ -36,12 +38,12 @@ export function StatementBox({
   const [toastMessage, setToastMessage] = useState("");
   const [toastType, setToastType] = useState<"success" | "error">("success");
   const [showToast, setShowToast] = useState(false);
-
-  // filtros
   const [showFilters, setShowFilters] = useState(false);
   const [filtroTipo, setFiltroTipo] = useState("");
   const [filtroMes, setFiltroMes] = useState("");
   const [filtroValor, setFiltroValor] = useState("");
+
+  const [paginaAtual, setPaginaAtual] = useState(1);
 
   const showToastMsg = (msg: string, type: "success" | "error") => {
     setShowToast(false);
@@ -64,16 +66,37 @@ export function StatementBox({
     return TipoTransacao.deposito == tipo ? "deposito" : "transferencia";
   }
 
-  // aplicar filtros
-  const transacoesFiltradas = items.map(({ mesAno, transacoes }) => ({
-    mesAno,
-    transacoes: transacoes.filter(({ tipo, valor }) => {
-      const tipoMatch = !filtroTipo || tipo.toLowerCase() === filtroTipo.toLowerCase();
-      const mesMatch = !filtroMes || mesAno.toLowerCase() === filtroMes.toLowerCase();
-      const valorMatch = !filtroValor || valor >= Number(filtroValor);
-      return tipoMatch && mesMatch && valorMatch;
-    }),
-  })).filter((item) => item.transacoes.length > 0);
+  const transacoesFiltradas = items
+    .map(({ mesAno, transacoes }) =>
+      transacoes
+        .filter(({ tipo, valor }) => {
+          const tipoMatch =
+            !filtroTipo || tipo.toLowerCase() === filtroTipo.toLowerCase();
+          const mesMatch =
+            !filtroMes || mesAno.toLowerCase() === filtroMes.toLowerCase();
+          const valorMatch = !filtroValor || valor >= Number(filtroValor);
+          return tipoMatch && mesMatch && valorMatch;
+        })
+        .map((t) => ({ ...t, mesAno }))
+    )
+    .flat();
+
+  const totalPaginas = Math.ceil(transacoesFiltradas.length / PAGE_SIZE);
+
+  const pagina = Math.max(1, Math.min(paginaAtual, totalPaginas || 1));
+  const inicio = (pagina - 1) * PAGE_SIZE;
+  const fim = inicio + PAGE_SIZE;
+  const transacoesPaginadas = transacoesFiltradas.slice(inicio, fim);
+
+  const transacoesAgrupadas: { mesAno: string; transacoes: typeof transacoesPaginadas }[] = [];
+  transacoesPaginadas.forEach((t) => {
+    const idx = transacoesAgrupadas.findIndex((g) => g.mesAno === t.mesAno);
+    if (idx > -1) {
+      transacoesAgrupadas[idx].transacoes.push(t);
+    } else {
+      transacoesAgrupadas.push({ mesAno: t.mesAno, transacoes: [t] });
+    }
+  });
 
   return (
     <div className={styles.box}>
@@ -93,7 +116,10 @@ export function StatementBox({
             <select
               className="form-select form-select-sm"
               value={filtroTipo}
-              onChange={(e) => setFiltroTipo(e.target.value)}
+              onChange={(e) => {
+                setFiltroTipo(e.target.value);
+                setPaginaAtual(1);
+              }}
             >
               <option value="">Tipo (todos)</option>
               <option value="Depósito">Depósito</option>
@@ -103,7 +129,10 @@ export function StatementBox({
             <select
               className="form-select form-select-sm"
               value={filtroMes}
-              onChange={(e) => setFiltroMes(e.target.value)}
+              onChange={(e) => {
+                setFiltroMes(e.target.value);
+                setPaginaAtual(1);
+              }}
             >
               <option value="">Mês (todos)</option>
               {items.map(({ mesAno }) => (
@@ -118,7 +147,10 @@ export function StatementBox({
               type="number"
               placeholder="Valor mínimo"
               value={filtroValor}
-              onChange={(e) => setFiltroValor(e.target.value)}
+              onChange={(e) => {
+                setFiltroValor(e.target.value);
+                setPaginaAtual(1);
+              }}
             />
           </div>
         </div>
@@ -126,7 +158,7 @@ export function StatementBox({
 
       {transacoesFiltradas.length === 0 && <p>Nenhum item encontrado.</p>}
 
-      {transacoesFiltradas.map(({ mesAno, transacoes }) => (
+      {transacoesAgrupadas.map(({ mesAno, transacoes }) => (
         <div key={mesAno}>
           <div className="fw-bold small" style={{ color: "#004D61" }}>
             {mesAno}
@@ -170,6 +202,48 @@ export function StatementBox({
           ))}
         </div>
       ))}
+
+    {totalPaginas > 1 && (
+      <div className="d-flex justify-content-center align-items-center mt-3" style={{ gap: 4 }}>
+        <button
+          className="btn btn-light btn-sm"
+          onClick={() => setPaginaAtual(1)}
+          disabled={pagina === 1}
+          title="Primeira página"
+        >
+          <i className="bi bi-chevron-double-left"></i>
+        </button>
+        <button
+          className="btn btn-light btn-sm"
+          onClick={() => setPaginaAtual((old) => Math.max(1, old - 1))}
+          disabled={pagina === 1}
+          title="Anterior"
+        >
+          <i className="bi bi-arrow-left-circle-fill"></i>
+        </button>
+        <span style={{ minWidth: 70, textAlign: "center" }}>
+          {pagina} / {totalPaginas}
+        </span>
+        <button
+          className="btn btn-light btn-sm"
+          onClick={() =>
+            setPaginaAtual((old) => Math.min(totalPaginas, old + 1))
+          }
+          disabled={pagina === totalPaginas}
+          title="Próxima"
+        >
+          <i className="bi bi-arrow-right-circle-fill"></i>
+        </button>
+        <button
+          className="btn btn-light btn-sm"
+          onClick={() => setPaginaAtual(totalPaginas)}
+          disabled={pagina === totalPaginas}
+          title="Última página"
+        >
+          <i className="bi bi-chevron-double-right"></i>
+        </button>
+      </div>
+    )}
 
       <TransactionModal
         show={modalShow}
