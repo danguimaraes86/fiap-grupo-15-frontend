@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  # Container principal que carrega os outros
+  root-config:
+    build: ./bytebank-root
+    ports:
+      - "9000:80"
+
+  # Micro-Frontend de Homepage
+  homepage:
+    build: ./mfe-homepage
+    ports:
+      - "9001:8081"
+
+  # Micro-Frontend de Dashboard
+  dashboard:
+    build: ./mfe-dashboard
+    ports:
+      - "9002:8082"
+
+  # Micro-Frontend de Not Found
+  notfound:
+    build: ./mfe-notfound
+    ports:
+      - "9003:8083"
+
+  # Backend construído localmente
+  backend:
+    build: ./bytebank-backend
+    ports:
+      - "8080:8080"

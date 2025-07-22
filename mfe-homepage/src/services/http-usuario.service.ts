@@ -2,7 +2,7 @@ import axios, { AxiosError } from 'axios'
 import type { AuthResponse, LoginRequest, RegistrationRequest } from './http-usuario.models'
 
 const http = axios.create({
-  baseURL: 'https://fiap-grupo-15-bytebank-backend-9f339827bd67.herokuapp.com/'
+  baseURL: import.meta.env.VITE_API_URL
 })
 
 export async function postCreateUsuario(payload: RegistrationRequest) {
