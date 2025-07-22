@@ -5,7 +5,7 @@ export interface TransacaoRequest {
   descricao: string
   valor: number
   tipoTransacao: string
-  categoria?: string
+  categoria: string
 }
 
 export interface TransacaoResponse {

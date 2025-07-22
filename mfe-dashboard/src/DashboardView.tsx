@@ -8,7 +8,11 @@ import { StatementBox } from "./components/StatementBox";
 import { ToastMessage } from "./components/toast";
 import { TransactionForm } from "./components/TransactionForm";
 import { getSaldoUsuario } from "./services/saldos";
-import { createTransacao, getTransacaoList } from "./services/transacoes";
+import {
+  createTransacao,
+  getTransacaoList,
+  type TransacaoRequest,
+} from "./services/transacoes";
 import { getUsuarioLogado } from "./services/usuarios";
 import { agruparTransacoesPorMes, formatCurrencyBRL, parseDate } from "./utils";
 
@@ -43,19 +47,23 @@ export default function DashboardView() {
 
   const handleSubmit = async (
     selectedOption: string,
-    transactionValue: string
+    transactionValue: string,
+    selectedCategory: string,
+    file: File | null
   ) => {
-    if (!selectedOption || !transactionValue) {
+    if (!selectedOption || !transactionValue || !selectedCategory) {
       showToast("Preencha todos os campos para concluir a transação.", "error");
       return;
     }
 
     try {
-      await createTransacao({
+      const transacaoRequest: TransacaoRequest = {
         descricao: "descrição",
         valor: parseFloat(transactionValue),
         tipoTransacao: selectedOption,
-      });
+        categoria: selectedCategory,
+      };
+      await createTransacao(transacaoRequest, file);
 
       showToast("Transação enviada com sucesso!", "success");
       await transactionsList();
