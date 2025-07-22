@@ -4,22 +4,20 @@ import vitePluginSingleSpa from 'vite-plugin-single-spa'
 
 export default defineConfig({
   server: {
-    port: 9002,
-    hmr: false
+    hmr: false,
+    port: 9002
   },
   plugins: [
     react(),
     vitePluginSingleSpa({
-      orgName: 'bytebank-grupo-15',
-      projectName: 'dashboard',
+      serverPort: 9002,
       spaEntryPoints: ['src/main.tsx']
     })
   ],
+  esbuild: {
+    target: 'es2022',
+  },
   build: {
-    rollupOptions: {
-      output: {
-        entryFileNames: `bytebank-grupo-15-dashboard.js`
-      }
-    }
+    target: 'es2022',
   }
 })

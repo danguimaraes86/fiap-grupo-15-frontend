@@ -5,7 +5,7 @@ COPY package*.json ./
 RUN npm install
 COPY . .
 # Gera a pasta 'dist' com o index.html e outros arquivos
-RUN npm run build
+RUN npm run build:docker
 
 # Estágio 2: Cria a imagem final com o servidor Nginx
 FROM nginx:stable-alpine

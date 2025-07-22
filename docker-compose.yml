@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   # Container principal que carrega os outros
   root-config:

@@ -15,7 +15,7 @@ RUN npm install -g serve
 # Copia APENAS a pasta 'dist' gerada no estágio anterior
 COPY --from=builder /app/dist ./dist
 # Copia o arquivo de configuração para o CORS
-COPY serve.json .
+COPY serve.json ./dist
 
 EXPOSE 8081
 # Inicia o servidor, aponta para a pasta 'dist' e aplica as regras do serve.json
