@@ -11,6 +11,6 @@ public record TransacaoRequest(
         @NotBlank String descricao,
         @PositiveOrZero @NotNull BigDecimal valor,
         @NotBlank String tipoTransacao,
-        Categoria categoria
+        @NotBlank String categoria
 ) {
 }

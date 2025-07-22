@@ -185,10 +185,10 @@ public class TransacaoService {
     }
 
     private Categoria handleCategoriaTransacao(TransacaoRequest transacao) {
-        if (transacao.tipoTransacao().equals(TipoTransacao.DEPOSITO.getDescricao())) {
+        if (TipoTransacao.DEPOSITO.equals(TipoTransacao.valueOf(transacao.tipoTransacao().toUpperCase()))) {
             return Categoria.ENTRADA;
         }
-        return transacao.categoria() == null ? Categoria.NAO_CLASSIFICADO : transacao.categoria();
+        return transacao.categoria() == null ? Categoria.NAO_CLASSIFICADO : Categoria.valueOf(transacao.categoria().toUpperCase());
     }
 
 }
