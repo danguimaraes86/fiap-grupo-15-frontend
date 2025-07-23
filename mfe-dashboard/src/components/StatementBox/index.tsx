@@ -2,7 +2,7 @@ import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { useState } from "react";
 import { TipoTransacao } from "../../services/configs";
-import { deleteTransacao, updateTransacao } from "../../services/transacoes";
+import { deleteTransacao, updateTransacao, downloadAnexoTransacao  } from "../../services/transacoes";
 import { formatCurrencyBRL } from "../../utils/currency/formatCurrency";
 import { ToastMessage } from "../toast";
 import { TransactionModal } from "../TransactionForm/TransactionModal/TransactionModal";
@@ -81,6 +81,22 @@ export function StatementBox({
         .map((t) => ({ ...t, mesAno }))
     )
     .flat();
+
+  async function handleDownloadAnexo(id: number) {
+    try {
+      const blob = await downloadAnexoTransacao(id);
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "anexo.pdf";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      showToastMsg("Erro ao baixar anexo", "error");
+    }
+  }
 
 
   const totalPaginas = Math.ceil(transacoesFiltradas.length / PAGE_SIZE);
@@ -206,17 +222,20 @@ export function StatementBox({
                     : "Data inválida"}
 
                   <div className="d-flex gap-2 justify-content-end">
-                    <span onClick={() => openModal("edit", id, valor)}>
+                    <span onClick={() => openModal("edit", id, valor)} title="Editar">
                       <i
                         style={{ cursor: "pointer" }}
                         className="bi bi-pencil-fill"
                       ></i>
                     </span>
-                    <span onClick={() => openModal("delete", id)}>
+                    <span onClick={() => openModal("delete", id)} title="Deletar">
                       <i
                         style={{ cursor: "pointer" }}
                         className="bi bi-trash3-fill"
                       ></i>
+                    </span>
+                    <span onClick={() => handleDownloadAnexo(id)} title="Baixar anexo">
+                      <i className="bi bi-file-earmark-arrow-down-fill" style={{ cursor: "pointer" }}></i>
                     </span>
                   </div>
                 </div>

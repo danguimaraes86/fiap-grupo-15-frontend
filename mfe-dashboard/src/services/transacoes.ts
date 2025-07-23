@@ -78,3 +78,18 @@ export async function updateTransacao(id: number, payload: TransacaoRequest) {
     throw error.response?.data
   }
 }
+
+export async function downloadAnexoTransacao(id: number) {
+  try {
+    const response = await http.get(`/transacao/${id}/anexo`, {
+      responseType: "blob",
+    });
+    return response.data;
+  } catch (err) {
+    const error = err as AxiosError;
+    if (!error.status) {
+      throw "erro de conexão";
+    }
+    throw error.response?.data;
+  }
+}
