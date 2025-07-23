@@ -1,6 +1,5 @@
-'use client';
-import styles from './DashboardCard.module.css';
-import { useState } from 'react';
+import styles from "./DashboardCard.module.css";
+import { useState } from "react";
 
 type Props = {
   name: string;
@@ -13,7 +12,7 @@ export function DashboardCard({ name, date, accountType, balance }: Props) {
   const [mostrarSaldo, setMostrarSaldo] = useState(false);
 
   const toggleSaldo = () => {
-    setMostrarSaldo(prev => !prev);
+    setMostrarSaldo((prev) => !prev);
   };
   return (
     <div className={styles.cardContainer}>
@@ -27,16 +26,19 @@ export function DashboardCard({ name, date, accountType, balance }: Props) {
             <span className={styles.label}>Saldo</span>
             <span className={styles.botaoOlho} onClick={toggleSaldo}>
               {mostrarSaldo ? (
-                <i className="bi bi-eye-slash-fill" style={{ color: '#FF5031' }}></i>
+                <i
+                  className="bi bi-eye-slash-fill"
+                  style={{ color: "#FF5031" }}
+                ></i>
               ) : (
-                <i className="bi-eye-fill" style={{ color: '#FF5031' }}></i>
+                <i className="bi-eye-fill" style={{ color: "#FF5031" }}></i>
               )}
             </span>
           </div>
           <hr className={styles.hr} />
           <div>
             <h5>{accountType}</h5>
-            <h3>{mostrarSaldo ? balance : '••••••••'}</h3>
+            <h3>{mostrarSaldo ? balance : "••••••••"}</h3>
           </div>
         </div>
       </div>
