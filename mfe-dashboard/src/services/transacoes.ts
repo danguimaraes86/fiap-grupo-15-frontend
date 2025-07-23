@@ -9,12 +9,13 @@ export interface TransacaoRequest {
 }
 
 export interface TransacaoResponse {
-  id: number
+  id?: number
   descricao: string
   valor: number
   dataCriacao: string
   tipoTransacao: 'deposito' | 'transferencia'
   categoria: string
+  anexoId?: string
 }
 
 export async function createTransacao(

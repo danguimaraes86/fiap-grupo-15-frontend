@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { NumericFormat } from "react-number-format";
 import img_transactions_left from "../../assets/images/transactions-left.png";
 import img_transactions_right from "../../assets/images/transactions-right.png";
@@ -29,17 +29,13 @@ export function TransactionForm({ onSubmit }: Props) {
   const [transactionValue, setTransactionValue] = useState<string>("");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [error, setError] = useState("");
+  const formRef = useRef<HTMLFormElement>(null);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!selectedOption) {
       setError("Selecione o tipo de transação.");
-      return;
-    }
-
-    if (!selectedCategory) {
-      setError("Selecione uma categoria.");
       return;
     }
 
@@ -66,12 +62,18 @@ export function TransactionForm({ onSubmit }: Props) {
     }
 
     setError("");
-    onSubmit(selectedOption, parsedValue.toFixed(2), selectedCategory, selectedFile);
+    onSubmit(
+      selectedOption,
+      parsedValue.toFixed(2),
+      selectedCategory,
+      selectedFile
+    );
 
     setSelectedOption("");
     setSelectedCategory("");
     setTransactionValue("");
     setSelectedFile(null);
+    formRef.current?.reset()
   };
 
   return (
@@ -89,7 +91,11 @@ export function TransactionForm({ onSubmit }: Props) {
 
       <h6 className={styles.title}>Nova transação</h6>
 
-      <form className={styles.transactionForm} onSubmit={handleSubmit}>
+      <form
+        className={styles.transactionForm}
+        ref={formRef}
+        onSubmit={handleSubmit}
+      >
         <select
           className="form-select mb-2"
           value={selectedOption}

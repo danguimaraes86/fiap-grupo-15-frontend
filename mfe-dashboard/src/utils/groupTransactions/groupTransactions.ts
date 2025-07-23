@@ -39,7 +39,7 @@ export function agruparTransacoesPorMes(transacoes: TransacaoResponse[]): Transa
     }
 
     mapa.get(mesCapitalizado)!.transacoes.push({
-      id: t.id,
+      id: t.id!,
       tipo: t.tipoTransacao,
       valor: t.valor,
       data: t.dataCriacao,
