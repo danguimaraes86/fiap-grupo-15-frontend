@@ -7,7 +7,8 @@ export type Transacao = {
   tipo: 'Depósito' | 'Transferência';
   valor: number;
   data: string;
-  categoria: string
+  categoria: string;
+  anexoId?: string;
 };
 
 export type TransacoesAgrupadas = {
@@ -18,6 +19,7 @@ export type TransacoesAgrupadas = {
     valor: number;
     data: string;
     categoria: string;
+    anexoId?: string;
   }[];
 };
 
@@ -44,6 +46,7 @@ export function agruparTransacoesPorMes(transacoes: TransacaoResponse[]): Transa
       valor: t.valor,
       data: t.dataCriacao,
       categoria: t.categoria,
+      anexoId: t.anexoId
     });
   }
 

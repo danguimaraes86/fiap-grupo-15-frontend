@@ -17,7 +17,8 @@ type Props = {
       tipo: string;
       valor: number;
       data: string;
-      categoria: string
+      categoria: string;
+      anexoId?: string;
     }[];
   }[];
   onUpdate: () => void;
@@ -198,7 +199,7 @@ export function StatementBox({
             {mesAno}
           </div>
 
-          {transacoes.map(({ id, tipo, valor, data, categoria }) => (
+          {transacoes.map(({ id, tipo, valor, data, categoria, anexoId }) => (
             <div key={id} className={`${styles.item} mt-2`}>
               <div className="d-flex justify-content-between align-items-start">
                 <div>
@@ -234,9 +235,11 @@ export function StatementBox({
                         className="bi bi-trash3-fill"
                       ></i>
                     </span>
-                    <span onClick={() => handleDownloadAnexo(id)} title="Baixar anexo">
-                      <i className="bi bi-file-earmark-arrow-down-fill" style={{ cursor: "pointer" }}></i>
-                    </span>
+                    {anexoId && (
+                      <span onClick={() => handleDownloadAnexo(id)} title="Baixar anexo">
+                        <i className="bi bi-file-earmark-arrow-down-fill" style={{ cursor: "pointer" }}></i>
+                      </span>
+                    )}
                   </div>
                 </div>
               </div>
