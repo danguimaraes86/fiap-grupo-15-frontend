@@ -51,18 +51,21 @@ export default function DashboardView() {
     selectedCategory: string,
     file: File | null
   ) => {
-    if (!selectedOption || !transactionValue || !selectedCategory) {
+    if (!selectedOption || !transactionValue) {
       showToast("Preencha todos os campos para concluir a transação.", "error");
       return;
     }
 
     try {
-      const transacaoRequest: TransacaoRequest = {
+      let transacaoRequest: TransacaoRequest = {
         descricao: "descrição",
         valor: parseFloat(transactionValue),
         tipoTransacao: selectedOption,
-        categoria: selectedCategory,
       };
+      if (selectedCategory.length > 0) {
+        transacaoRequest = { ...transacaoRequest, categoria: selectedCategory };
+      }
+
       await createTransacao(transacaoRequest, file);
 
       showToast("Transação enviada com sucesso!", "success");

@@ -38,11 +38,6 @@ export function TransactionForm({ onSubmit }: Props) {
       return;
     }
 
-    if (!selectedCategory) {
-      setError("Selecione uma categoria.");
-      return;
-    }
-
     if (!transactionValue) {
       setError("Digite um valor.");
       return;
@@ -66,7 +61,12 @@ export function TransactionForm({ onSubmit }: Props) {
     }
 
     setError("");
-    onSubmit(selectedOption, parsedValue.toFixed(2), selectedCategory, selectedFile);
+    onSubmit(
+      selectedOption,
+      parsedValue.toFixed(2),
+      selectedCategory,
+      selectedFile
+    );
 
     setSelectedOption("");
     setSelectedCategory("");

@@ -5,16 +5,17 @@ export interface TransacaoRequest {
   descricao: string
   valor: number
   tipoTransacao: string
-  categoria: string
+  categoria?: string
 }
 
 export interface TransacaoResponse {
-  id: number
+  id?: number
   descricao: string
   valor: number
   dataCriacao: string
   tipoTransacao: 'deposito' | 'transferencia'
   categoria: string
+  anexoId?: string
 }
 
 export async function createTransacao(
