@@ -1,7 +1,10 @@
 package com.bytebank.backend.controllers.dtos;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 import java.math.BigDecimal;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public record TransacaoResponse(
         Long id,
         String descricao,

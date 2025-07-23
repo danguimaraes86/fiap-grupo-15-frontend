@@ -170,7 +170,7 @@ public class TransacaoService {
                 transacao.getTipoTransacao().getDescricao(),
                 transacao.getDataCriacao().toString(),
                 transacao.getCategoria().getDescricao(),
-                anexo != null ? anexo.getId().toString() : null
+                (anexo != null && anexo.getId() != null) ? anexo.getId().toString() : null
         );
     }
 
