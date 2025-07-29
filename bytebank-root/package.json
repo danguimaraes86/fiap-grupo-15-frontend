@@ -8,6 +8,7 @@
     "check-format": "prettier --check .",
     "prepare": "husky install",
     "build": "concurrently npm:build:*",
+    "build:docker": "webpack --mode=production --env isLocal",
     "build:webpack": "webpack --mode=production",
     "build:types": "tsc"
   },
@@ -46,5 +47,8 @@
     "@types/webpack-env": "^1.16.2",
     "single-spa-layout": "^1.6.0"
   },
-  "types": "dist/bytebank-grupo-15-root-config.d.ts"
+  "types": "dist/bytebank-grupo-15-root-config.d.ts",
+  "overrides": {
+    "standalone-single-spa-webpack-plugin": "2.1.0"
+  }
 }

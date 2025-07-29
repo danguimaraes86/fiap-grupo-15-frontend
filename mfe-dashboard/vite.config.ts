@@ -2,10 +2,10 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import vitePluginSingleSpa from 'vite-plugin-single-spa'
 
-// https://vite.dev/config/
 export default defineConfig({
   server: {
-    hmr: false
+    hmr: false,
+    port: 9002
   },
   plugins: [
     react(),
@@ -14,4 +14,10 @@ export default defineConfig({
       spaEntryPoints: ['src/main.tsx']
     })
   ],
+  esbuild: {
+    target: 'es2022',
+  },
+  build: {
+    target: 'es2022',
+  }
 })

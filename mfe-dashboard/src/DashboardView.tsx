@@ -171,8 +171,8 @@ export default function DashboardView() {
       <Header userName={usuario.nome} />
       <MobileMenu
         items={menuItems}
-        active={undefined}
-        forceVisible={undefined}
+        active={""}
+        forceVisible={false}
       />
       <TabletMenu items={menuItems} />
 

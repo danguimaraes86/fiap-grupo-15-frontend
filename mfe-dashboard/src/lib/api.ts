@@ -20,7 +20,7 @@ function isTokenValid(token: string): boolean {
 }
 
 export const http = axios.create({
-  baseURL: 'https://fiap-grupo-15-bytebank-backend-9f339827bd67.herokuapp.com',
+  baseURL: import.meta.env.VITE_API_URL,
   headers: {
     Authorization: `Bearer ${initUsuario()}`
   }
