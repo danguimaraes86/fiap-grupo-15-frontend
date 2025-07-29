@@ -1,0 +1,10 @@
+:root {
+  --bs-primary: #8e44ad;
+  --bs-primary-rgb: 142, 68, 173;
+  --bs-secondary: #2ecc71;
+  --bs-secondary-rgb: 46, 204, 113;
+}
+
+body {
+  background-color: #eaf2e4;
+}
