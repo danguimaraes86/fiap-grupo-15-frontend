@@ -37,8 +37,15 @@ export default function DashboardView() {
 
   const [toastMessage, setToastMessage] = useState("");
   const [toastType, setToastType] = useState<"success" | "error">("success");
-  const [labels, setLabels] = useState(null);
-  const [datasets, setDatasets] = useState(null);
+  const [labels, setLabels] = useState<string[]>([]);
+  const [datasets, setDatasets] = useState<
+    {
+      label: string;
+      data: number[];
+      backgroundColor: string[];
+      borderWidth: number;
+    }[]
+  >([]);
 
   const showToast = (message: string, type: "success" | "error") => {
     setToastMessage(""); // força re-render
@@ -93,7 +100,6 @@ export default function DashboardView() {
       const transacaoList = await getTransacaoList();
       if (!Array.isArray(transacaoList)) throw new Error("Resposta inválida");
       const agrupadas = agruparTransacoesPorMes(transacaoList);
-      console.log(agrupadas);
       const grouped = agrupadas?.[0].transacoes?.reduce<Record<string, number>>(
         (acc, curr) => {
           acc[curr.categoria] = (acc[curr.categoria] || 0) + curr.valor;
@@ -146,7 +152,6 @@ export default function DashboardView() {
       ];
 
       // Agora você pode passar labels e datasets para o DoughnutChart
-      console.log({ labels, datasets });
       setLabels(labels);
       setDatasets(datasets);
       setListTransactions(agrupadas);
