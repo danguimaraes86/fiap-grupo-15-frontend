@@ -18,7 +18,7 @@ module.exports = (webpackConfigEnv, argv) => {
         inject: false,
         template: "src/index.ejs",
         templateParameters: {
-          isLocal: webpackConfigEnv && webpackConfigEnv.isLocal,
+          isLocal: (webpackConfigEnv && webpackConfigEnv.isLocal) || process.env.NODE_ENV === 'development',
           orgName,
         },
       }),
