@@ -65,6 +65,8 @@ npm run storybook
 ## Como acessar o projeto remotamente
 Abra a url [https://bytebank-root.onrender.com/](https://bytebank-root.onrender.com/) no seu navegador.
 
+⚠️ **Lembrete:** Pode haver um delay de 50 segundos, pois a instância é encerrada por inatividade.
+
 ## Licença
 Este projeto está licenciado sob a [Creative Commons Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)](https://creativecommons.org/licenses/by-nc/4.0/). 
 
