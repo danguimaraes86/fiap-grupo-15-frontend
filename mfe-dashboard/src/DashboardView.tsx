@@ -16,6 +16,7 @@ import {
 import { getUsuarioLogado } from "./services/usuarios";
 import { agruparTransacoesPorMes, formatCurrencyBRL, parseDate } from "./utils";
 import DoughnutChart from "./components/Chart/DoughnutChart";
+import LineChart from "./components/Chart/LineChart";
 
 const menuItems = [
   { label: "Início", href: "#" },
@@ -37,8 +38,8 @@ export default function DashboardView() {
 
   const [toastMessage, setToastMessage] = useState("");
   const [toastType, setToastType] = useState<"success" | "error">("success");
-  const [labels, setLabels] = useState(null);
-  const [datasets, setDatasets] = useState(null);
+  const [labels, setLabels] = useState<string[]>([]);
+  const [datasets, setDatasets] = useState<any[]>([]);
 
   const showToast = (message: string, type: "success" | "error") => {
     setToastMessage(""); // força re-render
@@ -88,67 +89,130 @@ export default function DashboardView() {
     }
   };
 
+  function gerarDiasDoMes(): string[] {
+    const hoje = new Date();
+    const ano = hoje.getFullYear();
+    const mes = hoje.getMonth();
+    const ultimoDia = new Date(ano, mes + 1, 0).getDate();
+
+    const dias: string[] = [];
+
+    for (let dia = 1; dia <= ultimoDia; dia++) {
+      dias.push(
+        `${dia.toString().padStart(2, "0")}/${(mes + 1)
+          .toString()
+          .padStart(2, "0")}`
+      );
+    }
+
+    return dias;
+  }
+
+  function gerarTransacoesFalsas(): Transacao[] {
+    const hoje = new Date();
+    const ano = hoje.getFullYear();
+    const mes = hoje.getMonth(); // 0-indexado
+    const totalDias = new Date(ano, mes + 1, 0).getDate();
+    const categorias = [
+      "Educação",
+      "Pets",
+      "Não Classificado",
+      "Entrada",
+      "Transporte",
+      "Lazer",
+      "Moradia",
+    ];
+
+    const transacoes: Transacao[] = [];
+
+    for (let dia = 1; dia <= totalDias; dia++) {
+      const data = new Date(ano, mes, dia);
+      const quantidadePorDia = Math.floor(Math.random() * 3); // até 2 transações por dia
+
+      for (let i = 0; i < quantidadePorDia; i++) {
+        const categoria =
+          categorias[Math.floor(Math.random() * categorias.length)];
+        const valor = Math.floor(Math.random() * 200) + 1;
+
+        transacoes.push({
+          id: dia * 10 + i,
+          tipo: categoria === "Entrada" ? "Depósito" : "Despesa",
+          valor,
+          data: data.toISOString(),
+          categoria,
+        });
+      }
+    }
+
+    return transacoes;
+  }
+
   const transactionsList = async () => {
     try {
       const transacaoList = await getTransacaoList();
       if (!Array.isArray(transacaoList)) throw new Error("Resposta inválida");
       const agrupadas = agruparTransacoesPorMes(transacaoList);
       console.log(agrupadas);
-      const grouped = agrupadas?.[0].transacoes?.reduce<Record<string, number>>(
-        (acc, curr) => {
-          acc[curr.categoria] = (acc[curr.categoria] || 0) + curr.valor;
-          return acc;
-        },
-        {}
-      );
 
-      // 2. Pegar labels e dados
-      const labels = Object.keys(grouped);
-      const data = Object.values(grouped);
+      // Agrupar por categoria e por dia
+      const transacoes = agrupadas.flatMap((grupo) => grupo.transacoes);
 
-      // Cores para categorias, com "Entrada" sempre verde
-      const predefinedColors: Record<string, string> = {
-        Entrada: "#2ecc71", // verde
-        Saída: "#e74c3c", // vermelho
-        Investimento: "#9b59b6", // roxo
-        Transferência: "#3498db", // azul
-        Outro: "#f1c40f", // amarelo
+      // Agrupar por categoria e por dia
+      const dataMap: Record<string, Record<string, number>> = {};
+
+      for (const transacao of transacoes) {
+        const date = new Date(transacao.data);
+        const dia = `${date.getDate().toString().padStart(2, "0")}/${(
+          date.getMonth() + 1
+        )
+          .toString()
+          .padStart(2, "0")}`;
+        const categoria = transacao.tipo || "Não Classificado";
+
+        if (!dataMap[categoria]) dataMap[categoria] = {};
+        dataMap[categoria][dia] =
+          (dataMap[categoria][dia] || 0) + transacao.valor;
+      }
+
+      // Pegar todos os dias únicos e ordenar
+      const diasDoMes = gerarDiasDoMes();
+
+      // Cores fixas por categoria
+      const corPorCategoria: Record<string, string> = {
+        Depósito: "#006e06ff", // verde
+        Transferência: "#fa0000ff", // laranja escuro
+        Pets: "#f39c12", // laranja
+        Transporte: "#3498db", // azul
+        Lazer: "#9b59b6", // roxo
+        Moradia: "#1abc9c", // verde água
+        "Não Classificado": "#34495e", // cinza escuro
       };
 
-      // Cores extras caso existam categorias não mapeadas
       const fallbackColors = [
-        "#1abc9c",
-        "#f39c12",
-        "#34495e",
-        "#7f8c8d",
-        "#d35400",
-        "#c0392b",
+        "#ce0000ff",
         "#16a085",
         "#27ae60",
-        "#2980b9",
-        "#8e44ad",
+        "#f1c40f",
+        "#d35400",
+        "#c0392b",
+        "#7f8c8d",
       ];
 
-      // Mapear as cores baseadas no nome da categoria (label)
-      const backgroundColor = labels.map(
-        (label, i) =>
-          predefinedColors[label] || fallbackColors[i % fallbackColors.length]
+      // Montar datasets
+      const datasets = Object.entries(dataMap).map(
+        ([categoria, valores], index) => ({
+          label: categoria,
+          data: diasDoMes.map((dia) => valores[dia] ?? 0),
+          borderColor:
+            corPorCategoria[categoria] ||
+            fallbackColors[index % fallbackColors.length],
+          tension: 0.3,
+        })
       );
 
-      // 4. Montar datasets para o DoughnutChart
-      const datasets = [
-        {
-          label: "Valores por tipo",
-          data,
-          backgroundColor,
-          borderWidth: 1,
-        },
-      ];
-
-      // Agora você pode passar labels e datasets para o DoughnutChart
-      console.log({ labels, datasets });
-      setLabels(labels);
+      setLabels(diasDoMes);
       setDatasets(datasets);
+
       setListTransactions(agrupadas);
     } catch (error) {
       showToast("Erro ao carregar transações.", "error");
@@ -186,7 +250,10 @@ export default function DashboardView() {
                   balance={formatCurrencyBRL(balance)}
                 />
                 <TransactionForm onSubmit={handleSubmit} />
-                <DoughnutChart labels={labels} datasets={datasets} />
+                
+              </div>
+              <div className="col-12 col-md-10 col-xl-3 mx-auto">
+              <LineChart labels={labels} datasets={datasets} />
               </div>
               <div className="col-12 col-md-10 col-xl-3 mx-auto">
                 <StatementBox
