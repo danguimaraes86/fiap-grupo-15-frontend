@@ -3,6 +3,7 @@ import react from '@vitejs/plugin-react'
 import vitePluginSingleSpa from 'vite-plugin-single-spa'
 
 export default defineConfig({
+  base: './',
   server: {
     hmr: false,
     port: 9002
