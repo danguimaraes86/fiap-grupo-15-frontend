@@ -8,7 +8,8 @@
 - [Funcionalidades](#funcionalidades)
 - [Tecnologias e técnicas utilizadas](#tecnologias-e-técnicas-utilizadas)
 - [Como clonar o repositório](#como-clonar-o-repositório)
-- [Como rodar o projeto](#como-rodar-o-projeto)
+- [Como rodar o projeto localmente](#como-rodar-o-projeto-localmente)
+- [Como acessar o projeto remotamentee](#como-acessar-o-projeto-remotamente)
 - [Licença](#licença)
 
 ## Descrição
@@ -48,7 +49,7 @@ Clique [aqui](https://www.figma.com/design/c1hvZBQNoN9TwePrjJqVTL/Projeto-Financ
 $ git clone https://github.com/danguimaraes86/fiap-grupo-15-frontend.git
 ```
 
-## Como rodar o projeto
+## Como rodar o projeto localmente
 Rode o ambiente de desenvolvimento:
 ```bash
 docker-compose up --build
@@ -60,6 +61,11 @@ Rode o Storybook:
 npm run build-storybook
 npm run storybook
 ```
+
+## Como acessar o projeto remotamente
+Abra a url [https://bytebank-root.onrender.com/](https://bytebank-root.onrender.com/) no seu navegador.
+
+⚠️ **Lembrete:** Pode haver um delay de 50 segundos, pois a instância é encerrada por inatividade.
 
 ## Licença
 Este projeto está licenciado sob a [Creative Commons Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)](https://creativecommons.org/licenses/by-nc/4.0/). 
