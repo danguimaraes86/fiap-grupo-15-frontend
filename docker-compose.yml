@@ -1,7 +1,10 @@
 services:
   # Container principal que carrega os outros
   root-config:
-    build: ./bytebank-root
+    build:
+      context: ./bytebank-root
+      args:
+        BUILD_SCRIPT: build:docker
     ports:
       - "9000:80"
 
