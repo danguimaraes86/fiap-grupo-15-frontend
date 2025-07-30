@@ -6,6 +6,7 @@ services:
   # 1. Serviço do Root Config
   - type: web
     name: bytebank-root
+    plan: free
     runtime: docker
     dockerfilePath: ./bytebank-root/Dockerfile
     envVars:
@@ -15,6 +16,7 @@ services:
   # 2. Serviço do MFE Homepage
   - type: web
     name: bytebank-homepage
+    plan: free
     runtime: docker
     dockerfilePath: ./mfe-homepage/Dockerfile
     envVars:
@@ -24,6 +26,7 @@ services:
   # 3. Serviço do MFE Dashboard
   - type: web
     name: bytebank-dashboard
+    plan: free
     runtime: docker
     dockerfilePath: ./mfe-dashboard/Dockerfile
     envVars:
@@ -33,6 +36,7 @@ services:
   # 4. Serviço do MFE Not Found
   - type: web
     name: bytebank-notfound
+    plan: free
     runtime: docker
     dockerfilePath: ./mfe-notfound/Dockerfile
     envVars:
