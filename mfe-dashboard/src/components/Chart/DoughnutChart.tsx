@@ -1,21 +1,16 @@
+import { ArcElement, Chart as ChartJS, Legend, Tooltip } from "chart.js";
 import React from "react";
 import { Doughnut } from "react-chartjs-2";
-import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
+import { useChartData } from "../../hooks/useChartData";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-type ChartProps = {
-  labels: string[];
-  datasets: {
-    label: string;
-    data: number[];
-    backgroundColor: string[];
-    borderWidth: number;
-  }[];
-};
+const DoughnutChart: React.FC = () => {
+  const chartData = useChartData();
 
-const DoughnutChart: React.FC<ChartProps> = ({ labels, datasets }) => {
-  const data = { labels, datasets };
+  function verificaChartDataVazio() {
+    return chartData.labels.length > 0 && chartData.datasets.length > 0;
+  }
 
   const defaultData = {
     labels: ["Nenhum valor registrado"],
@@ -49,8 +44,8 @@ const DoughnutChart: React.FC<ChartProps> = ({ labels, datasets }) => {
         alignContent: "center",
       }}
     >
-      {labels && datasets ? (
-        <Doughnut data={data} options={options} />
+      {verificaChartDataVazio() ? (
+        <Doughnut data={chartData} options={options} />
       ) : (
         <Doughnut data={defaultData} options={options} />
       )}

@@ -34,15 +34,6 @@ export default function DashboardView() {
 
   const [toastMessage, setToastMessage] = useState("");
   const [toastType, setToastType] = useState<"success" | "error">("success");
-  const [labels, setLabels] = useState<string[]>([]);
-  const [datasets, setDatasets] = useState<
-    {
-      label: string;
-      data: number[];
-      backgroundColor: string[];
-      borderWidth: number;
-    }[]
-  >([]);
 
   const showToast = (message: string, type: "success" | "error") => {
     setToastMessage(""); // força re-render
@@ -96,60 +87,6 @@ export default function DashboardView() {
       const transacaoList = await getTransacaoList();
       if (!Array.isArray(transacaoList)) throw new Error("Resposta inválida");
       const agrupadas = agruparTransacoesPorMes(transacaoList);
-      const grouped = agrupadas?.[0].transacoes?.reduce<Record<string, number>>(
-        (acc, curr) => {
-          acc[curr.categoria] = (acc[curr.categoria] || 0) + curr.valor;
-          return acc;
-        },
-        {}
-      );
-
-      // 2. Pegar labels e dados
-      const labels = Object.keys(grouped);
-      const data = Object.values(grouped);
-
-      // Cores para categorias, com "Entrada" sempre verde
-      const predefinedColors: Record<string, string> = {
-        Entrada: "#2ecc71", // verde
-        Saída: "#e74c3c", // vermelho
-        Investimento: "#9b59b6", // roxo
-        Transferência: "#3498db", // azul
-        Outro: "#f1c40f", // amarelo
-      };
-
-      // Cores extras caso existam categorias não mapeadas
-      const fallbackColors = [
-        "#1abc9c",
-        "#f39c12",
-        "#34495e",
-        "#7f8c8d",
-        "#d35400",
-        "#c0392b",
-        "#16a085",
-        "#27ae60",
-        "#2980b9",
-        "#8e44ad",
-      ];
-
-      // Mapear as cores baseadas no nome da categoria (label)
-      const backgroundColor = labels.map(
-        (label, i) =>
-          predefinedColors[label] || fallbackColors[i % fallbackColors.length]
-      );
-
-      // 4. Montar datasets para o DoughnutChart
-      const datasets = [
-        {
-          label: "Valores por tipo",
-          data,
-          backgroundColor,
-          borderWidth: 1,
-        },
-      ];
-
-      // Agora você pode passar labels e datasets para o DoughnutChart
-      setLabels(labels);
-      setDatasets(datasets);
       setTransactionList(agrupadas);
     } catch (error) {
       showToast("Erro ao carregar transações.", "error");
@@ -177,7 +114,7 @@ export default function DashboardView() {
               <div className="col-12 col-md-10 col-xl-7 mx-auto">
                 <DashboardCard name={usuario.nome} />
                 <TransactionForm onSubmit={handleSubmit} />
-                <DoughnutChart labels={labels} datasets={datasets} />
+                <DoughnutChart />
               </div>
               <div className="col-12 col-md-10 col-xl-3 mx-auto">
                 <StatementBox
