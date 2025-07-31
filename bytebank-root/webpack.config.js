@@ -19,6 +19,7 @@ module.exports = (webpackConfigEnv, argv) => {
         template: "src/index.ejs",
         templateParameters: {
           isLocal: (webpackConfigEnv && webpackConfigEnv.isLocal) || process.env.NODE_ENV === 'development',
+          isDocker: webpackConfigEnv && webpackConfigEnv.isDocker,
           orgName,
         },
       }),

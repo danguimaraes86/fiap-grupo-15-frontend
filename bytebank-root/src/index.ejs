@@ -19,8 +19,8 @@
       {
         "imports": {
           "single-spa": "https://cdn.jsdelivr.net/npm/single-spa@6.0.3/lib/es2015/esm/single-spa.min.js",
-          "react": "https://cdn.jsdelivr.net/npm/react@19.1.0/+esm",
-          "react-dom/client": "https://cdn.jsdelivr.net/npm/react-dom@19.1.0/client/+esm"
+          "react": "https://cdn.jsdelivr.net/npm/react@18.3.1/+esm",
+          "react-dom/client": "https://cdn.jsdelivr.net/npm/react-dom@18.3.1/client/+esm"
         }
       }
     </script>
@@ -32,24 +32,35 @@
     <script type="injector-importmap">
       {
         "imports": {
-            "@bytebank-grupo-15/root-config": "//localhost:9000/bytebank-grupo-15-root-config.js",
-            "@bytebank-grupo-15/homepage": "//localhost:9001/main.js",
-            "@bytebank-grupo-15/dashboard": "//localhost:9002/main.js",
-            "@bytebank-grupo-15/notfound": "//localhost:9003/main.js"
+          "@bytebank-grupo-15/root-config": "//localhost:9000/bytebank-grupo-15-root-config.js",
+          "@bytebank-grupo-15/homepage": "//localhost:9001/src/main.tsx",
+          "@bytebank-grupo-15/dashboard": "//localhost:9002/src/main.tsx",
+          "@bytebank-grupo-15/notfound": "//localhost:9003/src/main.tsx"
+        }
+      }
+    </script>
+    <% } else if (isDocker) { %>
+    <script type="injector-importmap">
+      {
+        "imports": {
+          "@bytebank-grupo-15/root-config": "//localhost:9000/bytebank-grupo-15-root-config.js",
+          "@bytebank-grupo-15/homepage": "//localhost:9001/main.js",
+          "@bytebank-grupo-15/dashboard": "//localhost:9002/main.js",
+          "@bytebank-grupo-15/notfound": "//localhost:9003/main.js"
         }
       }
     </script>
     <% } else { %>
-      <script type="injector-importmap">
-        {
-          "imports": {
-            "@bytebank-grupo-15/root-config": "https://bytebank-root.onrender.com/bytebank-grupo-15-root-config.js",
-            "@bytebank-grupo-15/homepage": "https://bytebank-homepage.onrender.com/main.js",
-            "@bytebank-grupo-15/dashboard": "https://bytebank-dashboard.onrender.com/main.js",
-            "@bytebank-grupo-15/notfound": "https://bytebank-notfound.onrender.com/main.js"
-          }
+    <script type="injector-importmap">
+      {
+        "imports": {
+          "@bytebank-grupo-15/root-config": "https://bytebank-root.onrender.com/bytebank-grupo-15-root-config.js",
+          "@bytebank-grupo-15/homepage": "https://bytebank-homepage.onrender.com/main.js",
+          "@bytebank-grupo-15/dashboard": "https://bytebank-dashboard.onrender.com/main.js",
+          "@bytebank-grupo-15/notfound": "https://bytebank-notfound.onrender.com/main.js"
         }
-      </script>
+      }
+    </script>
     <% } %>
 
     <script src="https://cdn.jsdelivr.net/npm/import-map-overrides@5.1.1/dist/import-map-overrides.js"></script>
