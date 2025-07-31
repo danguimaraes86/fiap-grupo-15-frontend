@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import vitePluginSingleSpa from 'vite-plugin-single-spa'
+import cssInjectedByJsPlugin from 'vite-plugin-css-injected-by-js'
 
 export default defineConfig({
   base: './',
@@ -13,11 +14,9 @@ export default defineConfig({
     vitePluginSingleSpa({
       serverPort: 9001,
       spaEntryPoints: ['src/main.tsx']
-    })
+    }),
+    cssInjectedByJsPlugin()
   ],
-  esbuild: {
-    target: 'es2022',
-  },
   build: {
     target: 'es2022',
   }
