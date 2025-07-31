@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import { useSetRecoilState } from "recoil";
+import DoughnutChart from "./components/Chart/DoughnutChart";
 import { DashboardCard } from "./components/DashboardCard";
 import { Header } from "./components/layout/Header";
 import { MobileMenu } from "./components/layout/MobileMenu";
@@ -7,6 +9,7 @@ import { TabletMenu } from "./components/layout/TabletMenu";
 import { StatementBox } from "./components/StatementBox";
 import { ToastMessage } from "./components/toast";
 import { TransactionForm } from "./components/TransactionForm";
+import { saldoState, transactionListState } from "./recoil/atoms";
 import { getSaldoUsuario } from "./services/saldos";
 import {
   createTransacao,
@@ -14,8 +17,7 @@ import {
   type TransacaoRequest,
 } from "./services/transacoes";
 import { getUsuarioLogado } from "./services/usuarios";
-import { agruparTransacoesPorMes, formatCurrencyBRL, parseDate } from "./utils";
-import DoughnutChart from "./components/Chart/DoughnutChart";
+import { agruparTransacoesPorMes } from "./utils";
 
 const menuItems = [
   { label: "Início", href: "#" },
@@ -24,16 +26,11 @@ const menuItems = [
   { label: "Outros serviços", href: "#" },
 ];
 
-const dashboardCardList = {
-  accountType: "Conta Corrente",
-};
-
 const usuario = await getUsuarioLogado();
 
 export default function DashboardView() {
-  const [balance, setBalance] = useState<number>(0);
-  const [listTransactions, setListTransactions] = useState<any[]>([]);
-  const [currentDate, setCurrentDate] = useState("");
+  const setSaldo = useSetRecoilState(saldoState);
+  const setTransactionList = useSetRecoilState(transactionListState);
 
   const [toastMessage, setToastMessage] = useState("");
   const [toastType, setToastType] = useState<"success" | "error">("success");
@@ -88,8 +85,7 @@ export default function DashboardView() {
 
   const fetchBalance = async () => {
     try {
-      const saldo = await getSaldoUsuario();
-      setBalance(saldo);
+      setSaldo(await getSaldoUsuario());
     } catch (error) {
       showToast("Erro ao carregar saldo.", "error");
     }
@@ -154,7 +150,7 @@ export default function DashboardView() {
       // Agora você pode passar labels e datasets para o DoughnutChart
       setLabels(labels);
       setDatasets(datasets);
-      setListTransactions(agrupadas);
+      setTransactionList(agrupadas);
     } catch (error) {
       showToast("Erro ao carregar transações.", "error");
     }
@@ -163,17 +159,12 @@ export default function DashboardView() {
   useEffect(() => {
     fetchBalance();
     transactionsList();
-    setCurrentDate(parseDate(new Date()));
   }, []);
 
   return (
     <main className="bg-[#eaf2e4] min-h-screen">
       <Header userName={usuario.nome} />
-      <MobileMenu
-        items={menuItems}
-        active={""}
-        forceVisible={false}
-      />
+      <MobileMenu items={menuItems} active={""} forceVisible={false} />
       <TabletMenu items={menuItems} />
 
       <div className="container-xl mt-4">
@@ -184,19 +175,13 @@ export default function DashboardView() {
                 <Sidebar items={menuItems} />
               </div>
               <div className="col-12 col-md-10 col-xl-7 mx-auto">
-                <DashboardCard
-                  name={usuario.nome}
-                  date={currentDate}
-                  accountType={dashboardCardList.accountType}
-                  balance={formatCurrencyBRL(balance)}
-                />
+                <DashboardCard name={usuario.nome} />
                 <TransactionForm onSubmit={handleSubmit} />
                 <DoughnutChart labels={labels} datasets={datasets} />
               </div>
               <div className="col-12 col-md-10 col-xl-3 mx-auto">
                 <StatementBox
                   title="Extrato"
-                  items={listTransactions}
                   onUpdate={transactionsList}
                   onBalanceUpdate={fetchBalance}
                 />

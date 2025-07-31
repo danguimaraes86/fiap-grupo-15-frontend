@@ -1,15 +1,18 @@
-import styles from "./DashboardCard.module.css";
 import { useState } from "react";
+import { useRecoilValue } from "recoil";
+import { accountTypeState, saldoState } from "../../recoil/atoms";
+import { parseDate } from "../../utils";
+import { formatCurrencyBRL } from "../../utils/currency/formatCurrency";
+import styles from "./DashboardCard.module.css";
 
 type Props = {
   name: string;
-  date: string;
-  accountType: string;
-  balance: string;
 };
 
-export function DashboardCard({ name, date, accountType, balance }: Props) {
+export function DashboardCard({ name }: Props) {
   const [mostrarSaldo, setMostrarSaldo] = useState(false);
+  const saldo = useRecoilValue(saldoState);
+  const accountType = useRecoilValue(accountTypeState);
 
   const toggleSaldo = () => {
     setMostrarSaldo((prev) => !prev);
@@ -19,7 +22,7 @@ export function DashboardCard({ name, date, accountType, balance }: Props) {
       <div className={styles.card}>
         <div className={styles.colunaEsquerda}>
           <h3>Olá, {name}! :)</h3>
-          <p>{date}</p>
+          <p>{parseDate(new Date())}</p>
         </div>
         <div className={styles.colunaDireita}>
           <div className={styles.headerSaldo}>
@@ -38,7 +41,7 @@ export function DashboardCard({ name, date, accountType, balance }: Props) {
           <hr className={styles.hr} />
           <div>
             <h5>{accountType}</h5>
-            <h3>{mostrarSaldo ? balance : "••••••••"}</h3>
+            <h3>{mostrarSaldo ? formatCurrencyBRL(saldo) : "••••••••"}</h3>
           </div>
         </div>
       </div>

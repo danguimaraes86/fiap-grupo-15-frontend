@@ -1,8 +1,14 @@
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { useState } from "react";
+import { useRecoilValue } from "recoil";
+import { transactionListState } from "../../recoil/atoms";
 import { TipoTransacao } from "../../services/configs";
-import { deleteTransacao, updateTransacao, downloadAnexoTransacao  } from "../../services/transacoes";
+import {
+  deleteTransacao,
+  downloadAnexoTransacao,
+  updateTransacao,
+} from "../../services/transacoes";
 import { formatCurrencyBRL } from "../../utils/currency/formatCurrency";
 import { ToastMessage } from "../toast";
 import { TransactionModal } from "../TransactionForm/TransactionModal/TransactionModal";
@@ -10,29 +16,13 @@ import styles from "./StatementBox.module.css";
 
 type Props = {
   title: string;
-  items: {
-    mesAno: string;
-    transacoes: {
-      id: number;
-      tipo: string;
-      valor: number;
-      data: string;
-      categoria: string;
-      anexoId?: string;
-    }[];
-  }[];
   onUpdate: () => void;
   onBalanceUpdate: () => void;
 };
 
 const PAGE_SIZE = 6;
 
-export function StatementBox({
-  items,
-  title,
-  onUpdate,
-  onBalanceUpdate,
-}: Props) {
+export function StatementBox({ title, onUpdate, onBalanceUpdate }: Props) {
   const [modalShow, setModalShow] = useState(false);
   const [modalType, setModalType] = useState<"edit" | "delete">("edit");
   const [selectedId, setSelectedId] = useState<number | null>(null);
@@ -47,6 +37,8 @@ export function StatementBox({
   const [filtroCategoria, setFiltroCategoria] = useState("");
 
   const [paginaAtual, setPaginaAtual] = useState(1);
+
+  const transacaoList = useRecoilValue(transactionListState);
 
   const showToastMsg = (msg: string, type: "success" | "error") => {
     setShowToast(false);
@@ -69,14 +61,17 @@ export function StatementBox({
     return TipoTransacao.deposito == tipo ? "deposito" : "transferencia";
   }
 
-  const transacoesFiltradas = items
+  const transacoesFiltradas = transacaoList
     .map(({ mesAno, transacoes }) =>
       transacoes
         .filter(({ tipo, valor, categoria }) => {
-          const tipoMatch = !filtroTipo || tipo.toLowerCase() === filtroTipo.toLowerCase();
-          const mesMatch = !filtroMes || mesAno.toLowerCase() === filtroMes.toLowerCase();
+          const tipoMatch =
+            !filtroTipo || tipo.toLowerCase() === filtroTipo.toLowerCase();
+          const mesMatch =
+            !filtroMes || mesAno.toLowerCase() === filtroMes.toLowerCase();
           const valorMatch = !filtroValor || valor >= Number(filtroValor);
-          const categoriaMatch = !filtroCategoria || categoria === filtroCategoria;
+          const categoriaMatch =
+            !filtroCategoria || categoria === filtroCategoria;
           return tipoMatch && mesMatch && valorMatch && categoriaMatch;
         })
         .map((t) => ({ ...t, mesAno }))
@@ -99,7 +94,6 @@ export function StatementBox({
     }
   }
 
-
   const totalPaginas = Math.ceil(transacoesFiltradas.length / PAGE_SIZE);
 
   const pagina = Math.max(1, Math.min(paginaAtual, totalPaginas || 1));
@@ -107,7 +101,10 @@ export function StatementBox({
   const fim = inicio + PAGE_SIZE;
   const transacoesPaginadas = transacoesFiltradas.slice(inicio, fim);
 
-  const transacoesAgrupadas: { mesAno: string; transacoes: typeof transacoesPaginadas }[] = [];
+  const transacoesAgrupadas: {
+    mesAno: string;
+    transacoes: typeof transacoesPaginadas;
+  }[] = [];
   transacoesPaginadas.forEach((t) => {
     const idx = transacoesAgrupadas.findIndex((g) => g.mesAno === t.mesAno);
     if (idx > -1) {
@@ -154,7 +151,7 @@ export function StatementBox({
               }}
             >
               <option value="">Mês (todos)</option>
-              {items.map(({ mesAno }) => (
+              {transacaoList.map(({ mesAno }) => (
                 <option key={mesAno} value={mesAno}>
                   {mesAno}
                 </option>
@@ -170,10 +167,18 @@ export function StatementBox({
               }}
             >
               <option value="">Categoria (todas)</option>
-              {Array.from(new Set(items.flatMap(i => i.transacoes.map(t => t.categoria))))
+              {Array.from(
+                new Set(
+                  transacaoList.flatMap((i) =>
+                    i.transacoes.map((t) => t.categoria)
+                  )
+                )
+              )
                 .filter(Boolean)
                 .map((cat) => (
-                  <option key={cat} value={cat}>{cat}</option>
+                  <option key={cat} value={cat}>
+                    {cat}
+                  </option>
                 ))}
             </select>
 
@@ -223,21 +228,33 @@ export function StatementBox({
                     : "Data inválida"}
 
                   <div className="d-flex gap-2 justify-content-end">
-                    <span onClick={() => openModal("edit", id, valor)} title="Editar">
+                    <span
+                      onClick={() => openModal("edit", id, valor)}
+                      title="Editar"
+                    >
                       <i
                         style={{ cursor: "pointer" }}
                         className="bi bi-pencil-fill"
                       ></i>
                     </span>
-                    <span onClick={() => openModal("delete", id)} title="Deletar">
+                    <span
+                      onClick={() => openModal("delete", id)}
+                      title="Deletar"
+                    >
                       <i
                         style={{ cursor: "pointer" }}
                         className="bi bi-trash3-fill"
                       ></i>
                     </span>
                     {anexoId && (
-                      <span onClick={() => handleDownloadAnexo(id)} title="Baixar anexo">
-                        <i className="bi bi-file-earmark-arrow-down-fill" style={{ cursor: "pointer" }}></i>
+                      <span
+                        onClick={() => handleDownloadAnexo(id)}
+                        title="Baixar anexo"
+                      >
+                        <i
+                          className="bi bi-file-earmark-arrow-down-fill"
+                          style={{ cursor: "pointer" }}
+                        ></i>
                       </span>
                     )}
                   </div>
@@ -248,47 +265,50 @@ export function StatementBox({
         </div>
       ))}
 
-    {totalPaginas > 1 && (
-      <div className="d-flex justify-content-center align-items-center mt-3" style={{ gap: 4 }}>
-        <button
-          className="btn btn-light btn-sm"
-          onClick={() => setPaginaAtual(1)}
-          disabled={pagina === 1}
-          title="Primeira página"
+      {totalPaginas > 1 && (
+        <div
+          className="d-flex justify-content-center align-items-center mt-3"
+          style={{ gap: 4 }}
         >
-          <i className="bi bi-chevron-double-left"></i>
-        </button>
-        <button
-          className="btn btn-light btn-sm"
-          onClick={() => setPaginaAtual((old) => Math.max(1, old - 1))}
-          disabled={pagina === 1}
-          title="Anterior"
-        >
-          <i className="bi bi-chevron-left"></i>
-        </button>
-        <span style={{ minWidth: 70, textAlign: "center" }}>
-          {pagina} / {totalPaginas}
-        </span>
-        <button
-          className="btn btn-light btn-sm"
-          onClick={() =>
-            setPaginaAtual((old) => Math.min(totalPaginas, old + 1))
-          }
-          disabled={pagina === totalPaginas}
-          title="Próxima"
-        >
-          <i className="bi bi-chevron-right"></i>
-        </button>
-        <button
-          className="btn btn-light btn-sm"
-          onClick={() => setPaginaAtual(totalPaginas)}
-          disabled={pagina === totalPaginas}
-          title="Última página"
-        >
-          <i className="bi bi-chevron-double-right"></i>
-        </button>
-      </div>
-    )}
+          <button
+            className="btn btn-light btn-sm"
+            onClick={() => setPaginaAtual(1)}
+            disabled={pagina === 1}
+            title="Primeira página"
+          >
+            <i className="bi bi-chevron-double-left"></i>
+          </button>
+          <button
+            className="btn btn-light btn-sm"
+            onClick={() => setPaginaAtual((old) => Math.max(1, old - 1))}
+            disabled={pagina === 1}
+            title="Anterior"
+          >
+            <i className="bi bi-chevron-left"></i>
+          </button>
+          <span style={{ minWidth: 70, textAlign: "center" }}>
+            {pagina} / {totalPaginas}
+          </span>
+          <button
+            className="btn btn-light btn-sm"
+            onClick={() =>
+              setPaginaAtual((old) => Math.min(totalPaginas, old + 1))
+            }
+            disabled={pagina === totalPaginas}
+            title="Próxima"
+          >
+            <i className="bi bi-chevron-right"></i>
+          </button>
+          <button
+            className="btn btn-light btn-sm"
+            onClick={() => setPaginaAtual(totalPaginas)}
+            disabled={pagina === totalPaginas}
+            title="Última página"
+          >
+            <i className="bi bi-chevron-double-right"></i>
+          </button>
+        </div>
+      )}
 
       <TransactionModal
         show={modalShow}
@@ -296,7 +316,7 @@ export function StatementBox({
         onConfirm={async (value) => {
           if (modalType === "edit") {
             if (selectedId !== null && value !== undefined) {
-              const transacaoOriginal = items
+              const transacaoOriginal = transacaoList
                 .flatMap((item) => item.transacoes)
                 .find((t) => t.id === selectedId);
 
