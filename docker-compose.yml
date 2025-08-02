@@ -33,7 +33,5 @@ services:
   # Backend construído localmente
   backend:
     build: ./bytebank-backend
-    env_file:
-      - ./bytebank-backend/.env
     ports:
       - "3001:3001"
