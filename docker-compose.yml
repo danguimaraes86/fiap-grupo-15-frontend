@@ -11,12 +11,16 @@ services:
   # Micro-Frontend de Homepage
   homepage:
     build: ./mfe-homepage
+    env_file:
+      - ./mfe-homepage/.env
     ports:
       - "9001:8081"
 
   # Micro-Frontend de Dashboard
   dashboard:
     build: ./mfe-dashboard
+    env_file:
+      - ./mfe-dashboard/.env
     ports:
       - "9002:8082"
 
@@ -29,5 +33,7 @@ services:
   # Backend construído localmente
   backend:
     build: ./bytebank-backend
+    env_file:
+      - ./bytebank-backend/.env
     ports:
-      - "8080:8080"
+      - "3001:3001"

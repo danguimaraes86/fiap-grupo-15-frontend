@@ -25,7 +25,7 @@ WORKDIR /app
 COPY --from=builder /app/build/libs/bytebank-backend-0.0.1-SNAPSHOT.jar app.jar
 
 # Exponha a porta padrão do Spring Boot
-EXPOSE 8080
+EXPOSE 3001
 
 # Comando de inicialização (Heroku define $PORT)
 ENTRYPOINT ["java", "-jar", "app.jar"]
