@@ -29,9 +29,3 @@ services:
     build: ./mfe-notfound
     ports:
       - "9003:8083"
-
-  # Backend construído localmente
-  backend:
-    build: ./bytebank-backend
-    ports:
-      - "3001:3001"
