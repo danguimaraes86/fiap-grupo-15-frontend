@@ -198,6 +198,8 @@ cd mfe-notfound && npm run dev
 Acesse a aplicação em funcionamento:
 - **[https://bytebank-root.onrender.com/](https://bytebank-root.onrender.com/)**
 
+**PS: Pode haver um delay de 50 segundos no primeiro carregamento, pois a instância é encerrada por inatividade.**
+
 ## 📄 Licença
 
 Este projeto está licenciado sob a **[Creative Commons Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)](https://creativecommons.org/licenses/by-nc/4.0/)**
