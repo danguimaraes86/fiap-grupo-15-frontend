@@ -148,7 +148,7 @@ docker-compose up --build
 # Abra http://localhost:9000 no seu navegador
 ```
 
-**PS: os serviços backend não irão subir por falta das variáveis de ambiente, mas é possível acessar a API pela url https://fiap-grupo-15-bytebank-backend-9f339827bd67.herokuapp.com**
+**PS: Os serviços backend são acessados pela API na url https://fiap-grupo-15-bytebank-backend-9f339827bd67.herokuapp.com**
 
 ### 🔧 Método Alternativo - Desenvolvimento Local
 
@@ -197,7 +197,6 @@ cd mfe-notfound && npm run dev
 
 Acesse a aplicação em funcionamento:
 - **[https://bytebank-root.onrender.com/](https://bytebank-root.onrender.com/)**
-- **[https://fiap-grupo-15-bytebank-backend-9f339827bd67.herokuapp.com](https://fiap-grupo-15-bytebank-backend-9f339827bd67.herokuapp.com)**
 
 ## 📄 Licença
 
