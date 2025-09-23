@@ -1,8 +1,9 @@
-import 'package:bytebank/pages/home/cadastro_view.dart';
 import 'package:bytebank/configs/firebase_options.dart';
+import 'package:bytebank/configs/routes.dart';
 import 'package:bytebank/configs/system_colors.dart';
+import 'package:bytebank/pages/home/auth/cadastro_view.dart';
+import 'package:bytebank/pages/home/auth/login_view.dart';
 import 'package:bytebank/pages/home/home_view.dart';
-import 'package:bytebank/pages/home/login_view.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
@@ -32,10 +33,10 @@ class MyApp extends StatelessWidget {
           onSurface: SystemColors.background,
         ),
       ),
-      home: const MyHomePage(),
       routes: {
-        '/login': (context) => const LoginScreen(),
-        '/cadastro': (context) => const CadastroScreen(),
+        Routes.home: (context) => const HomeView(),
+        Routes.login: (context) => const LoginView(),
+        Routes.cadastro: (context) => const CadastroView(),
       },
     );
   }
