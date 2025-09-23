@@ -1,5 +1,6 @@
 import 'package:bytebank/pages/home/cadastro_view.dart';
 import 'package:bytebank/configs/firebase_options.dart';
+import 'package:bytebank/configs/system_colors.dart';
 import 'package:bytebank/pages/home/home_view.dart';
 import 'package:bytebank/pages/home/login_view.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -19,10 +20,17 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'ByteBank Fiap',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: Color.fromARGB(255, 31, 48, 94),
+        colorScheme: ColorScheme(
+          brightness: Brightness.light,
+          primary: SystemColors.primary,
+          onPrimary: SystemColors.background,
+          secondary: SystemColors.secondary,
+          onSecondary: SystemColors.background,
+          error: Colors.yellowAccent,
+          onError: SystemColors.background,
+          surface: SystemColors.secondary,
+          onSurface: SystemColors.background,
         ),
-        useMaterial3: true,
       ),
       home: const MyHomePage(),
       routes: {
