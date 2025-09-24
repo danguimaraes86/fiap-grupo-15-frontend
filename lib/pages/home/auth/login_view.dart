@@ -34,7 +34,7 @@ class _LoginViewState extends State<LoginView> {
   }
 
   Future<void> _handleFormSubmit() async {
-    final authProvider = context.watch<FirebaseAuthProvider>();
+    final authProvider = context.read<UserAuthProvider>();
 
     bool success = await authProvider.handleLoginUsuario(
       LoginRequest(email: _emailController.text, senha: _senhaController.text),
@@ -124,7 +124,7 @@ class _LoginViewState extends State<LoginView> {
                 onChanged: (_) => _validateAndCheckEnabled(),
               ),
               const SizedBox(height: 24),
-              Consumer<FirebaseAuthProvider>(
+              Consumer<UserAuthProvider>(
                 builder: (context, provider, child) {
                   return CustomSubmitButton(
                     onPressed: _isFormValid

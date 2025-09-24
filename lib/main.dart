@@ -5,6 +5,7 @@ import 'package:bytebank/pages/home/auth/cadastro_view.dart';
 import 'package:bytebank/pages/home/auth/login_view.dart';
 import 'package:bytebank/pages/home/home_view.dart';
 import 'package:bytebank/providers/firebase_auth_provider.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -12,10 +13,11 @@ import 'package:provider/provider.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  await FirebaseAuth.instance.signOut();
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (context) => FirebaseAuthProvider()),
+        ChangeNotifierProvider(create: (context) => UserAuthProvider()),
       ],
       child: const MyApp(),
     ),

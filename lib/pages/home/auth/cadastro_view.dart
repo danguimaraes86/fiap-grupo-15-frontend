@@ -43,7 +43,7 @@ class _CadastroViewState extends State<CadastroView> {
   }
 
   Future<void> _handleFormSubmit() async {
-    final authProvider = context.watch<FirebaseAuthProvider>();
+    final authProvider = context.read<UserAuthProvider>();
 
     bool success = await authProvider.handleCadastrarUsuario(
       CadastroRequest(
@@ -159,7 +159,7 @@ class _CadastroViewState extends State<CadastroView> {
                 },
               ),
               const SizedBox(height: 40),
-              Consumer<FirebaseAuthProvider>(
+              Consumer<UserAuthProvider>(
                 builder: (context, provider, child) {
                   return CustomSubmitButton(
                     onPressed: _isFormValid

@@ -4,7 +4,7 @@ import 'package:bytebank/services/firebase_service.dart';
 import 'package:bytebank/services/firebase_service_exceptions.dart';
 import 'package:flutter/material.dart';
 
-class FirebaseAuthProvider with ChangeNotifier {
+class UserAuthProvider with ChangeNotifier {
   bool _isLoading = false;
   String? _errorMessage;
   bool _isLoggedIn = false;
