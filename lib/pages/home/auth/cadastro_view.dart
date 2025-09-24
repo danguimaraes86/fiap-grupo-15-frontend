@@ -1,9 +1,11 @@
 import 'package:bytebank/pages/home/auth/widgets/custom_checkbox_field.dart';
 import 'package:bytebank/pages/home/auth/widgets/custom_submit_buttom.dart';
 import 'package:bytebank/pages/home/auth/widgets/custom_text_form_field.dart';
-import 'package:bytebank/services/firebase_service.dart';
+import 'package:bytebank/providers/firebase_auth_provider.dart';
+import 'package:bytebank/services/firebase_request.dart';
 import 'package:bytebank/shared/form_validators.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class CadastroView extends StatefulWidget {
   const CadastroView({super.key});
@@ -18,7 +20,6 @@ class _CadastroViewState extends State<CadastroView> {
   final _emailController = TextEditingController();
   final _senhaController = TextEditingController();
   bool _checkBoxTermoCondicoes = false;
-  bool _isLoading = false;
   bool _isFormValid = false;
 
   void _validateAndCheckEnabled() {
@@ -42,19 +43,17 @@ class _CadastroViewState extends State<CadastroView> {
   }
 
   Future<void> _handleFormSubmit() async {
-    setState(() {
-      _isLoading = true;
-    });
+    final authProvider = context.watch<FirebaseAuthProvider>();
 
-    try {
-      await FirebaseService().cadastrarUsuario(
+    bool success = await authProvider.handleCadastrarUsuario(
+      CadastroRequest(
         nome: _nomeController.text,
         email: _emailController.text,
         senha: _senhaController.text,
-      );
-
+      ),
+    );
+    if (success) {
       _handleClearFields();
-
       if (mounted) {
         Navigator.of(context).pop();
         ScaffoldMessenger.of(context).showSnackBar(
@@ -67,12 +66,12 @@ class _CadastroViewState extends State<CadastroView> {
           ),
         );
       }
-    } on CadastroException catch (e) {
+    } else {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              e.message,
+              authProvider.errorMessage!,
               style: TextStyle(color: Theme.of(context).colorScheme.primary),
             ),
             backgroundColor: Colors.yellowAccent,
@@ -80,10 +79,6 @@ class _CadastroViewState extends State<CadastroView> {
           ),
         );
       }
-    } finally {
-      setState(() {
-        _isLoading = false;
-      });
     }
   }
 
@@ -164,11 +159,15 @@ class _CadastroViewState extends State<CadastroView> {
                 },
               ),
               const SizedBox(height: 40),
-              CustomSubmitButton(
-                onPressed: _isFormValid
-                    ? (_isLoading ? null : _handleFormSubmit)
-                    : null,
-                text: 'Cadastrar',
+              Consumer<FirebaseAuthProvider>(
+                builder: (context, provider, child) {
+                  return CustomSubmitButton(
+                    onPressed: _isFormValid
+                        ? (provider.isLoading ? null : _handleFormSubmit)
+                        : null,
+                    text: 'Cadastrar',
+                  );
+                },
               ),
             ],
           ),

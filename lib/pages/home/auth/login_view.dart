@@ -1,9 +1,10 @@
 import 'package:bytebank/pages/home/auth/widgets/custom_submit_buttom.dart';
 import 'package:bytebank/pages/home/auth/widgets/custom_text_form_field.dart';
-import 'package:bytebank/services/firebase_service.dart';
+import 'package:bytebank/providers/firebase_auth_provider.dart';
+import 'package:bytebank/services/firebase_request.dart';
 import 'package:bytebank/shared/form_validators.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -16,7 +17,6 @@ class _LoginViewState extends State<LoginView> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _senhaController = TextEditingController();
-  bool _isLoading = false;
   bool _isFormValid = false;
 
   void _validateAndCheckEnabled() {
@@ -34,18 +34,14 @@ class _LoginViewState extends State<LoginView> {
   }
 
   Future<void> _handleFormSubmit() async {
-    setState(() {
-      _isLoading = true;
-    });
+    final authProvider = context.watch<FirebaseAuthProvider>();
 
-    try {
-      // ignore: unused_local_variable
-      User usuario = await FirebaseService().loginUsuario(
-        email: _emailController.text,
-        senha: _senhaController.text,
-      );
+    bool success = await authProvider.handleLoginUsuario(
+      LoginRequest(email: _emailController.text, senha: _senhaController.text),
+    );
+
+    if (success) {
       _handleClearFields();
-
       if (mounted) {
         Navigator.of(context).pop();
         ScaffoldMessenger.of(context).showSnackBar(
@@ -58,12 +54,12 @@ class _LoginViewState extends State<LoginView> {
           ),
         );
       }
-    } on LoginException catch (e) {
+    } else {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              e.message,
+              authProvider.errorMessage!,
               style: TextStyle(color: Theme.of(context).colorScheme.primary),
             ),
             backgroundColor: Colors.yellowAccent,
@@ -71,10 +67,6 @@ class _LoginViewState extends State<LoginView> {
           ),
         );
       }
-    } finally {
-      setState(() {
-        _isLoading = false;
-      });
     }
   }
 
@@ -132,11 +124,15 @@ class _LoginViewState extends State<LoginView> {
                 onChanged: (_) => _validateAndCheckEnabled(),
               ),
               const SizedBox(height: 24),
-              CustomSubmitButton(
-                onPressed: _isFormValid
-                    ? (_isLoading ? null : _handleFormSubmit)
-                    : null,
-                text: 'Entrar',
+              Consumer<FirebaseAuthProvider>(
+                builder: (context, provider, child) {
+                  return CustomSubmitButton(
+                    onPressed: _isFormValid
+                        ? (provider.isLoading ? null : _handleFormSubmit)
+                        : null,
+                    text: 'Entrar',
+                  );
+                },
               ),
             ],
           ),
