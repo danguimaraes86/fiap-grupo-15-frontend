@@ -1,3 +1,4 @@
+import 'package:bytebank/configs/routes.dart';
 import 'package:bytebank/pages/home/auth/widgets/custom_checkbox_field.dart';
 import 'package:bytebank/pages/home/auth/widgets/custom_submit_buttom.dart';
 import 'package:bytebank/pages/home/auth/widgets/custom_text_form_field.dart';
@@ -55,7 +56,11 @@ class _CadastroViewState extends State<CadastroView> {
     if (success) {
       _handleClearFields();
       if (mounted) {
-        Navigator.of(context).pop();
+        Navigator.pushNamedAndRemoveUntil(
+          context,
+          Routes.dashboard,
+          (route) => false,
+        );
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(

@@ -105,4 +105,8 @@ class FirebaseService {
       throw LoginException(mensagem);
     }
   }
+
+  void logout() async {
+    await _auth.signOut();
+  }
 }

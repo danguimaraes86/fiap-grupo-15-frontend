@@ -1,3 +1,4 @@
+import 'package:bytebank/configs/routes.dart';
 import 'package:bytebank/pages/home/auth/widgets/custom_submit_buttom.dart';
 import 'package:bytebank/pages/home/auth/widgets/custom_text_form_field.dart';
 import 'package:bytebank/providers/firebase_auth_provider.dart';
@@ -43,7 +44,11 @@ class _LoginViewState extends State<LoginView> {
     if (success) {
       _handleClearFields();
       if (mounted) {
-        Navigator.of(context).pop();
+        Navigator.pushNamedAndRemoveUntil(
+          context,
+          Routes.dashboard,
+          (route) => false,
+        );
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(

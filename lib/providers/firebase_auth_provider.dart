@@ -55,6 +55,17 @@ class UserAuthProvider with ChangeNotifier {
     }
   }
 
+  void handleLogoutUsuario() {
+    _setLoading(true);
+    _clearError();
+    try {
+      _firebaseService.logout();
+      _setLoggedIn(usuario: null, loggedIn: false);
+    } finally {
+      _setLoading(false);
+    }
+  }
+
   void _setLoggedIn({Usuario? usuario, required bool loggedIn}) {
     _usuarioLogado = usuario;
     _isLoggedIn = loggedIn;
