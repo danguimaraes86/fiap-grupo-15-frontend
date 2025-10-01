@@ -1,7 +1,13 @@
+import 'package:bytebank/configs/routes.dart';
+import 'package:bytebank/models/transaction.dart';
+import 'package:bytebank/models/usuario.dart';
 import 'package:bytebank/pages/dashboard/widgets/dashboard_app_bar.dart';
 import 'package:bytebank/pages/shared/drawer.dart';
 import 'package:bytebank/pages/transactions/models.dart';
+import 'package:bytebank/providers/firebase_auth_provider.dart';
+import 'package:bytebank/providers/transaction_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class TransactionsFormPage extends StatefulWidget {
   const TransactionsFormPage({super.key});
@@ -11,14 +17,14 @@ class TransactionsFormPage extends StatefulWidget {
 
 class _TransactionsFormPageState extends State<TransactionsFormPage> {
   final _form = GlobalKey<FormState>();
-  final _title = TextEditingController();
+  final _description = TextEditingController();
   final _amount = TextEditingController();
   DateTime _date = DateTime.now();
-  TxType _type = TxType.expense;
+  TransactionType _type = TransactionType.despesa;
 
   @override
   void dispose() {
-    _title.dispose();
+    _description.dispose();
     _amount.dispose();
     super.dispose();
   }
@@ -36,12 +42,24 @@ class _TransactionsFormPageState extends State<TransactionsFormPage> {
   void _submit() {
     if (!_form.currentState!.validate()) return;
 
+    if (mounted) {
+      Usuario usuario = context.read<UserAuthProvider>().usuarioLogado!;
+      context.read<TransactionProvider>().handleNewTransaction(
+        TransactionRequest(
+          idUsuario: usuario.uid,
+          descricao: _description.text,
+          valor: double.parse(_amount.text.replaceAll(',', '.')),
+          tipoTransacao: _type,
+        ),
+      );
+    }
+
     // Aqui você chamaria sua API (POST). Vamos simular:
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(const SnackBar(content: Text('Transação salva (mock).')));
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Transação salva com sucesso.')),
+    );
     // Volta para a lista
-    Navigator.pushReplacementNamed(context, '/list');
+    Navigator.pushReplacementNamed(context, Routes.dashboard);
   }
 
   @override
@@ -50,7 +68,6 @@ class _TransactionsFormPageState extends State<TransactionsFormPage> {
       backgroundColor: AppColors.whiteSmoke,
       appBar: DashboardAppBar(title: 'Nova Transação'),
       drawer: const AppDrawer(),
-      //bottomNavigationBar: const BottomNav(currentIndex: 1),
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16),
@@ -63,13 +80,13 @@ class _TransactionsFormPageState extends State<TransactionsFormPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     TextFormField(
-                      controller: _title,
+                      controller: _description,
                       decoration: const InputDecoration(
-                        labelText: 'Título',
+                        labelText: 'Descrição',
                         border: OutlineInputBorder(),
                       ),
                       validator: (v) => (v == null || v.trim().isEmpty)
-                          ? 'Informe um título'
+                          ? 'Informe uma descrição'
                           : null,
                     ),
                     const SizedBox(height: 12),
@@ -92,7 +109,7 @@ class _TransactionsFormPageState extends State<TransactionsFormPage> {
                       },
                     ),
                     const SizedBox(height: 12),
-                    DropdownButtonFormField<TxType>(
+                    DropdownButtonFormField<TransactionType>(
                       value: _type,
                       decoration: const InputDecoration(
                         labelText: 'Tipo',
@@ -100,20 +117,20 @@ class _TransactionsFormPageState extends State<TransactionsFormPage> {
                       ),
                       items: const [
                         DropdownMenuItem(
-                          value: TxType.income,
+                          value: TransactionType.receita,
                           child: Text('Entrada'),
                         ),
                         DropdownMenuItem(
-                          value: TxType.expense,
+                          value: TransactionType.despesa,
                           child: Text('Saída'),
                         ),
-                        DropdownMenuItem(
-                          value: TxType.transfer,
-                          child: Text('Transferência'),
-                        ),
+                        // DropdownMenuItem(
+                        //   value: TxType.transfer,
+                        //   child: Text('Transferência'),
+                        // ),
                       ],
                       onChanged: (v) =>
-                          setState(() => _type = v ?? TxType.expense),
+                          setState(() => _type = v ?? TransactionType.despesa),
                     ),
                     const SizedBox(height: 12),
                     InkWell(

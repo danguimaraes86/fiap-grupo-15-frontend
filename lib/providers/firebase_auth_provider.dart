@@ -1,7 +1,7 @@
 import 'package:bytebank/models/usuario.dart';
 import 'package:bytebank/services/firebase_request.dart';
-import 'package:bytebank/services/firebase_service.dart';
-import 'package:bytebank/services/firebase_service_exceptions.dart';
+import 'package:bytebank/services/authentication_service.dart';
+import 'package:bytebank/services/authentication_service_exceptions.dart';
 import 'package:flutter/material.dart';
 
 class UserAuthProvider with ChangeNotifier {
@@ -15,7 +15,7 @@ class UserAuthProvider with ChangeNotifier {
   bool get isLoggedIn => _isLoggedIn;
   Usuario? get usuarioLogado => _usuarioLogado;
 
-  final FirebaseService _firebaseService = FirebaseService();
+  final AuthenticationService _firebaseService = AuthenticationService();
 
   Future<bool> handleCadastrarUsuario(CadastroRequest request) async {
     _setLoading(true);

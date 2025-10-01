@@ -1,23 +1,23 @@
 import 'package:bytebank/models/usuario.dart';
 import 'package:bytebank/services/firebase_request.dart';
-import 'package:bytebank/services/firebase_service_exceptions.dart';
+import 'package:bytebank/services/authentication_service_exceptions.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-class FirebaseService {
+class AuthenticationService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  static String usuariosCollection = 'usuarios';
+  static final String _usuariosCollection = 'usuarios';
 
   Future<QuerySnapshot> _findUsuarioByEmail(String email) {
     return _firestore
-        .collection(usuariosCollection)
+        .collection(_usuariosCollection)
         .where('email', isEqualTo: email)
         .get();
   }
 
   void _createNewUsuario(Usuario usuario) {
-    _firestore.collection(usuariosCollection).doc(usuario.uid).set({
+    _firestore.collection(_usuariosCollection).doc(usuario.uid).set({
       'nome': usuario.nome,
       'email': usuario.email,
       'dataCriacao': Timestamp.now(),
