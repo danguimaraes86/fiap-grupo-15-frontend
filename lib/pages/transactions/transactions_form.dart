@@ -1,11 +1,11 @@
 import 'package:bytebank/configs/routes.dart';
-import 'package:bytebank/models/transaction.dart';
+import 'package:bytebank/models/app_colors.dart';
+import 'package:bytebank/models/transaction_model.dart';
 import 'package:bytebank/models/usuario.dart';
 import 'package:bytebank/pages/dashboard/widgets/dashboard_app_bar.dart';
 import 'package:bytebank/pages/shared/drawer.dart';
-import 'package:bytebank/pages/transactions/models.dart';
-import 'package:bytebank/providers/firebase_auth_provider.dart';
 import 'package:bytebank/providers/transaction_provider.dart';
+import 'package:bytebank/providers/user_auth_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -17,26 +17,27 @@ class TransactionsFormPage extends StatefulWidget {
 
 class _TransactionsFormPageState extends State<TransactionsFormPage> {
   final _form = GlobalKey<FormState>();
-  final _description = TextEditingController();
-  final _amount = TextEditingController();
-  DateTime _date = DateTime.now();
-  TransactionType _type = TransactionType.despesa;
+  final _descricao = TextEditingController();
+  final _valor = TextEditingController();
+  DateTime _dataCriacao = DateTime.now();
+  TransactionType _transactionType = TransactionType.despesa;
+  CategoriasType _categoriasType = CategoriasType.alimentacao;
 
   @override
   void dispose() {
-    _description.dispose();
-    _amount.dispose();
+    _descricao.dispose();
+    _valor.dispose();
     super.dispose();
   }
 
   Future<void> _pickDate() async {
     final picked = await showDatePicker(
       context: context,
-      initialDate: _date,
-      firstDate: DateTime(2000),
-      lastDate: DateTime(2100),
+      initialDate: _dataCriacao,
+      firstDate: DateTime(2024),
+      lastDate: DateTime(2025),
     );
-    if (picked != null) setState(() => _date = picked);
+    if (picked != null) setState(() => _dataCriacao = picked);
   }
 
   void _submit() {
@@ -45,11 +46,14 @@ class _TransactionsFormPageState extends State<TransactionsFormPage> {
     if (mounted) {
       Usuario usuario = context.read<UserAuthProvider>().usuarioLogado!;
       context.read<TransactionProvider>().handleNewTransaction(
-        TransactionRequest(
+        BytebankTransaction(
           idUsuario: usuario.uid,
-          descricao: _description.text,
-          valor: double.parse(_amount.text.replaceAll(',', '.')),
-          tipoTransacao: _type,
+          descricao: _descricao.text,
+          valor: double.parse(_valor.text.replaceAll(',', '.')),
+          tipoTransacao: _transactionType,
+          dataCriacao: _dataCriacao,
+          mesReferencia: _dataCriacao.month,
+          categoria: _categoriasType.name,
         ),
       );
     }
@@ -80,7 +84,7 @@ class _TransactionsFormPageState extends State<TransactionsFormPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     TextFormField(
-                      controller: _description,
+                      controller: _descricao,
                       decoration: const InputDecoration(
                         labelText: 'Descrição',
                         border: OutlineInputBorder(),
@@ -91,7 +95,7 @@ class _TransactionsFormPageState extends State<TransactionsFormPage> {
                     ),
                     const SizedBox(height: 12),
                     TextFormField(
-                      controller: _amount,
+                      controller: _valor,
                       keyboardType: const TextInputType.numberWithOptions(
                         decimal: true,
                       ),
@@ -109,28 +113,38 @@ class _TransactionsFormPageState extends State<TransactionsFormPage> {
                       },
                     ),
                     const SizedBox(height: 12),
+                    DropdownButtonFormField<CategoriasType>(
+                      initialValue: _categoriasType,
+                      decoration: const InputDecoration(
+                        labelText: 'Categoria',
+                        border: OutlineInputBorder(),
+                      ),
+                      items: CategoriasType.values.map((categoria) {
+                        return DropdownMenuItem(
+                          value: categoria,
+                          child: Text(categoria.descricao),
+                        );
+                      }).toList(),
+                      onChanged: (v) => setState(() {
+                        _categoriasType = v!;
+                      }),
+                    ),
+                    const SizedBox(height: 12),
                     DropdownButtonFormField<TransactionType>(
-                      value: _type,
+                      initialValue: _transactionType,
                       decoration: const InputDecoration(
                         labelText: 'Tipo',
                         border: OutlineInputBorder(),
                       ),
-                      items: const [
-                        DropdownMenuItem(
-                          value: TransactionType.receita,
-                          child: Text('Entrada'),
-                        ),
-                        DropdownMenuItem(
-                          value: TransactionType.despesa,
-                          child: Text('Saída'),
-                        ),
-                        // DropdownMenuItem(
-                        //   value: TxType.transfer,
-                        //   child: Text('Transferência'),
-                        // ),
-                      ],
-                      onChanged: (v) =>
-                          setState(() => _type = v ?? TransactionType.despesa),
+                      items: TransactionType.values.map((transaction) {
+                        return DropdownMenuItem(
+                          value: transaction,
+                          child: Text(transaction.descricao),
+                        );
+                      }).toList(),
+                      onChanged: (v) => setState(() {
+                        _transactionType = v!;
+                      }),
                     ),
                     const SizedBox(height: 12),
                     InkWell(
@@ -144,8 +158,8 @@ class _TransactionsFormPageState extends State<TransactionsFormPage> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              '${_date.day.toString().padLeft(2, '0')}/'
-                              '${_date.month.toString().padLeft(2, '0')}/${_date.year}',
+                              '${_dataCriacao.day.toString().padLeft(2, '0')}/'
+                              '${_dataCriacao.month.toString().padLeft(2, '0')}/${_dataCriacao.year}',
                             ),
                             const Icon(Icons.calendar_today, size: 18),
                           ],
