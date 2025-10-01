@@ -1,18 +1,9 @@
 import 'package:bytebank/configs/system_colors.dart';
+import 'package:bytebank/providers/transaction_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class Balance extends StatefulWidget {
-  final double saldo;
-  final double receitas;
-  final double despesas;
-
-  const Balance({
-    super.key,
-    required this.saldo,
-    required this.receitas,
-    required this.despesas,
-  });
-
   @override
   State<Balance> createState() => _BalanceState();
 }
@@ -50,31 +41,39 @@ class _BalanceState extends State<Balance> {
             ),
           ),
           const SizedBox(height: 8),
-          Text(
-            'R\$ ${widget.saldo.toStringAsFixed(2)}',
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 36,
-              fontWeight: FontWeight.bold,
-            ),
+          Consumer<TransactionProvider>(
+            builder: (context, provider, child) {
+              return Text(
+                'R\$ ${provider.saldo.toStringAsFixed(2)}',
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 36,
+                  fontWeight: FontWeight.bold,
+                ),
+              );
+            },
           ),
           const SizedBox(height: 24),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              _buildInfoCard(
-                icon: Icons.arrow_downward,
-                label: 'Receitas',
-                value: 'R\$ ${widget.receitas.toStringAsFixed(2)}',
-                color: Colors.green,
-              ),
-              _buildInfoCard(
-                icon: Icons.arrow_upward,
-                label: 'Despesas',
-                value: 'R\$ ${widget.despesas.toStringAsFixed(2)}',
-                color: Colors.red,
-              ),
-            ],
+          Consumer<TransactionProvider>(
+            builder: (context, provider, child) {
+              return Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  _buildInfoCard(
+                    icon: Icons.arrow_downward,
+                    label: 'Receitas',
+                    value: 'R\$ ${provider.receitas.toStringAsFixed(2)}',
+                    color: Colors.green,
+                  ),
+                  _buildInfoCard(
+                    icon: Icons.arrow_upward,
+                    label: 'Despesas',
+                    value: 'R\$ ${provider.despesas.toStringAsFixed(2)}',
+                    color: Colors.red,
+                  ),
+                ],
+              );
+            },
           ),
         ],
       ),
@@ -109,10 +108,7 @@ class _BalanceState extends State<Balance> {
             children: [
               Text(
                 label,
-                style: const TextStyle(
-                  color: Colors.white70,
-                  fontSize: 12,
-                ),
+                style: const TextStyle(color: Colors.white70, fontSize: 12),
               ),
               const SizedBox(height: 4),
               Text(

@@ -1,25 +1,11 @@
 import 'package:bytebank/configs/system_colors.dart';
+import 'package:bytebank/models/transaction_model.dart';
+import 'package:bytebank/providers/transaction_provider.dart';
 import 'package:flutter/material.dart';
-
-class ExpenseItem {
-  final String categoria;
-  final double valor;
-  final Color cor;
-
-  ExpenseItem({
-    required this.categoria,
-    required this.valor,
-    required this.cor,
-  });
-}
+import 'package:provider/provider.dart';
 
 class Graphics extends StatefulWidget {
-  final List<ExpenseItem> despesas;
-
-  const Graphics({
-    super.key,
-    required this.despesas,
-  });
+  const Graphics({super.key});
 
   @override
   State<Graphics> createState() => _GraphicsState();
@@ -28,7 +14,11 @@ class Graphics extends StatefulWidget {
 class _GraphicsState extends State<Graphics> {
   @override
   Widget build(BuildContext context) {
-    final total = widget.despesas.fold<double>(0, (sum, item) => sum + item.valor);
+    final transactionList = context.read<TransactionProvider>().transactionList;
+    final total = transactionList.fold<double>(
+      0,
+      (sum, item) => sum + item.valor,
+    );
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16),
@@ -61,19 +51,21 @@ class _GraphicsState extends State<Graphics> {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.end,
               mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: widget.despesas.map((item) {
-                final percentage = (item.valor / total);
-                final height = percentage * 180;
-                
+              children: transactionList.map((transacao) {
+                final percentage = (transacao.valor / total);
+                final height = percentage * 100;
+
                 return Column(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     Text(
-                      'R\$${item.valor.toStringAsFixed(0)}',
+                      'R\$${transacao.valor.toStringAsFixed(0)}',
                       style: TextStyle(
                         fontSize: 11,
                         fontWeight: FontWeight.w600,
-                        color: item.cor,
+                        color: CategoriasType.values
+                            .byName(transacao.categoria)
+                            .cor,
                       ),
                     ),
                     const SizedBox(height: 8),
@@ -83,8 +75,13 @@ class _GraphicsState extends State<Graphics> {
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
                           colors: [
-                            item.cor,
-                            item.cor.withOpacity(0.7),
+                            CategoriasType.values
+                                .byName(transacao.categoria)
+                                .cor,
+                            CategoriasType.values
+                                .byName(transacao.categoria)
+                                .cor
+                                .withOpacity(0.7),
                           ],
                           begin: Alignment.topCenter,
                           end: Alignment.bottomCenter,
@@ -98,7 +95,9 @@ class _GraphicsState extends State<Graphics> {
                     SizedBox(
                       width: 60,
                       child: Text(
-                        item.categoria,
+                        CategoriasType.values
+                            .byName(transacao.categoria)
+                            .descricao,
                         textAlign: TextAlign.center,
                         style: const TextStyle(
                           fontSize: 11,
@@ -116,9 +115,9 @@ class _GraphicsState extends State<Graphics> {
           const SizedBox(height: 24),
           const Divider(),
           const SizedBox(height: 16),
-          ...widget.despesas.map((item) {
-            final percentage = (item.valor / total * 100);
-            
+          ...transactionList.map((transacao) {
+            final percentage = (transacao.valor / total * 100);
+
             return Padding(
               padding: const EdgeInsets.only(bottom: 16),
               child: Column(
@@ -132,13 +131,17 @@ class _GraphicsState extends State<Graphics> {
                             width: 12,
                             height: 12,
                             decoration: BoxDecoration(
-                              color: item.cor,
+                              color: CategoriasType.values
+                                  .byName(transacao.categoria)
+                                  .cor,
                               borderRadius: BorderRadius.circular(3),
                             ),
                           ),
                           const SizedBox(width: 12),
                           Text(
-                            item.categoria,
+                            CategoriasType.values
+                                .byName(transacao.categoria)
+                                .descricao,
                             style: const TextStyle(
                               fontSize: 15,
                               fontWeight: FontWeight.w500,
@@ -148,7 +151,7 @@ class _GraphicsState extends State<Graphics> {
                         ],
                       ),
                       Text(
-                        'R\$ ${item.valor.toStringAsFixed(2)}',
+                        'R\$ ${transacao.valor.toStringAsFixed(2)}',
                         style: const TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.bold,
@@ -163,14 +166,16 @@ class _GraphicsState extends State<Graphics> {
                     child: LinearProgressIndicator(
                       value: percentage / 100,
                       backgroundColor: Colors.grey[200],
-                      valueColor: AlwaysStoppedAnimation<Color>(item.cor),
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        CategoriasType.values.byName(transacao.categoria).cor,
+                      ),
                       minHeight: 8,
                     ),
                   ),
                 ],
               ),
             );
-          }).toList(),
+          }),
           const SizedBox(height: 8),
           Container(
             padding: const EdgeInsets.all(16),

@@ -1,5 +1,9 @@
+import 'package:bytebank/models/usuario.dart';
 import 'package:bytebank/pages/dashboard/widgets/dashboard_lista_vazia.dart';
+import 'package:bytebank/providers/transaction_provider.dart';
+import 'package:bytebank/providers/user_auth_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import 'balance.dart';
 import 'graphics.dart';
@@ -12,57 +16,18 @@ class DashboardBody extends StatefulWidget {
 }
 
 class _DashboardBodyState extends State<DashboardBody> {
-  double receitas = 0.00;
-  double despesasTotal = 0.00;
-
-  late List<ExpenseItem> despesas;
-  late final double saldo;
-
-  @override
-  void initState() {
-    super.initState();
-    setState(() {
-      saldo = receitas - despesasTotal;
-      despesas = [];
-    });
-
-    // despesas = [
-    //   ExpenseItem(
-    //     categoria: 'Alimentação',
-    //     valor: 800.00,
-    //     cor: const Color(0xFFEF4444),
-    //   ),
-    //   ExpenseItem(
-    //     categoria: 'Transporte',
-    //     valor: 450.00,
-    //     cor: const Color(0xFFF59E0B),
-    //   ),
-    //   ExpenseItem(
-    //     categoria: 'Moradia',
-    //     valor: 1200.00,
-    //     cor: const Color(0xFF8B5CF6),
-    //   ),
-    //   ExpenseItem(
-    //     categoria: 'Lazer',
-    //     valor: 350.00,
-    //     cor: const Color(0xFF10B981),
-    //   ),
-    //   ExpenseItem(
-    //     categoria: 'Saúde',
-    //     valor: 400.00,
-    //     cor: const Color(0xFF3B82F6),
-    //   ),
-    // ];
-  }
-
   @override
   Widget build(BuildContext context) {
+    Usuario? usuario = context.read<UserAuthProvider>().usuarioLogado;
+    context.read<TransactionProvider>().handleGetAllTransaction(usuario!.uid);
     return SingleChildScrollView(
       child: Column(
         children: [
-          Balance(saldo: saldo, receitas: receitas, despesas: despesasTotal),
+          Balance(),
           const SizedBox(height: 16),
-          despesas.isEmpty ? ListaVazia() : Graphics(despesas: despesas),
+          context.watch<TransactionProvider>().transactionList.isEmpty
+              ? ListaVazia()
+              : Graphics(),
           const SizedBox(height: 24),
         ],
       ),
