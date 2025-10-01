@@ -1,27 +1,29 @@
 import 'package:bytebank/models/usuario.dart';
-import 'package:bytebank/services/firebase_request.dart';
-import 'package:bytebank/services/authentication_service.dart';
-import 'package:bytebank/services/authentication_service_exceptions.dart';
+import 'package:bytebank/services/models/authentication_model.dart';
+import 'package:bytebank/services/auth/authentication_service.dart';
+import 'package:bytebank/services/auth/authentication_exceptions.dart';
 import 'package:flutter/material.dart';
 
 class UserAuthProvider with ChangeNotifier {
-  bool _isLoading = false;
-  String? _errorMessage;
-  bool _isLoggedIn = false;
-  Usuario? _usuarioLogado;
-
-  bool get isLoading => _isLoading;
-  String? get errorMessage => _errorMessage;
-  bool get isLoggedIn => _isLoggedIn;
-  Usuario? get usuarioLogado => _usuarioLogado;
-
   final AuthenticationService _firebaseService = AuthenticationService();
 
-  Future<bool> handleCadastrarUsuario(CadastroRequest request) async {
-    _setLoading(true);
-    _clearError();
+  bool _isLoading = false;
+  bool get isLoading => _isLoading;
 
+  String? _errorMessage;
+  String? get errorMessage => _errorMessage;
+
+  Usuario? _usuarioLogado;
+  Usuario? get usuarioLogado => _usuarioLogado;
+
+  bool _isLoggedIn = false;
+  bool get isLoggedIn => _isLoggedIn;
+
+  Future<bool> handleCadastrarUsuario(CadastroRequest request) async {
     try {
+      _setLoading(true);
+      _clearError();
+
       Usuario usuario = await _firebaseService.cadastrarUsuario(request);
       _setLoggedIn(usuario: usuario, loggedIn: true);
 
@@ -37,10 +39,10 @@ class UserAuthProvider with ChangeNotifier {
   }
 
   Future<bool> handleLoginUsuario(LoginRequest request) async {
-    _setLoading(true);
-    _clearError();
-
     try {
+      _setLoading(true);
+      _clearError();
+
       Usuario usuario = await _firebaseService.loginUsuario(request);
       _setLoggedIn(usuario: usuario, loggedIn: true);
 
@@ -58,12 +60,10 @@ class UserAuthProvider with ChangeNotifier {
   void handleLogoutUsuario() {
     _setLoading(true);
     _clearError();
-    try {
-      _firebaseService.logout();
-      _setLoggedIn(usuario: null, loggedIn: false);
-    } finally {
-      _setLoading(false);
-    }
+
+    _firebaseService.logout();
+    _setLoggedIn(usuario: null, loggedIn: false);
+    _setLoading(false);
   }
 
   void _setLoggedIn({Usuario? usuario, required bool loggedIn}) {

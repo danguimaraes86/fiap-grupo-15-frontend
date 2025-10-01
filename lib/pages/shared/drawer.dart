@@ -2,7 +2,7 @@
 
 import 'package:bytebank/configs/routes.dart';
 import 'package:bytebank/models/app_colors.dart';
-import 'package:bytebank/providers/firebase_auth_provider.dart';
+import 'package:bytebank/providers/user_auth_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

@@ -8,6 +8,12 @@ class CadastroRequest {
     required this.email,
     required this.senha,
   });
+
+  Map<String, dynamic> toJson() => {
+    'nome': nome,
+    'email': email,
+    'senha': senha,
+  };
 }
 
 class LoginRequest {
@@ -15,4 +21,6 @@ class LoginRequest {
   final String senha;
 
   LoginRequest({required this.email, required this.senha});
+
+  Map<String, dynamic> toJson() => {'email': email, 'senha': senha};
 }

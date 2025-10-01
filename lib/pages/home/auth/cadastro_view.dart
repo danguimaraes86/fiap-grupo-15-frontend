@@ -1,9 +1,9 @@
 import 'package:bytebank/configs/routes.dart';
+import 'package:bytebank/models/authentication_model.dart';
 import 'package:bytebank/pages/home/auth/widgets/custom_checkbox_field.dart';
 import 'package:bytebank/pages/home/auth/widgets/custom_submit_buttom.dart';
 import 'package:bytebank/pages/home/auth/widgets/custom_text_form_field.dart';
-import 'package:bytebank/providers/firebase_auth_provider.dart';
-import 'package:bytebank/services/firebase_request.dart';
+import 'package:bytebank/providers/user_auth_provider.dart';
 import 'package:bytebank/shared/form_validators.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';

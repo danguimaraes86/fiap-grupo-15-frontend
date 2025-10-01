@@ -1,48 +1,52 @@
+import 'package:bytebank/models/authentication_model.dart';
 import 'package:bytebank/models/usuario.dart';
-import 'package:bytebank/services/firebase_request.dart';
-import 'package:bytebank/services/authentication_service_exceptions.dart';
+import 'package:bytebank/services/auth/authentication_exceptions.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class AuthenticationService {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   static final String _usuariosCollection = 'usuarios';
 
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final _usuariosRef = FirebaseFirestore.instance.collection(
+    _usuariosCollection,
+  );
+
   Future<QuerySnapshot> _findUsuarioByEmail(String email) {
-    return _firestore
-        .collection(_usuariosCollection)
-        .where('email', isEqualTo: email)
-        .get();
+    return _usuariosRef.where('email', isEqualTo: email).get();
   }
 
   void _createNewUsuario(Usuario usuario) {
-    _firestore.collection(_usuariosCollection).doc(usuario.uid).set({
+    _usuariosRef.doc(usuario.uid).set({
       'nome': usuario.nome,
       'email': usuario.email,
       'dataCriacao': Timestamp.now(),
     });
   }
 
+  String getIdUsuarioLogado() {
+    return _auth.currentUser!.uid;
+  }
+
   Future<Usuario> cadastrarUsuario(CadastroRequest request) async {
     try {
-      QuerySnapshot userQueryResult = await _findUsuarioByEmail(request.email);
-      if (userQueryResult.docs.isNotEmpty) {
-        throw CadastroException('Este email já está cadastrado.');
-      }
+      // QuerySnapshot userQueryResult = await _findUsuarioByEmail(request.email);
+      // if (userQueryResult.docs.isNotEmpty) {
+      //   throw CadastroException('Este email já está cadastrado.');
+      // }
 
-      await _auth.createUserWithEmailAndPassword(
+      UserCredential credential = await _auth.createUserWithEmailAndPassword(
         email: request.email,
         password: request.senha,
       );
       await _auth.currentUser?.updateDisplayName(request.nome);
 
       Usuario novoUsuario = Usuario(
-        uid: _auth.currentUser!.uid,
+        uid: credential.user!.uid,
         nome: request.nome,
         email: request.email,
       );
-      _createNewUsuario(novoUsuario);
+      // _createNewUsuario(novoUsuario);
 
       return novoUsuario;
     } on FirebaseAuthException catch (e) {
@@ -66,20 +70,20 @@ class AuthenticationService {
 
   Future<Usuario> loginUsuario(LoginRequest request) async {
     try {
-      QuerySnapshot userQueryResult = await _findUsuarioByEmail(request.email);
-      if (userQueryResult.docs.isEmpty) {
-        throw LoginException('Email não localizado.');
-      }
+      // QuerySnapshot userQueryResult = await _findUsuarioByEmail(request.email);
+      // if (userQueryResult.docs.isEmpty) {
+      //   throw LoginException('Email não localizado.');
+      // }
 
-      await _auth.signInWithEmailAndPassword(
+      UserCredential credential = await _auth.signInWithEmailAndPassword(
         email: request.email,
         password: request.senha,
       );
 
       return Usuario(
-        uid: _auth.currentUser!.uid,
-        nome: _auth.currentUser!.displayName ?? 'Nome do usuário',
-        email: _auth.currentUser!.email ?? 'Email do usuário',
+        uid: credential.user!.uid,
+        nome: credential.user!.displayName ?? 'Nome do usuário',
+        email: credential.user!.email ?? 'Email do usuário',
       );
     } on FirebaseAuthException catch (e) {
       String mensagem;
