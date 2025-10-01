@@ -13,6 +13,7 @@ class TransactionService {
       'descricao': transaction.descricao,
       'valor': transaction.valor,
       'tipoTransacao': transaction.tipoTransacao.name,
+      'dataCriacao': DateTime.now(),
     });
   }
 

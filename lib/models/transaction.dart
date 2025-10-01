@@ -15,6 +15,11 @@ class TransactionResponse {
     required this.dataCriacao,
     required this.tipoTransacao,
   });
+
+  @override
+  String toString() {
+    return 'TransactionResponse{id: $id, idUsuario: $idUsuario, descricao: $descricao, valor: $valor, dataCriacao: $dataCriacao, tipoTransacao: $tipoTransacao}';
+  }
 }
 
 class TransactionRequest {
