@@ -1,7 +1,10 @@
-import 'package:bytebank/configs/system_colors.dart';
+import 'package:bytebank/models/transaction_model.dart';
+import 'package:bytebank/pages/dashboard/widgets/dashboard_app_bar.dart';
 import 'package:bytebank/pages/shared/drawer.dart';
 import 'package:bytebank/pages/transactions/models.dart';
+import 'package:bytebank/providers/transaction_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class TransactionItem {
   final String id;
@@ -60,126 +63,143 @@ class TransactionsListPage extends StatefulWidget {
 }
 
 class _TransactionsListPageState extends State<TransactionsListPage> {
-  final _repo = TransactionsRepository();
-  final _items = <TransactionItem>[];
-  final _scroll = ScrollController();
+  // final _repo = TransactionsRepository();
+  // final _items = <TransactionItem>[];
+  // final _scroll = ScrollController();
 
-  bool _isLoading = false, _hasMore = true;
-  int _page = 0;
+  // bool _isLoading = false, _hasMore = true;
+  // int _page = 0;
 
-  bool _filtersOpen = false;
-  int? _month;
-  TxType? _type;
+  // bool _filtersOpen = false;
+  // int? _month;
+  // TxType? _type;
 
-  @override
-  void initState() {
-    super.initState();
-    _loadFirstPage();
-    _scroll.addListener(_onScroll);
-  }
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   _loadFirstPage();
+  //   _scroll.addListener(_onScroll);
+  // }
 
-  @override
-  void dispose() {
-    _scroll.dispose();
-    super.dispose();
-  }
+  // @override
+  // void dispose() {
+  //   _scroll.dispose();
+  //   super.dispose();
+  // }
 
-  Future<void> _loadFirstPage() async {
-    setState(() {
-      _isLoading = true;
-      _hasMore = true;
-      _page = 0;
-      _items.clear();
-    });
-    final data = await _repo.fetchPage(page: _page, month: _month, type: _type);
-    setState(() {
-      _items.addAll(data);
-      _isLoading = false;
-      _hasMore = data.length == TransactionsRepository.pageSize;
-    });
-  }
+  // Future<void> _loadFirstPage() async {
+  //   setState(() {
+  //     _isLoading = true;
+  //     _hasMore = true;
+  //     _page = 0;
+  //     _items.clear();
+  //   });
+  //   final data = await _repo.fetchPage(page: _page, month: _month, type: _type);
+  //   setState(() {
+  //     _items.addAll(data);
+  //     _isLoading = false;
+  //     _hasMore = data.length == TransactionsRepository.pageSize;
+  //   });
+  // }
 
-  Future<void> _loadNextPage() async {
-    if (_isLoading || !_hasMore) return;
-    setState(() => _isLoading = true);
-    final next = _page + 1;
-    final data = await _repo.fetchPage(page: next, month: _month, type: _type);
-    setState(() {
-      _page = next;
-      _items.addAll(data);
-      _isLoading = false;
-      _hasMore = data.length == TransactionsRepository.pageSize;
-    });
-  }
+  // Future<void> _loadNextPage() async {
+  //   if (_isLoading || !_hasMore) return;
+  //   setState(() => _isLoading = true);
+  //   final next = _page + 1;
+  //   final data = await _repo.fetchPage(page: next, month: _month, type: _type);
+  //   setState(() {
+  //     _page = next;
+  //     _items.addAll(data);
+  //     _isLoading = false;
+  //     _hasMore = data.length == TransactionsRepository.pageSize;
+  //   });
+  // }
 
-  void _onScroll() {
-    if (!_scroll.hasClients) return;
-    if (_scroll.position.pixels + 200 >= _scroll.position.maxScrollExtent) {
-      _loadNextPage();
-    }
-  }
+  // void _onScroll() {
+  //   if (!_scroll.hasClients) return;
+  //   if (_scroll.position.pixels + 200 >= _scroll.position.maxScrollExtent) {
+  //     _loadNextPage();
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
+    List<BytebankTransaction> _transactionList = context
+        .watch<TransactionProvider>()
+        .transactionList;
     return Scaffold(
       backgroundColor: AppColors.whiteSmoke,
       drawer: const AppDrawer(),
+      appBar: DashboardAppBar(title: 'Histórico'),
+
       //bottomNavigationBar: const BottomNav(currentIndex: 0),
       body: SafeArea(
-        child: RefreshIndicator(
-          onRefresh: _loadFirstPage,
-          child: CustomScrollView(
-            controller: _scroll,
-            slivers: [
-              SliverAppBar(
-                title: Text('Histórico de Transações'),
-                backgroundColor: SystemColors.primary,
-                foregroundColor: SystemColors.background,
-                elevation: 0,
-                floating: true,
-                snap: true,
-              ),
-              SliverToBoxAdapter(
-                child: _FiltersCard(
-                  open: _filtersOpen,
-                  month: _month,
-                  type: _type,
-                  onToggle: () => setState(() => _filtersOpen = !_filtersOpen),
-                  onMonthChanged: (m) => setState(() => _month = m),
-                  onTypeChanged: (t) => setState(() => _type = t),
-                  onApply: _loadFirstPage,
-                  onClear: () {
-                    setState(() {
-                      _month = null;
-                      _type = null;
-                    });
-                    _loadFirstPage();
-                  },
-                ),
-              ),
-              SliverPadding(
-                padding: const EdgeInsets.all(12),
-                sliver: SliverList.builder(
-                  itemCount: _items.length + (_isLoading || _hasMore ? 1 : 0),
-                  itemBuilder: (context, i) {
-                    if (i >= _items.length) {
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 24),
-                        child: Center(
-                          child: _hasMore
-                              ? const CircularProgressIndicator()
-                              : const Text('Fim da lista'),
-                        ),
-                      );
-                    }
-                    return _TransactionCard(item: _items[i]);
-                  },
-                ),
-              ),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              ..._transactionList.map((transaction) {
+                return _TransactionCard(transaction);
+              }),
             ],
           ),
         ),
       ),
+      // SafeArea(
+      //   child: RefreshIndicator(
+      //     onRefresh: _loadFirstPage,
+      //     child: CustomScrollView(
+      //       controller: _scroll,
+      //       slivers: [
+      //         SliverAppBar(
+      //           title: Text('Histórico de Transações'),
+      //           backgroundColor: SystemColors.primary,
+      //           foregroundColor: SystemColors.background,
+      //           elevation: 0,
+      //           floating: true,
+      //           snap: true,
+      //         ),
+      //         SliverToBoxAdapter(
+      //           child: _FiltersCard(
+      //             open: _filtersOpen,
+      //             month: _month,
+      //             type: _type,
+      //             onToggle: () => setState(() => _filtersOpen = !_filtersOpen),
+      //             onMonthChanged: (m) => setState(() => _month = m),
+      //             onTypeChanged: (t) => setState(() => _type = t),
+      //             onApply: _loadFirstPage,
+      //             onClear: () {
+      //               setState(() {
+      //                 _month = null;
+      //                 _type = null;
+      //               });
+      //               _loadFirstPage();
+      //             },
+      //           ),
+      //         ),
+      //         SliverPadding(
+      //           padding: const EdgeInsets.all(12),
+      //           sliver: SliverList.builder(
+      //             itemCount: _items.length + (_isLoading || _hasMore ? 1 : 0),
+      //             itemBuilder: (context, i) {
+      //               if (i >= _items.length) {
+      //                 return Padding(
+      //                   padding: const EdgeInsets.symmetric(vertical: 24),
+      //                   child: Center(
+      //                     child: _hasMore
+      //                         ? const CircularProgressIndicator()
+      //                         : const Text('Fim da lista'),
+      //                   ),
+      //                 );
+      //               }
+      //               return _TransactionCard(item: _items[i]);
+      //             },
+      //           ),
+      //         ),
+      //       ],
+      //     ),
+      //   ),
+      // ),
     );
   }
 }
@@ -352,8 +372,8 @@ class _TypeDropdown extends StatelessWidget {
 
 /// ----- Card “cartão” -----
 class _TransactionCard extends StatelessWidget {
-  final TransactionItem item;
-  const _TransactionCard({required this.item});
+  final BytebankTransaction transaction;
+  const _TransactionCard(this.transaction);
 
   @override
   Widget build(BuildContext context) {
@@ -383,7 +403,7 @@ class _TransactionCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    item.title,
+                    transaction.descricao,
                     style: const TextStyle(
                       color: AppColors.delftBlue,
                       fontWeight: FontWeight.w700,
@@ -391,7 +411,7 @@ class _TransactionCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 6),
                   Text(
-                    _fmtDate(item.date),
+                    _fmtDate(transaction.dataCriacao),
                     style: const TextStyle(color: AppColors.paynesGray),
                   ),
                 ],
@@ -402,7 +422,7 @@ class _TransactionCard extends StatelessWidget {
               children: [
                 const SizedBox(height: 2),
                 Text(
-                  'R\$ ${item.amount.toStringAsFixed(2)}',
+                  'R\$ ${transaction.valor.toStringAsFixed(2)}',
                   style: const TextStyle(
                     fontWeight: FontWeight.w800,
                     fontSize: 16,
@@ -412,7 +432,9 @@ class _TransactionCard extends StatelessWidget {
                 const SizedBox(height: 6),
                 Container(
                   decoration: BoxDecoration(
-                    color: txTypeBg(item.type),
+                    color: CategoriasType.values
+                        .byName(transaction.categoria)
+                        .cor,
                     borderRadius: BorderRadius.circular(999),
                     border: Border.all(
                       color: AppColors.frenchGray.withOpacity(.5),
@@ -423,10 +445,14 @@ class _TransactionCard extends StatelessWidget {
                     vertical: 4,
                   ),
                   child: Text(
-                    txTypeLabel(item.type),
+                    CategoriasType.values
+                        .byName(transaction.categoria)
+                        .descricao,
                     style: TextStyle(
                       fontWeight: FontWeight.w600,
-                      color: txTypeFg(item.type),
+                      color: CategoriasType.values
+                          .byName(transaction.categoria)
+                          .cor,
                       fontSize: 12,
                     ),
                   ),
