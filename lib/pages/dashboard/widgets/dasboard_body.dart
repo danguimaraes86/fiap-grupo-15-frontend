@@ -1,4 +1,4 @@
-import 'package:bytebank/models/usuario.dart';
+import 'package:bytebank/models/usuario_model.dart';
 import 'package:bytebank/pages/dashboard/widgets/dashboard_lista_vazia.dart';
 import 'package:bytebank/providers/transaction_provider.dart';
 import 'package:bytebank/providers/user_auth_provider.dart';

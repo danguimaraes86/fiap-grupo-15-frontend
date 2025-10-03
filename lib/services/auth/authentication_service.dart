@@ -1,28 +1,10 @@
 import 'package:bytebank/models/authentication_model.dart';
-import 'package:bytebank/models/usuario.dart';
+import 'package:bytebank/models/usuario_model.dart';
 import 'package:bytebank/services/auth/authentication_exceptions.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class AuthenticationService {
-  static final String _usuariosCollection = 'usuarios';
-
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  final _usuariosRef = FirebaseFirestore.instance.collection(
-    _usuariosCollection,
-  );
-
-  Future<QuerySnapshot> _findUsuarioByEmail(String email) {
-    return _usuariosRef.where('email', isEqualTo: email).get();
-  }
-
-  void _createNewUsuario(Usuario usuario) {
-    _usuariosRef.doc(usuario.uid).set({
-      'nome': usuario.nome,
-      'email': usuario.email,
-      'dataCriacao': Timestamp.now(),
-    });
-  }
 
   String getIdUsuarioLogado() {
     return _auth.currentUser!.uid;
@@ -30,11 +12,6 @@ class AuthenticationService {
 
   Future<Usuario> cadastrarUsuario(CadastroRequest request) async {
     try {
-      // QuerySnapshot userQueryResult = await _findUsuarioByEmail(request.email);
-      // if (userQueryResult.docs.isNotEmpty) {
-      //   throw CadastroException('Este email já está cadastrado.');
-      // }
-
       UserCredential credential = await _auth.createUserWithEmailAndPassword(
         email: request.email,
         password: request.senha,
@@ -46,8 +23,6 @@ class AuthenticationService {
         nome: request.nome,
         email: request.email,
       );
-      // _createNewUsuario(novoUsuario);
-
       return novoUsuario;
     } on FirebaseAuthException catch (e) {
       String mensagem;
@@ -70,11 +45,6 @@ class AuthenticationService {
 
   Future<Usuario> loginUsuario(LoginRequest request) async {
     try {
-      // QuerySnapshot userQueryResult = await _findUsuarioByEmail(request.email);
-      // if (userQueryResult.docs.isEmpty) {
-      //   throw LoginException('Email não localizado.');
-      // }
-
       UserCredential credential = await _auth.signInWithEmailAndPassword(
         email: request.email,
         password: request.senha,

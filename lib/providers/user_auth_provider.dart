@@ -1,7 +1,7 @@
-import 'package:bytebank/models/usuario.dart';
-import 'package:bytebank/services/models/authentication_model.dart';
-import 'package:bytebank/services/auth/authentication_service.dart';
+import 'package:bytebank/models/authentication_model.dart';
+import 'package:bytebank/models/usuario_model.dart';
 import 'package:bytebank/services/auth/authentication_exceptions.dart';
+import 'package:bytebank/services/auth/authentication_service.dart';
 import 'package:flutter/material.dart';
 
 class UserAuthProvider with ChangeNotifier {
