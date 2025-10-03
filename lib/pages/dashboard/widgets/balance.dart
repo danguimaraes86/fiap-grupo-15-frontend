@@ -1,9 +1,10 @@
-import 'package:bytebank/configs/system_colors.dart';
 import 'package:bytebank/providers/transaction_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class Balance extends StatefulWidget {
+  const Balance({super.key});
+
   @override
   State<Balance> createState() => _BalanceState();
 }
@@ -16,14 +17,17 @@ class _BalanceState extends State<Balance> {
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [SystemColors.primary, SystemColors.secondary],
+          colors: [
+            Theme.of(context).colorScheme.primary,
+            Theme.of(context).colorScheme.onPrimary,
+          ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: SystemColors.secondary.withOpacity(0.3),
+            color: Theme.of(context).colorScheme.onPrimary.withOpacity(0.3),
             blurRadius: 15,
             offset: const Offset(0, 5),
           ),
@@ -106,10 +110,7 @@ class _BalanceState extends State<Balance> {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                label,
-                style: const TextStyle(color: Colors.white70, fontSize: 12),
-              ),
+              Text(label, style: const TextStyle(color: Colors.white70, fontSize: 12)),
               const SizedBox(height: 4),
               Text(
                 value,

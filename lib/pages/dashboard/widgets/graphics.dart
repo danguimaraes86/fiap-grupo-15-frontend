@@ -1,4 +1,3 @@
-import 'package:bytebank/configs/system_colors.dart';
 import 'package:bytebank/models/transaction_model.dart';
 import 'package:bytebank/providers/transaction_provider.dart';
 import 'package:flutter/material.dart';
@@ -15,10 +14,7 @@ class _GraphicsState extends State<Graphics> {
   @override
   Widget build(BuildContext context) {
     final transactionList = context.read<TransactionProvider>().transactionList;
-    final total = transactionList.fold<double>(
-      0,
-      (sum, item) => sum + item.valor,
-    );
+    final total = transactionList.fold<double>(0, (sum, item) => sum + item.valor);
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16),
@@ -63,9 +59,7 @@ class _GraphicsState extends State<Graphics> {
                       style: TextStyle(
                         fontSize: 11,
                         fontWeight: FontWeight.w600,
-                        color: CategoriasType.values
-                            .byName(transacao.categoria)
-                            .cor,
+                        color: CategoriasType.values.byName(transacao.categoria).cor,
                       ),
                     ),
                     const SizedBox(height: 8),
@@ -75,9 +69,7 @@ class _GraphicsState extends State<Graphics> {
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
                           colors: [
-                            CategoriasType.values
-                                .byName(transacao.categoria)
-                                .cor,
+                            CategoriasType.values.byName(transacao.categoria).cor,
                             CategoriasType.values
                                 .byName(transacao.categoria)
                                 .cor
@@ -95,14 +87,9 @@ class _GraphicsState extends State<Graphics> {
                     SizedBox(
                       width: 60,
                       child: Text(
-                        CategoriasType.values
-                            .byName(transacao.categoria)
-                            .descricao,
+                        CategoriasType.values.byName(transacao.categoria).descricao,
                         textAlign: TextAlign.center,
-                        style: const TextStyle(
-                          fontSize: 11,
-                          color: Color(0xFF6B7280),
-                        ),
+                        style: const TextStyle(fontSize: 11, color: Color(0xFF6B7280)),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -139,9 +126,7 @@ class _GraphicsState extends State<Graphics> {
                           ),
                           const SizedBox(width: 12),
                           Text(
-                            CategoriasType.values
-                                .byName(transacao.categoria)
-                                .descricao,
+                            CategoriasType.values.byName(transacao.categoria).descricao,
                             style: const TextStyle(
                               fontSize: 15,
                               fontWeight: FontWeight.w500,
@@ -180,7 +165,7 @@ class _GraphicsState extends State<Graphics> {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: SystemColors.primary,
+              color: Theme.of(context).colorScheme.primary,
               borderRadius: BorderRadius.circular(12),
             ),
             child: Row(
@@ -191,7 +176,7 @@ class _GraphicsState extends State<Graphics> {
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
-                    color: SystemColors.background,
+                    color: Theme.of(context).colorScheme.onPrimary,
                   ),
                 ),
                 Text(

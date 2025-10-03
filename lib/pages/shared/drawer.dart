@@ -1,7 +1,4 @@
-// pages/app_drawer.dart
-
 import 'package:bytebank/configs/routes.dart';
-import 'package:bytebank/models/app_colors.dart';
 import 'package:bytebank/providers/user_auth_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -23,23 +20,23 @@ class _AppDrawerState extends State<AppDrawer> {
           Container(
             width: double.infinity,
             padding: const EdgeInsets.fromLTRB(16, 40, 16, 20),
-            decoration: const BoxDecoration(color: AppColors.delftBlue),
+            decoration: BoxDecoration(color: Theme.of(context).colorScheme.primary),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                const Text(
+                Text(
                   'ByteBank Fiap',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                    color: Theme.of(context).colorScheme.onPrimary,
                     fontSize: 22,
                   ),
                 ),
                 const SizedBox(height: 12),
                 CircleAvatar(
                   radius: 40,
-                  backgroundColor: Colors.white,
-                  foregroundColor: AppColors.delftBlue,
+                  backgroundColor: Theme.of(context).colorScheme.onPrimary,
+                  foregroundColor: Theme.of(context).colorScheme.primary,
                   child: Text(
                     context
                         .read<UserAuthProvider>()
@@ -54,7 +51,7 @@ class _AppDrawerState extends State<AppDrawer> {
                 Text(
                   context.read<UserAuthProvider>().usuarioLogado!.nome,
                   style: TextStyle(
-                    color: Colors.white,
+                    color: Theme.of(context).colorScheme.onPrimary,
                     fontWeight: FontWeight.bold,
                     fontSize: 18,
                   ),
@@ -63,7 +60,7 @@ class _AppDrawerState extends State<AppDrawer> {
                 Text(
                   context.read<UserAuthProvider>().usuarioLogado!.email,
                   style: TextStyle(
-                    color: Colors.white.withOpacity(0.8),
+                    color: Theme.of(context).colorScheme.onPrimary.withOpacity(0.8),
                     fontSize: 14,
                   ),
                 ),
@@ -108,8 +105,7 @@ class _AppDrawerState extends State<AppDrawer> {
                 // Navega para a tela de login e remove todas as outras telas da pilha
                 context,
                 Routes.home, // Rota de login
-                (route) =>
-                    false, // Este comando remove todas as telas anteriores
+                (route) => false, // Este comando remove todas as telas anteriores
               );
             },
           ),
