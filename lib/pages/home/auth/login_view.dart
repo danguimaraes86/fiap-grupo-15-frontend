@@ -1,9 +1,9 @@
 import 'package:bytebank/configs/routes.dart';
 import 'package:bytebank/models/authentication_model.dart';
 import 'package:bytebank/pages/home/auth/widgets/custom_submit_buttom.dart';
-import 'package:bytebank/pages/home/auth/widgets/custom_text_form_field.dart';
+import 'package:bytebank/pages/shared/custom_text_form_field.dart';
 import 'package:bytebank/providers/user_auth_provider.dart';
-import 'package:bytebank/shared/form_validators.dart';
+import 'package:bytebank/utils/form_validators.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -44,11 +44,7 @@ class _LoginViewState extends State<LoginView> {
     if (success) {
       _handleClearFields();
       if (mounted) {
-        Navigator.pushNamedAndRemoveUntil(
-          context,
-          Routes.dashboard,
-          (route) => false,
-        );
+        Navigator.pushNamedAndRemoveUntil(context, Routes.dashboard, (route) => false);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
@@ -99,11 +95,7 @@ class _LoginViewState extends State<LoginView> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(
-                Icons.login,
-                size: 80,
-                color: Theme.of(context).colorScheme.onPrimary,
-              ),
+              Icon(Icons.login, size: 80, color: Theme.of(context).colorScheme.onPrimary),
               const SizedBox(height: 24),
               CustomTextFormField(
                 controller: _emailController,

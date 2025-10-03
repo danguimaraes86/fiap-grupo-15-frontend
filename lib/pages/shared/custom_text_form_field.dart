@@ -1,5 +1,6 @@
-import 'package:bytebank/shared/form_validators.dart';
+import 'package:bytebank/utils/form_validators.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class CustomTextFormField extends StatelessWidget {
   final TextEditingController controller;
@@ -9,6 +10,7 @@ class CustomTextFormField extends StatelessWidget {
   final TextInputType? keyboardType;
   final List<String? Function(String?)>? validatores;
   final void Function(String)? onChanged;
+  final List<TextInputFormatter>? inputFormatter;
 
   const CustomTextFormField({
     super.key,
@@ -19,6 +21,7 @@ class CustomTextFormField extends StatelessWidget {
     this.keyboardType,
     this.validatores,
     this.onChanged,
+    this.inputFormatter,
   });
 
   @override
@@ -27,14 +30,10 @@ class CustomTextFormField extends StatelessWidget {
       controller: controller,
       decoration: InputDecoration(
         labelText: labelText,
-        floatingLabelStyle: TextStyle(
-          color: Theme.of(context).colorScheme.onPrimary,
-        ),
+        floatingLabelStyle: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
         border: const OutlineInputBorder(),
         focusedBorder: OutlineInputBorder(
-          borderSide: BorderSide(
-            color: Theme.of(context).colorScheme.onPrimary,
-          ),
+          borderSide: BorderSide(color: Theme.of(context).colorScheme.onPrimary),
         ),
         prefixIcon: prefixIcon != null ? Icon(prefixIcon) : null,
       ),
@@ -43,6 +42,7 @@ class CustomTextFormField extends StatelessWidget {
       keyboardType: keyboardType,
       validator: validators(validatores ?? []),
       autocorrect: false,
+      inputFormatters: inputFormatter,
       onChanged: onChanged,
     );
   }
