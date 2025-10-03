@@ -19,7 +19,7 @@ class _BalanceState extends State<Balance> {
         gradient: LinearGradient(
           colors: [
             Theme.of(context).colorScheme.primary,
-            Theme.of(context).colorScheme.onPrimary,
+            Theme.of(context).colorScheme.secondary,
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,

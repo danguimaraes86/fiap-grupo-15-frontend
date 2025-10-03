@@ -70,11 +70,12 @@ enum TransactionType {
 }
 
 enum CategoriasType {
+  entrada('Receita', Color(0xFF10B981)),
   alimentacao('Alimentação', Color(0xFFEF4444)),
-  transporte('Transporte', Color(0xFFF59E0B)),
+  transporte('Transporte', Color(0xFF3B82F6)),
   moradia('Moradia', Color(0xFF8B5CF6)),
-  lazer('Lazer', Color(0xFF10B981)),
-  saude('Saúde', Color(0xFF3B82F6));
+  lazer('Lazer', Color(0xFFF59E0B)),
+  saude('Saúde', Color(0xFFEC4899));
 
   final String descricao;
   final Color cor;
