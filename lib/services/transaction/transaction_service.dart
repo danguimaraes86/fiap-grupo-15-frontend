@@ -17,11 +17,23 @@ class TransactionService {
     return await _transactionsRef.add(transaction);
   }
 
-  Future<QuerySnapshot<BytebankTransaction>> getAllTransactions(
-    String idUsuario,
-  ) async {
-    return await _transactionsRef
+  Future<QuerySnapshot<BytebankTransaction>> getAllTransactions(String idUsuario) async {
+    return await _transactionsRef.where('idUsuario', isEqualTo: idUsuario).get();
+  }
+
+  Future<QuerySnapshot<BytebankTransaction>> getTransactionsPaginated(
+    String idUsuario, {
+    DocumentSnapshot? lastDocument,
+  }) async {
+    Query<BytebankTransaction> query = _transactionsRef
         .where('idUsuario', isEqualTo: idUsuario)
-        .get();
+        .orderBy('dataCriacao', descending: true)
+        .limit(10);
+
+    if (lastDocument != null) {
+      query = query.startAfterDocument(lastDocument);
+    }
+
+    return await query.get();
   }
 }

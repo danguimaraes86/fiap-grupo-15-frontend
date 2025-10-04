@@ -1,12 +1,10 @@
 import 'package:bytebank/models/transaction_model.dart';
-import 'package:bytebank/services/auth/authentication_service.dart';
 import 'package:bytebank/services/transaction/transaction_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class TransactionProvider with ChangeNotifier {
   final TransactionService _transactionService = TransactionService();
-  final AuthenticationService _authenticationService = AuthenticationService();
 
   double _saldo = 0.0;
   double get saldo => _saldo;
@@ -20,12 +18,11 @@ class TransactionProvider with ChangeNotifier {
 
   void handleNewTransaction(BytebankTransaction transaction) async {
     await _transactionService.createNewTransaction(transaction);
-    // await handleGetAllTransaction(_authenticationService.getIdUsuarioLogado());
   }
 
   Future<List<BytebankTransaction>> handleGetAllTransaction(String uid) async {
-    QuerySnapshot<BytebankTransaction> transactionList =
-        await _transactionService.getAllTransactions(uid);
+    QuerySnapshot<BytebankTransaction> transactionList = await _transactionService
+        .getAllTransactions(uid);
 
     if (transactionList.docs.isNotEmpty) {
       _setTransactions(transactionList.docs.map((doc) => doc.data()).toList());

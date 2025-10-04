@@ -19,7 +19,7 @@ class _DashboardBodyState extends State<DashboardBody> {
   @override
   Widget build(BuildContext context) {
     Usuario? usuario = context.read<UserAuthProvider>().usuarioLogado;
-    context.read<TransactionProvider>().handleGetAllTransaction(usuario!.uid);
+    context.watch<TransactionProvider>().handleGetAllTransaction(usuario!.uid);
     return SingleChildScrollView(
       child: Column(
         children: [

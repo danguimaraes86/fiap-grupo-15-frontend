@@ -27,7 +27,7 @@ class ListaVazia extends StatelessWidget {
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
-              color: Color(0xFF1F2937),
+              color: Theme.of(context).colorScheme.primary,
             ),
           ),
         ],
