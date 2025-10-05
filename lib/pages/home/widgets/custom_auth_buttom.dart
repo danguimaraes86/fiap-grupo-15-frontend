@@ -27,8 +27,11 @@ class CustomAuthButton extends StatelessWidget {
       onPressed: () => Navigator.pushNamed(context, path),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
-        spacing: 8,
-        children: [Icon(icon), Text(description)],
+        children: [
+          Icon(icon),
+          const SizedBox(width: 8),
+          Text(description)
+        ],
       ),
     );
   }

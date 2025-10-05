@@ -92,7 +92,7 @@ class _AppDrawerState extends State<AppDrawer> {
             onTap: () {
               Navigator.pop(context); // Fecha o menu
               // Navega para o formulário (substituindo a tela atual)
-              Navigator.pushReplacementNamed(context, Routes.transactionForm);
+              Navigator.pushReplacementNamed(context, Routes.transactionsForm);
             },
           ),
           const Divider(),

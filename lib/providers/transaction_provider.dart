@@ -16,8 +16,55 @@ class TransactionProvider with ChangeNotifier {
   List<BytebankTransaction> _transactionList = [];
   List<BytebankTransaction> get transactionList => _transactionList;
 
-  void handleNewTransaction(BytebankTransaction transaction) async {
-    await _transactionService.createNewTransaction(transaction);
+  Future<void> handleNewTransaction(BytebankTransaction transaction) async {
+    final docRef = await _transactionService.createNewTransaction(transaction);
+    
+    // Adicionar à lista local com o ID gerado
+    final newTransaction = BytebankTransaction(
+      id: docRef.id,
+      idUsuario: transaction.idUsuario,
+      descricao: transaction.descricao,
+      valor: transaction.valor,
+      dataCriacao: transaction.dataCriacao,
+      mesReferencia: transaction.mesReferencia,
+      tipoTransacao: transaction.tipoTransacao,
+      categoria: transaction.categoria,
+      anexoUrl: transaction.anexoUrl,
+      anexoNome: transaction.anexoNome,
+    );
+    _transactionList.add(newTransaction);
+    
+    // Recalcular saldo, receitas e despesas
+    _calcularSaldoReceitaDespesa();
+    
+    notifyListeners();
+  }
+
+  Future<void> handleUpdateTransaction(BytebankTransaction transaction) async {
+    await _transactionService.updateTransaction(transaction);
+    
+    // Atualizar na lista local
+    final index = _transactionList.indexWhere((t) => t.id == transaction.id);
+    if (index != -1) {
+      _transactionList[index] = transaction;
+    }
+    
+    // Recalcular saldo, receitas e despesas
+    _calcularSaldoReceitaDespesa();
+    
+    notifyListeners();
+  }
+
+  Future<void> handleDeleteTransaction(String transactionId) async {
+    await _transactionService.deleteTransaction(transactionId);
+    
+    // Remover da lista local
+    _transactionList.removeWhere((transaction) => transaction.id == transactionId);
+    
+    // Recalcular saldo, receitas e despesas
+    _calcularSaldoReceitaDespesa();
+    
+    notifyListeners();
   }
 
   Future<List<BytebankTransaction>> handleGetAllTransaction(String uid) async {

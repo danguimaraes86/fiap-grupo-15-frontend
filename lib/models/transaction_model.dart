@@ -10,7 +10,8 @@ class BytebankTransaction {
   int mesReferencia;
   TransactionType tipoTransacao;
   String categoria;
-  // String? anexoId;
+  String? anexoUrl;
+  String? anexoNome;
 
   BytebankTransaction({
     this.id,
@@ -21,6 +22,8 @@ class BytebankTransaction {
     required this.mesReferencia,
     required this.tipoTransacao,
     required this.categoria,
+    this.anexoUrl,
+    this.anexoNome,
   });
 
   Map<String, dynamic> toFirestore() {
@@ -36,6 +39,14 @@ class BytebankTransaction {
 
     if (id != null) {
       data['id'] = id;
+    }
+
+    if (anexoUrl != null) {
+      data['anexoUrl'] = anexoUrl;
+    }
+
+    if (anexoNome != null) {
+      data['anexoNome'] = anexoNome;
     }
 
     return data;
@@ -56,6 +67,8 @@ class BytebankTransaction {
       mesReferencia: (data['dataCriacao'] as Timestamp).toDate().month,
       tipoTransacao: TransactionType.values.byName(data['tipoTransacao']),
       categoria: CategoriasType.values.byName(data['categoria']).name,
+      anexoUrl: data['anexoUrl'],
+      anexoNome: data['anexoNome'],
     );
   }
 }

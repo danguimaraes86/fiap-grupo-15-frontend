@@ -175,7 +175,10 @@ class _TransactionsListPageState extends State<TransactionsListPage> {
                             }
                             return const SizedBox(height: 80);
                           }
-                          return TransactionCard(transaction: _transactions[index]);
+                          return TransactionCard(
+                            transaction: _transactions[index],
+                            onChanged: _loadFirstPage,
+                          );
                         },
                       ),
               ),

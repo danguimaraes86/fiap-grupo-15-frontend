@@ -12,7 +12,7 @@ class Routes {
   static String login = '/login';
   static String dashboard = '/dashboard';
   static String transactionList = '/list';
-  static String transactionForm = '/add';
+  static String transactionsForm = '/add';
 
   Map<String, WidgetBuilder> get routes {
     return {
@@ -20,7 +20,7 @@ class Routes {
       Routes.login: (context) => const LoginView(),
       Routes.cadastro: (context) => const CadastroView(),
       Routes.dashboard: (context) => const DashboardView(),
-      Routes.transactionForm: (context) => const TransactionsFormPage(),
+      Routes.transactionsForm: (context) => const TransactionsFormPage(),
       Routes.transactionList: (context) => const TransactionsListPage(),
     };
   }

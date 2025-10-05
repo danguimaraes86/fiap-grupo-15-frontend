@@ -36,4 +36,20 @@ class TransactionService {
 
     return await query.get();
   }
+
+  Future<void> updateTransaction(BytebankTransaction transaction) async {
+    if (transaction.id == null) {
+      throw Exception('ID da transação não pode ser nulo para atualização');
+    }
+    await _transactionsRef.doc(transaction.id).update(transaction.toFirestore());
+  }
+
+  Future<void> deleteTransaction(String transactionId) async {
+    await _transactionsRef.doc(transactionId).delete();
+  }
+
+  Future<BytebankTransaction?> getTransactionById(String transactionId) async {
+    final doc = await _transactionsRef.doc(transactionId).get();
+    return doc.exists ? doc.data() : null;
+  }
 }
