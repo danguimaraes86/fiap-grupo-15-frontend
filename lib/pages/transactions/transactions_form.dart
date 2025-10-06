@@ -21,13 +21,13 @@ class _TransactionsFormPageState extends State<TransactionsFormPage> {
   final _descricaoController = TextEditingController();
   final _valorController = TextEditingController();
   final _dataController = TextEditingController();
-  
+
   TransactionType? _transactionTypeController;
   CategoriasType? _selectedCategoria;
-  
+
   PlatformFile? _selectedFile;
   bool _isUploading = false;
-  
+
   final StorageService _storageService = StorageService();
 
   @override
@@ -89,14 +89,19 @@ class _TransactionsFormPageState extends State<TransactionsFormPage> {
       try {
         final userProvider = Provider.of<UserAuthProvider>(context, listen: false);
         final userId = userProvider.usuarioLogado?.uid ?? '';
-        
+
         String? anexoUrl;
         String? anexoNome;
 
         if (_selectedFile != null) {
-          final String fileName = '\${DateTime.now().millisecondsSinceEpoch}_\${_selectedFile!.name}';
-          final String tempTransactionId = DateTime.now().millisecondsSinceEpoch.toString();
-          
+          final String sanitizedName = _selectedFile!.name
+              .replaceAll(' ', '_')
+              .replaceAll(RegExp(r'[^\w\s\-\.]'), '');
+          final String fileName =
+              '${DateTime.now().millisecondsSinceEpoch}_$sanitizedName';
+          final String tempTransactionId =
+              DateTime.now().millisecondsSinceEpoch.toString();
+
           if (kIsWeb) {
             if (_selectedFile!.bytes != null) {
               anexoUrl = await _storageService.uploadFile(
@@ -118,7 +123,7 @@ class _TransactionsFormPageState extends State<TransactionsFormPage> {
           }
           anexoNome = _selectedFile!.name;
         }
-        
+
         final newTransaction = BytebankTransaction(
           idUsuario: userId,
           descricao: _descricaoController.text,
@@ -132,14 +137,13 @@ class _TransactionsFormPageState extends State<TransactionsFormPage> {
         );
 
         if (mounted) {
-          await Provider.of<TransactionProvider>(context, listen: false)
-              .handleNewTransaction(newTransaction);
-          
+          await context.read<TransactionProvider>().handleNewTransaction(newTransaction);
+
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(content: Text('Transação criada com sucesso!')),
             );
-            
+
             // Redireciona para a lista de transações
             Navigator.of(context).pushReplacementNamed('/list');
           }
@@ -269,7 +273,6 @@ class _TransactionsFormPageState extends State<TransactionsFormPage> {
                 },
               ),
               const SizedBox(height: 24),
-              
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
@@ -309,7 +312,9 @@ class _TransactionsFormPageState extends State<TransactionsFormPage> {
                     ElevatedButton.icon(
                       onPressed: _pickFile,
                       icon: const Icon(Icons.upload_file),
-                      label: Text(_selectedFile == null ? 'Selecionar Arquivo' : 'Trocar Arquivo'),
+                      label: Text(_selectedFile == null
+                          ? 'Selecionar Arquivo'
+                          : 'Trocar Arquivo'),
                       style: ElevatedButton.styleFrom(
                         minimumSize: const Size(double.infinity, 48),
                       ),
@@ -323,7 +328,6 @@ class _TransactionsFormPageState extends State<TransactionsFormPage> {
                 ),
               ),
               const SizedBox(height: 24),
-              
               ElevatedButton(
                 onPressed: _isUploading ? null : _submit,
                 style: ElevatedButton.styleFrom(
@@ -355,7 +359,7 @@ class _TransactionsFormPageState extends State<TransactionsFormPage> {
     }
 
     List<CategoriasType> categorias;
-    
+
     if (_transactionTypeController == TransactionType.receita) {
       // Para receita, apenas entrada
       categorias = [CategoriasType.entrada];

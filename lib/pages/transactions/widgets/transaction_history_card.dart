@@ -12,7 +12,7 @@ class TransactionCard extends StatelessWidget {
   final VoidCallback? onChanged;
 
   const TransactionCard({
-    super.key, 
+    super.key,
     required this.transaction,
     this.onChanged,
   });
@@ -20,7 +20,7 @@ class TransactionCard extends StatelessWidget {
   Future<void> _openFile(String url) async {
     final Uri uri = Uri.parse(url);
     if (await canLaunchUrl(uri)) {
-      await launchUrl(uri, mode: LaunchMode.externalApplication);
+      await launchUrl(uri, mode: LaunchMode.platformDefault);
     }
   }
 
@@ -33,6 +33,8 @@ class TransactionCard extends StatelessWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
+            style: TextButton.styleFrom(
+                foregroundColor: Theme.of(context).colorScheme.onPrimary),
             child: const Text('Cancelar'),
           ),
           TextButton(
@@ -52,7 +54,9 @@ class TransactionCard extends StatelessWidget {
         }
 
         // Deletar transação
-        await context.read<TransactionProvider>().handleDeleteTransaction(transaction.id!);
+        await context
+            .read<TransactionProvider>()
+            .handleDeleteTransaction(transaction.id!);
 
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -61,7 +65,7 @@ class TransactionCard extends StatelessWidget {
               backgroundColor: Colors.green,
             ),
           );
-          
+
           // Chamar o callback para atualizar a lista
           onChanged?.call();
         }
@@ -98,130 +102,143 @@ class TransactionCard extends StatelessWidget {
         padding: const EdgeInsets.all(14),
         child: Column(
           children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Container(
-                    width: 40,
-                    height: 40,
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.onPrimary.withOpacity(.35),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Icon(
-                      Icons.receipt_long,
-                      color: Theme.of(context).colorScheme.primary,
-                      size: 22,
-                    ),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.onPrimary.withOpacity(.35),
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          transaction.descricao,
-                          style: TextStyle(
-                            color: Theme.of(context).colorScheme.onPrimary,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                        const SizedBox(height: 6),
-                        Text(
-                          DateFormat('dd/MM/yyyy').format(transaction.dataCriacao),
-                          style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
-                        ),
-                      ],
-                    ),
+                  child: Icon(
+                    Icons.receipt_long,
+                    color: Theme.of(context).colorScheme.primary,
+                    size: 22,
                   ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const SizedBox(height: 2),
                       Text(
-                        'R\$ ${transaction.valor.toStringAsFixed(2)}',
+                        transaction.descricao,
                         style: TextStyle(
-                          fontWeight: FontWeight.w800,
-                          fontSize: 16,
                           color: Theme.of(context).colorScheme.onPrimary,
+                          fontWeight: FontWeight.w700,
                         ),
                       ),
                       const SizedBox(height: 6),
-                      Container(
-                        decoration: BoxDecoration(
-                          color: CategoriasType.values.byName(transaction.categoria).cor,
-                          borderRadius: BorderRadius.circular(999),
-                          border: Border.all(
-                            color: Theme.of(context).colorScheme.onPrimary.withOpacity(.5),
-                          ),
-                        ),
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                        child: Text(
-                          CategoriasType.values.byName(transaction.categoria).descricao,
-                          style: TextStyle(
-                            fontWeight: FontWeight.w600,
-                            color: Theme.of(context).colorScheme.onPrimary,
-                            fontSize: 12,
-                          ),
-                        ),
+                      Text(
+                        DateFormat('dd/MM/yyyy').format(transaction.dataCriacao),
+                        style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
                       ),
                     ],
                   ),
-                ],
-              ),
-              if (transaction.anexoUrl != null) ...[
-                const SizedBox(height: 12),
-                const Divider(),
-                const SizedBox(height: 8),
-                Row(
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    Icon(
-                      Icons.attach_file,
-                      size: 16,
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: Text(
-                        transaction.anexoNome ?? 'Arquivo anexado',
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.primary,
-                          fontSize: 12,
-                        ),
-                        overflow: TextOverflow.ellipsis,
+                    const SizedBox(height: 2),
+                    Text(
+                      'R\$ ${transaction.valor.toStringAsFixed(2)}',
+                      style: TextStyle(
+                        fontWeight: FontWeight.w800,
+                        fontSize: 16,
+                        color: Theme.of(context).colorScheme.onPrimary,
                       ),
                     ),
-                    TextButton.icon(
-                      onPressed: () => _openFile(transaction.anexoUrl!),
-                      icon: const Icon(Icons.download, size: 16),
-                      label: const Text('Abrir', style: TextStyle(fontSize: 12)),
+                    const SizedBox(height: 6),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: CategoriasType.values.byName(transaction.categoria).cor,
+                        borderRadius: BorderRadius.circular(999),
+                        border: Border.all(
+                          color: Theme.of(context).colorScheme.onPrimary.withOpacity(.5),
+                        ),
+                      ),
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                      child: Text(
+                        CategoriasType.values.byName(transaction.categoria).descricao,
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          color: Theme.of(context).colorScheme.onPrimary,
+                          fontSize: 12,
+                        ),
+                      ),
                     ),
                   ],
                 ),
               ],
+            ),
+            if (transaction.anexoUrl != null) ...[
+              const SizedBox(height: 12),
+              const Divider(),
               const SizedBox(height: 8),
               Row(
-                mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  TextButton.icon(
-                    onPressed: () => _openEditModal(context),
-                    icon: const Icon(Icons.edit, size: 16),
-                    label: const Text('Editar', style: TextStyle(fontSize: 12)),
+                  Icon(
+                    Icons.attach_file,
+                    size: 16,
+                    color: Theme.of(context).colorScheme.onPrimary,
                   ),
                   const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      transaction.anexoNome ?? 'Arquivo anexado',
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.onPrimary,
+                        fontSize: 12,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
                   TextButton.icon(
-                    onPressed: () => _deleteTransaction(context),
-                    icon: const Icon(Icons.delete, size: 16, color: Colors.red),
-                    label: const Text(
-                      'Excluir',
-                      style: TextStyle(fontSize: 12, color: Colors.red),
+                    onPressed: () => _openFile(transaction.anexoUrl!),
+                    icon: Icon(Icons.download,
+                        size: 16, color: Theme.of(context).colorScheme.onPrimary),
+                    label: Text(
+                      'Abrir',
+                      style: TextStyle(
+                          fontSize: 12, color: Theme.of(context).colorScheme.onPrimary),
                     ),
                   ),
                 ],
               ),
             ],
-          ),
+            const SizedBox(height: 8),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                TextButton.icon(
+                  onPressed: () => _openEditModal(context),
+                  icon: Icon(
+                    Icons.edit,
+                    size: 16,
+                    color: Theme.of(context).colorScheme.onPrimary,
+                  ),
+                  label: Text(
+                    'Editar',
+                    style: TextStyle(
+                        fontSize: 12, color: Theme.of(context).colorScheme.onPrimary),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                TextButton.icon(
+                  onPressed: () => _deleteTransaction(context),
+                  icon: const Icon(Icons.delete, size: 16, color: Colors.redAccent),
+                  label: const Text(
+                    'Excluir',
+                    style: TextStyle(fontSize: 12, color: Colors.redAccent),
+                  ),
+                ),
+              ],
+            ),
+          ],
         ),
-      );
+      ),
+    );
   }
 }

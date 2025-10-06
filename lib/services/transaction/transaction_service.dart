@@ -18,7 +18,10 @@ class TransactionService {
   }
 
   Future<QuerySnapshot<BytebankTransaction>> getAllTransactions(String idUsuario) async {
-    return await _transactionsRef.where('idUsuario', isEqualTo: idUsuario).get();
+    return await _transactionsRef
+        .where('idUsuario', isEqualTo: idUsuario)
+        .orderBy('dataCriacao', descending: true)
+        .get();
   }
 
   Future<QuerySnapshot<BytebankTransaction>> getTransactionsPaginated(
@@ -46,10 +49,5 @@ class TransactionService {
 
   Future<void> deleteTransaction(String transactionId) async {
     await _transactionsRef.doc(transactionId).delete();
-  }
-
-  Future<BytebankTransaction?> getTransactionById(String transactionId) async {
-    final doc = await _transactionsRef.doc(transactionId).get();
-    return doc.exists ? doc.data() : null;
   }
 }

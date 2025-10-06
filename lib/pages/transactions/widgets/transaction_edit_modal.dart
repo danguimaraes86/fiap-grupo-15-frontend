@@ -1,4 +1,5 @@
 import 'dart:io';
+
 import 'package:bytebank/models/transaction_model.dart';
 import 'package:bytebank/models/usuario_model.dart';
 import 'package:bytebank/pages/shared/custom_text_form_field.dart';
@@ -116,6 +117,19 @@ class _TransactionEditModalState extends State<TransactionEditModal> {
       String? fileUrl = _existingFileUrl;
       String? fileName = _existingFileName;
 
+      if (widget.transaction.anexoUrl != null &&
+          _existingFileUrl == null &&
+          _selectedFile == null) {
+        try {
+          await _storageService.deleteFile(widget.transaction.anexoUrl!);
+        } catch (e) {
+          // Log do erro mas continua o fluxo
+          debugPrint('Erro ao deletar arquivo: $e');
+        }
+        fileUrl = null;
+        fileName = null;
+      }
+
       // Upload do novo arquivo se foi selecionado
       if (_selectedFile != null) {
         // Deletar arquivo anterior se existir
@@ -161,7 +175,9 @@ class _TransactionEditModalState extends State<TransactionEditModal> {
         anexoNome: fileName,
       );
 
-      await context.read<TransactionProvider>().handleUpdateTransaction(transaction);
+      if (mounted) {
+        await context.read<TransactionProvider>().handleUpdateTransaction(transaction);
+      }
 
       if (mounted) {
         Navigator.pop(context, true); // Retorna true indicando sucesso
@@ -259,7 +275,8 @@ class _TransactionEditModalState extends State<TransactionEditModal> {
                         controller: _valorController,
                         labelText: 'Valor (ex: 123,45)',
                         prefixIcon: Icons.attach_money,
-                        keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                        keyboardType:
+                            const TextInputType.numberWithOptions(decimal: true),
                         validatores: [(v) => validateCampoObrigatorio(v)],
                         inputFormatter: [
                           FilteringTextInputFormatter.allow(RegExp(r'^\d*[.,]?\d*')),
@@ -324,10 +341,11 @@ class _TransactionEditModalState extends State<TransactionEditModal> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text(DateFormat('dd/MM/yyyy').format(_dataCriacaoController)),
+                              Text(DateFormat('dd/MM/yyyy')
+                                  .format(_dataCriacaoController)),
                               Icon(
                                 Icons.calendar_today,
-                                color: Theme.of(context).colorScheme.primary,
+                                color: Theme.of(context).colorScheme.onPrimary,
                               ),
                             ],
                           ),
@@ -349,7 +367,7 @@ class _TransactionEditModalState extends State<TransactionEditModal> {
                               children: [
                                 Icon(
                                   Icons.attach_file,
-                                  color: Theme.of(context).colorScheme.primary,
+                                  color: Theme.of(context).colorScheme.onPrimary,
                                   size: 20,
                                 ),
                                 const SizedBox(width: 8),
@@ -358,7 +376,7 @@ class _TransactionEditModalState extends State<TransactionEditModal> {
                                   style: TextStyle(
                                     fontSize: 14,
                                     fontWeight: FontWeight.bold,
-                                    color: Theme.of(context).colorScheme.primary,
+                                    color: Theme.of(context).colorScheme.onPrimary,
                                   ),
                                 ),
                               ],
@@ -368,14 +386,14 @@ class _TransactionEditModalState extends State<TransactionEditModal> {
                               Container(
                                 padding: const EdgeInsets.all(12),
                                 decoration: BoxDecoration(
-                                  color: Colors.grey.shade100,
+                                  color: Theme.of(context).colorScheme.primary,
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                                 child: Row(
                                   children: [
                                     Icon(
                                       Icons.insert_drive_file,
-                                      color: Theme.of(context).colorScheme.primary,
+                                      color: Theme.of(context).colorScheme.onPrimary,
                                       size: 20,
                                     ),
                                     const SizedBox(width: 8),
@@ -387,7 +405,8 @@ class _TransactionEditModalState extends State<TransactionEditModal> {
                                       ),
                                     ),
                                     IconButton(
-                                      icon: const Icon(Icons.close, color: Colors.red, size: 20),
+                                      icon: const Icon(Icons.close,
+                                          color: Colors.red, size: 20),
                                       onPressed: _removeFile,
                                       padding: EdgeInsets.zero,
                                       constraints: const BoxConstraints(),
@@ -398,8 +417,17 @@ class _TransactionEditModalState extends State<TransactionEditModal> {
                             else
                               OutlinedButton.icon(
                                 onPressed: _pickFile,
-                                icon: const Icon(Icons.upload_file, size: 18),
-                                label: const Text('Selecionar Arquivo', style: TextStyle(fontSize: 13)),
+                                icon: Icon(
+                                  Icons.upload_file,
+                                  size: 18,
+                                  color: Theme.of(context).colorScheme.onPrimary,
+                                ),
+                                label: Text(
+                                  'Selecionar Arquivo',
+                                  style: TextStyle(
+                                      fontSize: 13,
+                                      color: Theme.of(context).colorScheme.onPrimary),
+                                ),
                                 style: OutlinedButton.styleFrom(
                                   minimumSize: const Size(double.infinity, 45),
                                 ),
@@ -409,7 +437,7 @@ class _TransactionEditModalState extends State<TransactionEditModal> {
                               'Formatos: PDF, JPG, PNG, DOC, DOCX',
                               style: TextStyle(
                                 fontSize: 11,
-                                color: Colors.grey.shade600,
+                                color: Theme.of(context).colorScheme.onPrimary,
                               ),
                             ),
                           ],
@@ -432,6 +460,10 @@ class _TransactionEditModalState extends State<TransactionEditModal> {
                   Expanded(
                     child: OutlinedButton(
                       onPressed: _isUploading ? null : () => Navigator.pop(context),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Theme.of(context).colorScheme.onPrimary,
+                        foregroundColor: Theme.of(context).colorScheme.primary,
+                      ),
                       child: const Text('Cancelar'),
                     ),
                   ),
@@ -469,18 +501,18 @@ class _TransactionEditModalState extends State<TransactionEditModal> {
     if (_transactionTypeController == TransactionType.receita) {
       return CategoriasType.entrada;
     }
-    
+
     // Se for despesa, não pode ser entrada
     if (_categoriasTypeController == CategoriasType.entrada) {
       return CategoriasType.values.firstWhere((cat) => cat != CategoriasType.entrada);
     }
-    
+
     return _categoriasTypeController;
   }
 
   List<DropdownMenuItem<CategoriasType>> _handleCategoriaItens() {
     List<CategoriasType> categorias;
-    
+
     if (_transactionTypeController == TransactionType.receita) {
       // Para receita, apenas entrada
       categorias = [CategoriasType.entrada];

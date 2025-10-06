@@ -126,6 +126,7 @@ class _TransactionsListPageState extends State<TransactionsListPage> {
       appBar: DashboardAppBar(title: 'Histórico'),
       body: SafeArea(
         child: RefreshIndicator(
+          color: Theme.of(context).colorScheme.onPrimary,
           onRefresh: _loadFirstPage,
           child: Column(
             children: [

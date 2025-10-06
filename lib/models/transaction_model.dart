@@ -35,18 +35,12 @@ class BytebankTransaction {
       'mesReferencia': mesReferencia,
       'tipoTransacao': tipoTransacao.name,
       'categoria': categoria,
+      'anexoUrl': anexoUrl,
+      'anexoNome': anexoNome,
     };
 
     if (id != null) {
       data['id'] = id;
-    }
-
-    if (anexoUrl != null) {
-      data['anexoUrl'] = anexoUrl;
-    }
-
-    if (anexoNome != null) {
-      data['anexoNome'] = anexoNome;
     }
 
     return data;

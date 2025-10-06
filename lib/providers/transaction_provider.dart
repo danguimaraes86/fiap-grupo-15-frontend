@@ -18,7 +18,7 @@ class TransactionProvider with ChangeNotifier {
 
   Future<void> handleNewTransaction(BytebankTransaction transaction) async {
     final docRef = await _transactionService.createNewTransaction(transaction);
-    
+
     // Adicionar à lista local com o ID gerado
     final newTransaction = BytebankTransaction(
       id: docRef.id,
@@ -33,43 +33,34 @@ class TransactionProvider with ChangeNotifier {
       anexoNome: transaction.anexoNome,
     );
     _transactionList.add(newTransaction);
-    
-    // Recalcular saldo, receitas e despesas
+    _setTransactions(_transactionList);
     _calcularSaldoReceitaDespesa();
-    
-    notifyListeners();
   }
 
   Future<void> handleUpdateTransaction(BytebankTransaction transaction) async {
     await _transactionService.updateTransaction(transaction);
-    
+
     // Atualizar na lista local
     final index = _transactionList.indexWhere((t) => t.id == transaction.id);
     if (index != -1) {
       _transactionList[index] = transaction;
     }
-    
-    // Recalcular saldo, receitas e despesas
+    _setTransactions(_transactionList);
     _calcularSaldoReceitaDespesa();
-    
-    notifyListeners();
   }
 
   Future<void> handleDeleteTransaction(String transactionId) async {
     await _transactionService.deleteTransaction(transactionId);
-    
+
     // Remover da lista local
     _transactionList.removeWhere((transaction) => transaction.id == transactionId);
-    
-    // Recalcular saldo, receitas e despesas
+    _setTransactions(_transactionList);
     _calcularSaldoReceitaDespesa();
-    
-    notifyListeners();
   }
 
   Future<List<BytebankTransaction>> handleGetAllTransaction(String uid) async {
-    QuerySnapshot<BytebankTransaction> transactionList = await _transactionService
-        .getAllTransactions(uid);
+    QuerySnapshot<BytebankTransaction> transactionList =
+        await _transactionService.getAllTransactions(uid);
 
     if (transactionList.docs.isNotEmpty) {
       _setTransactions(transactionList.docs.map((doc) => doc.data()).toList());
