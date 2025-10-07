@@ -1,4 +1,5 @@
 import 'package:bytebank/configs/routes.dart';
+import 'package:bytebank/providers/transaction_provider.dart';
 import 'package:bytebank/providers/user_auth_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -67,7 +68,6 @@ class _AppDrawerState extends State<AppDrawer> {
               ],
             ),
           ),
-
           ListTile(
             leading: const Icon(Icons.dashboard),
             title: const Text('Dashboard'),
@@ -100,6 +100,7 @@ class _AppDrawerState extends State<AppDrawer> {
             leading: const Icon(Icons.logout, color: Colors.red),
             title: const Text('Sair', style: TextStyle(color: Colors.red)),
             onTap: () {
+              context.read<TransactionProvider>().handleLimparSessao();
               context.read<UserAuthProvider>().handleLogoutUsuario();
               Navigator.pushNamedAndRemoveUntil(
                 // Navega para a tela de login e remove todas as outras telas da pilha

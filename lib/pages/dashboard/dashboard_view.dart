@@ -12,7 +12,7 @@ class DashboardView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: SystemColors.background,
-      appBar: DashboardAppBar(title: 'ByteBank Fiap'),
+      appBar: DashboardAppBar(title: 'Dashboard'),
       drawer: AppDrawer(),
       body: const DashboardBody(),
     );

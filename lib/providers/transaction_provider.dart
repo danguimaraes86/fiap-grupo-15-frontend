@@ -16,6 +16,9 @@ class TransactionProvider with ChangeNotifier {
   List<BytebankTransaction> _transactionList = [];
   List<BytebankTransaction> get transactionList => _transactionList;
 
+  String? _currentUserId;
+  String? get currentUserId => _currentUserId;
+
   Future<void> handleNewTransaction(BytebankTransaction transaction) async {
     final docRef = await _transactionService.createNewTransaction(transaction);
 
@@ -58,7 +61,13 @@ class TransactionProvider with ChangeNotifier {
     _calcularSaldoReceitaDespesa();
   }
 
-  Future<List<BytebankTransaction>> handleGetAllTransaction(String uid) async {
+  void handleGetAllTransaction(String uid) async {
+    if (_currentUserId == uid) return;
+    if (_currentUserId != uid) {
+      handleLimparSessao();
+      _currentUserId = uid;
+    }
+
     QuerySnapshot<BytebankTransaction> transactionList =
         await _transactionService.getAllTransactions(uid);
 
@@ -66,31 +75,16 @@ class TransactionProvider with ChangeNotifier {
       _setTransactions(transactionList.docs.map((doc) => doc.data()).toList());
     }
     _calcularSaldoReceitaDespesa();
-    return _transactionList;
   }
 
   void _calcularSaldoReceitaDespesa() {
-    _setSaldo(
-      _transactionList.fold<double>(0.0, (total, transaction) {
-        return transaction.tipoTransacao == TransactionType.receita
-            ? total + transaction.valor
-            : total - transaction.valor;
-      }),
-    );
-    _setReceitas(
-      _transactionList.fold<double>(0.0, (total, transaction) {
-        return transaction.tipoTransacao == TransactionType.receita
-            ? total + transaction.valor
-            : total;
-      }),
-    );
-    _setDespesas(
-      _transactionList.fold<double>(0.0, (total, transaction) {
-        return transaction.tipoTransacao == TransactionType.despesa
-            ? total + transaction.valor
-            : total;
-      }),
-    );
+    _setReceitas(transactionList
+        .where((transaction) => transaction.categoria == 'entrada')
+        .fold<double>(0, (total, item) => total + item.valor));
+    _setDespesas(transactionList
+        .where((transaction) => transaction.categoria != 'entrada')
+        .fold<double>(0, (total, item) => total + item.valor));
+    _setSaldo(_receitas - _despesas);
   }
 
   void _setTransactions(List<BytebankTransaction> novaLista) {
@@ -100,16 +94,22 @@ class TransactionProvider with ChangeNotifier {
 
   void _setSaldo(double novoSaldo) {
     _saldo = novoSaldo;
-    notifyListeners();
   }
 
   void _setReceitas(double novoValor) {
     _receitas = novoValor;
-    notifyListeners();
   }
 
   void _setDespesas(double novoValor) {
     _despesas = novoValor;
+  }
+
+  void handleLimparSessao() {
+    _transactionList = [];
+    _saldo = 0.0;
+    _receitas = 0.0;
+    _despesas = 0.0;
+    _currentUserId = null;
     notifyListeners();
   }
 }

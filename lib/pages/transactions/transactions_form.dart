@@ -1,3 +1,5 @@
+import 'package:bytebank/pages/dashboard/widgets/dashboard_app_bar.dart';
+import 'package:bytebank/pages/shared/drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'dart:io';
@@ -167,9 +169,8 @@ class _TransactionsFormPageState extends State<TransactionsFormPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Nova Transação'),
-      ),
+      appBar: DashboardAppBar(title: 'Nova Transação'),
+      drawer: AppDrawer(),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Form(
@@ -276,24 +277,28 @@ class _TransactionsFormPageState extends State<TransactionsFormPage> {
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey),
+                  border: Border.all(color: Theme.of(context).colorScheme.onPrimary),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
+                    Text(
                       'Anexo (opcional)',
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
+                        color: Theme.of(context).colorScheme.onPrimary,
                       ),
                     ),
                     const SizedBox(height: 12),
                     if (_selectedFile != null) ...[
                       Row(
                         children: [
-                          const Icon(Icons.attach_file),
+                          Icon(
+                            Icons.attach_file,
+                            color: Theme.of(context).colorScheme.onPrimary,
+                          ),
                           const SizedBox(width: 8),
                           Expanded(
                             child: Text(
@@ -302,7 +307,7 @@ class _TransactionsFormPageState extends State<TransactionsFormPage> {
                             ),
                           ),
                           IconButton(
-                            icon: const Icon(Icons.close),
+                            icon: Icon(Icons.close, color: Colors.redAccent,),
                             onPressed: _removeFile,
                           ),
                         ],
@@ -311,18 +316,25 @@ class _TransactionsFormPageState extends State<TransactionsFormPage> {
                     ],
                     ElevatedButton.icon(
                       onPressed: _pickFile,
-                      icon: const Icon(Icons.upload_file),
-                      label: Text(_selectedFile == null
-                          ? 'Selecionar Arquivo'
-                          : 'Trocar Arquivo'),
+                      icon: Icon(
+                        Icons.upload_file,
+                        color: Theme.of(context).colorScheme.onPrimary,
+                      ),
+                      label: Text(
+                        _selectedFile == null ? 'Selecionar Arquivo' : 'Trocar Arquivo',
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.onPrimary,
+                        ),
+                      ),
                       style: ElevatedButton.styleFrom(
                         minimumSize: const Size(double.infinity, 48),
                       ),
                     ),
                     const SizedBox(height: 8),
-                    const Text(
+                    Text(
                       'Formatos aceitos: PDF, JPG, PNG, DOC, DOCX',
-                      style: TextStyle(fontSize: 12, color: Colors.grey),
+                      style: TextStyle(
+                          fontSize: 12, color: Theme.of(context).colorScheme.onPrimary),
                     ),
                   ],
                 ),

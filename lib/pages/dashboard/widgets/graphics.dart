@@ -14,8 +14,13 @@ class Graphics extends StatefulWidget {
 class _GraphicsState extends State<Graphics> {
   @override
   Widget build(BuildContext context) {
-    final transactionList = context.read<TransactionProvider>().transactionList;
-    final total = transactionList.fold<double>(0, (sum, item) => sum + item.valor);
+    final transactionList = context
+        .read<TransactionProvider>()
+        .transactionList
+        .where((transaction) => transaction.categoria != 'entrada').toList();
+    final total = transactionList
+        .where((transaction) => transaction.categoria != 'entrada')
+        .fold<double>(0, (sum, item) => sum + item.valor);
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16),
@@ -42,14 +47,11 @@ class _GraphicsState extends State<Graphics> {
               color: Theme.of(context).colorScheme.primary,
             ),
           ),
-
           const SizedBox(height: 20),
           CategoriasChart(transactionList: transactionList, total: total),
-
           const SizedBox(height: 24),
           Divider(color: Theme.of(context).colorScheme.primary, thickness: 1),
           const SizedBox(height: 16),
-
           CategoriasList(transactionList: transactionList, total: total),
           const SizedBox(height: 8),
           Container(

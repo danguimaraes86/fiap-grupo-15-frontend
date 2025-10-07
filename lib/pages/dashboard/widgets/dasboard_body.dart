@@ -17,17 +17,30 @@ class DashboardBody extends StatefulWidget {
 
 class _DashboardBodyState extends State<DashboardBody> {
   @override
-  Widget build(BuildContext context) {
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadTransactions();
+    });
+  }
+
+  void _loadTransactions() {
     Usuario? usuario = context.read<UserAuthProvider>().usuarioLogado;
-    context.read<TransactionProvider>().handleGetAllTransaction(usuario!.uid);
+    if (usuario != null) {
+      context.read<TransactionProvider>().handleGetAllTransaction(usuario.uid);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final transactionProvider = context.watch<TransactionProvider>();
     return SingleChildScrollView(
       child: Column(
         children: [
           Balance(),
           const SizedBox(height: 16),
-          context.watch<TransactionProvider>().transactionList.isEmpty
-              ? ListaVazia()
-              : Graphics(),
+          transactionProvider.transactionList.isEmpty ? ListaVazia() : Graphics(),
           const SizedBox(height: 24),
         ],
       ),
