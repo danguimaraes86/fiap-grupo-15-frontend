@@ -35,14 +35,22 @@ class _DashboardBodyState extends State<DashboardBody> {
   @override
   Widget build(BuildContext context) {
     final transactionProvider = context.watch<TransactionProvider>();
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          Balance(),
-          const SizedBox(height: 16),
-          transactionProvider.transactionList.isEmpty ? ListaVazia() : Graphics(),
-          const SizedBox(height: 24),
-        ],
+
+    return RefreshIndicator(
+      onRefresh: () async {
+        _loadTransactions();
+      },
+      color: Theme.of(context).colorScheme.onPrimary,
+      child: SingleChildScrollView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        child: Column(
+          children: [
+            Balance(),
+            const SizedBox(height: 16),
+            transactionProvider.transactionList.isEmpty ? ListaVazia() : Graphics(),
+            const SizedBox(height: 24),
+          ],
+        ),
       ),
     );
   }
