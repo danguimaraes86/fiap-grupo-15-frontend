@@ -1,0 +1,93 @@
+/* Variáveis baseadas na paleta do Flutter (Imagem 1) */
+:host {
+    --bytebank-primary: #1a237e;
+    /* Azul escuro profundo */
+    --bytebank-secondary: #283593;
+    /* Azul um pouco mais claro */
+    --bytebank-accent: #4caf50;
+    /* Verde para botões de ação (Call to Action) */
+    --text-white: #ffffff;
+}
+
+/* Remove margens padrão e garante altura total */
+.main-content {
+    background: linear-gradient(180deg, var(--bytebank-primary) 0%, var(--bytebank-secondary) 100%);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Ajustes da Navbar */
+.navbar-custom mat-toolbar {
+    background-color: var(--bytebank-primary);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Hero Section */
+.hero-section {
+    padding-top: 60px;
+    padding-bottom: 60px;
+}
+
+.hero-image {
+    max-height: 350px;
+    object-fit: contain;
+    /* Animação suave de entrada */
+    animation: fadeIn 1.5s ease-in-out;
+}
+
+/* Cards de Vantagens */
+.benefit-card {
+    background-color: rgba(255, 255, 255, 0.95);
+    /* Quase branco */
+    border: none;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border-radius: 16px;
+    /* Bordas arredondadas como no Flutter */
+}
+
+.benefit-card:hover {
+    transform: translateY(-10px);
+    /* Efeito de levitação ao passar o mouse */
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+}
+
+.icon-container {
+    background-color: #e8eaf6;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.large-icon {
+    transform: scale(1.5);
+    color: var(--bytebank-primary);
+}
+
+.text-primary {
+    color: var(--bytebank-primary) !important;
+}
+
+/* Footer mobile flutuante */
+.fixed-bottom {
+    background-color: var(--bytebank-primary);
+    z-index: 1000;
+    padding-bottom: env(safe-area-inset-bottom);
+    /* Para iPhones */
+}
+
+/* Animação simples */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

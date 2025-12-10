@@ -1,41 +1,94 @@
-<nav>
-  <mat-toolbar>
-    <span class="mx-auto mx-md-0 mat-text-primary">ByteBank Fiap</span>
-    <span class="flex-md-grow-1"></span>
-    <span class="d-none d-md-inline">
-      <button matButton="tonal" class="me-1" (click)="openRegisterModal()">
-        <mat-icon>person_add</mat-icon>
-        Cadastrar
+<nav class="navbar-custom">
+  <mat-toolbar color="primary" class="d-flex justify-content-between align-items-center px-4">
+    <span class="brand-logo mat-headline-6 mb-0">ByteBank Fiap</span>
+
+    <div class="d-none d-md-block">
+      <button mat-flat-button color="accent" class="me-2 text-dark fw-bold" (click)="openRegisterModal()">
+        <mat-icon>person_add</mat-icon> Cadastrar
       </button>
-      <button matButton="filled" (click)="openLoginModal()">
+      <button mat-stroked-button class="text-white border-white" (click)="openLoginModal()">
+        <mat-icon>login</mat-icon> Entrar
+      </button>
+    </div>
+
+    <div class="d-md-none">
+      <button mat-icon-button (click)="openLoginModal()">
         <mat-icon>login</mat-icon>
-        Entrar
       </button>
-    </span>
+    </div>
   </mat-toolbar>
 </nav>
-<main class="container vh-100">
-  <mat-card>
-    <mat-card-content>
-      Experimente mais liberdade no controle da sua vida financeira. Crie sua conta com a gente!
-    </mat-card-content>
-  </mat-card>
-  <p>Vantagens do nosso banco:</p>
-  <mat-card>
-    <mat-card-content>
-      Experimente mais liberdade no controle da sua vida financeira. Crie sua conta com a gente!
-    </mat-card-content>
-  </mat-card>
+
+<main class="main-content">
+  <section class="hero-section d-flex align-items-center">
+    <div class="container">
+      <div class="row align-items-center flex-column-reverse flex-md-row">
+
+        <div class="col-12 col-md-6 text-center text-md-start mb-4 mb-md-0">
+          <h1 class="display-5 fw-bold text-white mb-3">
+            Experimente mais liberdade no controle da sua vida financeira.
+          </h1>
+          <p class="fs-5 text-white-50 mb-4">
+            Crie sua conta com a gente e tenha o banco na palma da sua mão!
+          </p>
+          <div class="d-grid gap-2 d-md-block">
+            <button mat-raised-button color="accent" class="py-2 px-4 fw-bold fs-6" (click)="openRegisterModal()">
+              Abrir conta agora
+            </button>
+          </div>
+        </div>
+
+        <div class="col-12 col-md-6 text-center mb-4">
+          <img src="assets/images/home_hero.png" alt="Gráfico financeiro" class="img-fluid hero-image">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="features-section py-5">
+    <div class="container">
+      <div class="row mb-5">
+        <div class="col-12 text-center">
+          <h2 class="section-title text-white fw-bold">Vantagens do nosso banco:</h2>
+        </div>
+      </div>
+
+      <div class="row g-4">
+        @for (benefit of benefits; track benefit.title) {
+        <div class="col-12 col-md-6 col-lg-3">
+          <mat-card class="h-100 benefit-card text-center p-3">
+            <div class="icon-container mx-auto mt-3 mb-2">
+              <mat-icon class="large-icon text-primary">{{ benefit.icon }}</mat-icon>
+            </div>
+            <mat-card-content>
+              <h3 class="mat-title-medium fw-bold mb-3 text-primary">{{ benefit.title }}</h3>
+              <p class="mat-body-medium text-secondary">
+                {{ benefit.description }}
+              </p>
+            </mat-card-content>
+          </mat-card>
+        </div>
+        }
+      </div>
+    </div>
+  </section>
 </main>
-<footer class="sticky-bottom">
-  <mat-toolbar class="d-flex d-inline d-md-none justify-content-around">
-    <button matButton="tonal" (click)="openRegisterModal()">
-      <mat-icon>person_add</mat-icon>
-      Cadastrar
+
+<footer class="footer py-4 text-center text-white-50">
+  <div class="container">
+    <p class="mb-1">Desenvolvido por Grupo 15 - FIAP</p>
+    <div class="social-icons mt-2">
+      <mat-icon class="mx-2">language</mat-icon>
+      <mat-icon class="mx-2">email</mat-icon>
+    </div>
+  </div>
+
+  <div class="d-md-none fixed-bottom bg-primary p-2 d-flex justify-content-around border-top border-white-50">
+    <button mat-button class="text-white" (click)="openRegisterModal()">
+      <mat-icon>person_add</mat-icon> Criar Conta
     </button>
-    <button matButton="filled" (click)="openLoginModal()">
-      <mat-icon>login</mat-icon>
-      Entrar
+    <button mat-button class="text-white" (click)="openLoginModal()">
+      <mat-icon>login</mat-icon> Entrar
     </button>
-  </mat-toolbar>
+  </div>
 </footer>

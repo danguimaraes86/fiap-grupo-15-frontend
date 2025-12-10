@@ -5,9 +5,18 @@ import { MatDialogActions, MatDialogClose, MatDialogContent } from '@angular/mat
 import { MatError, MatFormField, MatLabel, MatPrefix, MatSuffix } from '@angular/material/form-field';
 import { MatIcon } from '@angular/material/icon';
 import { MatInput } from '@angular/material/input';
-import { LoginRequest } from '../../models/request.model';
-import { AuthenticationService } from '../../services/authentication.service';
+// import { LoginRequest } from '../../models/request.model'; // <--- COMENTADO: ARQUIVO NÃO ENCONTRADO
+// import { AuthenticationService } from '../../services/authentication.service'; // <--- COMENTADO: ARQUIVO NÃO ENCONTRADO
 import { FirebaseError } from 'firebase/app';
+
+// ----------------------------------------------------------------------------------
+// **PLACEHOLDERS:** CLASSES TEMPORÁRIAS PARA EVITAR ERROS DE INJEÇÃO E TIPOS
+// ----------------------------------------------------------------------------------
+// Crie uma classe vazia temporária para o serviço não encontrado:
+class AuthenticationService { }
+// Crie uma interface vazia temporária para o modelo não encontrado:
+interface LoginRequest { }
+// ----------------------------------------------------------------------------------
 
 @Component({
   selector: 'app-login-modal',
@@ -33,6 +42,7 @@ export class LoginModal {
   loginForm: FormGroup;
   hidePassword = true;
 
+  // CORREÇÃO DE INJEÇÃO: authService AGORA USA A CLASSE TEMPORÁRIA
   constructor(private fb: FormBuilder, private authService: AuthenticationService) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
@@ -43,9 +53,12 @@ export class LoginModal {
   onSubmit() {
     if (this.loginForm.valid) {
       console.log('Cadastro:', this.loginForm.value);
-      
-      this.authService.login(this.loginForm.value as LoginRequest)
-        .subscribe(user => console.log(user))
+
+      // Comentamos o código que usa o serviço, pois ele está incompleto/ausente
+      /*       this.authService.login(this.loginForm.value as LoginRequest)
+        // CORREÇÃO DE TIPO: Adicionamos ': any' para resolver o erro TS7006
+        .subscribe((user: any) => console.log(user))
+      */
     }
   }
 
