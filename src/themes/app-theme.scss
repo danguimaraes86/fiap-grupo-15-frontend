@@ -1,0 +1,32 @@
+@use '@angular/material' as mat;
+@use './custom-colors.scss' as _custom-colors;
+
+@include mat.core();
+
+$custom-theme: mat.define-theme(
+  (
+    color: (
+      theme-type: light,
+      primary: _custom-colors.$primary-palette,
+      tertiary: _custom-colors.$tertiary-palette,
+    ),
+  )
+);
+
+$material-azure: mat.define-theme(
+  (
+    color: (
+      theme-type: light,
+      primary: mat.$azure-palette,
+      tertiary: mat.$azure-palette,
+    ),
+  )
+);
+
+html {
+  @include mat.system-level-colors($material-azure);
+  @include mat.system-level-typography($material-azure);
+  @include mat.system-classes();
+
+  @include mat.all-component-themes($material-azure);
+}
