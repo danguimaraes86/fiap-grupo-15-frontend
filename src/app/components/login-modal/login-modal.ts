@@ -35,6 +35,7 @@ interface LoginRequest { }
     MatError,
     ReactiveFormsModule
   ],
+  providers: [AuthenticationService],
   templateUrl: './login-modal.html',
   styleUrl: './login-modal.css',
 })

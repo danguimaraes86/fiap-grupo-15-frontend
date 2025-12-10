@@ -1,19 +1,20 @@
 <nav class="navbar-custom mobile-fixed-header">
   <mat-toolbar color="primary" class="d-flex justify-content-between align-items-center px-4">
     <img src="assets/images/logo.svg" alt="ByteBank Logo" class="brand-logo mat-headline-6 mb-0">
-
     <div class="d-none d-md-block">
-      <button mat-raised-button color="accent" class="me-2 fw-bold " (click)="openRegisterModal()">
+      <button mat-raised-button color="accent" class="me-2 fw-bold" (click)="openRegisterModal()">
         <mat-icon>person_add</mat-icon> Abrir conta agora
       </button>
       <button mat-stroked-button class="text-white border-white" (click)="openLoginModal()">
         <mat-icon>login</mat-icon> Entrar
       </button>
     </div>
-
     <div class="d-md-none">
+      <button mat-icon-button (click)="openRegisterModal()" class="me-2">
+        <mat-icon class="text-white">person_add</mat-icon>
+      </button>
       <button mat-icon-button (click)="openLoginModal()">
-        <mat-icon>login</mat-icon>
+        <mat-icon class="text-white">login</mat-icon>
       </button>
     </div>
   </mat-toolbar>
@@ -73,7 +74,7 @@
 <footer class="footer-custom">
   <div class="container">
     <div class="row py-5">
-      <div class="col-12 col-md-4 mb-4 mb-md-0">
+      <div class="col-12 col-md-4 mb-4 mb-md-0 text-center">
         <h4 class="fw-bold text-white mb-3">Serviços</h4>
         <ul class="list-unstyled text-white-50">
           <li class="mb-2">Conta corrente</li>
@@ -81,7 +82,7 @@
           <li class="mb-2">Cartão de crédito</li>
         </ul>
       </div>
-      <div class="col-12 col-md-4 mb-4 mb-md-0">
+      <div class="col-12 col-md-4 mb-4 mb-md-0 text-center">
         <h4 class="fw-bold text-white mb-3">Contato</h4>
         <ul class="list-unstyled text-white-50">
           <li class="mb-2">0800 004 250 08</li>
@@ -89,7 +90,7 @@
           <li class="mb-2">ouvidoria@bytebank.com.br</li>
         </ul>
       </div>
-      <div class="col-12 col-md-4 ">
+      <div class="col-12 col-md-4 text-center">
         <h4 class="fw-bold text-white mb-3">Desenvolvido por Alura</h4>
         <div class="brand-logo mb-3 d-flex justify-content-center">
           <img src="assets/images/logo.svg" alt="ByteBank Logo" class="brand-logo-footer">

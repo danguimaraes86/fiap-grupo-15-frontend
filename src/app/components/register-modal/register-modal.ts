@@ -36,6 +36,7 @@ interface RegisterRequest { }
     MatError,
     ReactiveFormsModule
   ],
+  providers: [AuthenticationService],
   templateUrl: './register-modal.html',
   styleUrl: './register-modal.css',
 })
