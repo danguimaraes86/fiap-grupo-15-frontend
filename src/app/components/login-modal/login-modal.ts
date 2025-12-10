@@ -8,6 +8,7 @@ import { MatInput } from '@angular/material/input';
 import { LoginRequest } from '../../models/request.model';
 import { AuthenticationService } from '../../services/authentication.service';
 import { FirebaseError } from 'firebase/app';
+import { User } from 'firebase/auth';
 
 @Component({
   selector: 'app-login-modal',
@@ -43,9 +44,9 @@ export class LoginModal {
   onSubmit() {
     if (this.loginForm.valid) {
       console.log('Cadastro:', this.loginForm.value);
-      
+
       this.authService.login(this.loginForm.value as LoginRequest)
-        .subscribe(user => console.log(user))
+        .subscribe((user: User) => console.log(user))
     }
   }
 

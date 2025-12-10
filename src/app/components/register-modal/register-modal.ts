@@ -8,6 +8,7 @@ import { MatIcon } from '@angular/material/icon';
 import { MatInput } from '@angular/material/input';
 import { RegisterRequest } from '../../models/request.model';
 import { AuthenticationService } from '../../services/authentication.service';
+import { User } from 'firebase/auth';
 
 @Component({
   selector: 'app-register-modal',
@@ -48,7 +49,7 @@ export class RegisterModal {
       console.log('Cadastro:', this.registerForm.value);
 
       this.authService.register(this.registerForm.value as RegisterRequest)
-        .subscribe(user => console.log(user))
+        .subscribe((user: User) => console.log(user))
     }
   }
 
