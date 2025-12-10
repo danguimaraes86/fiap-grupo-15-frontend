@@ -1,0 +1,41 @@
+<nav>
+  <mat-toolbar>
+    <span class="mx-auto mx-md-0 mat-text-primary">ByteBank Fiap</span>
+    <span class="flex-md-grow-1"></span>
+    <span class="d-none d-md-inline">
+      <button matButton="tonal" class="me-1" (click)="openRegisterModal()">
+        <mat-icon>person_add</mat-icon>
+        Cadastrar
+      </button>
+      <button matButton="filled" (click)="openLoginModal()">
+        <mat-icon>login</mat-icon>
+        Entrar
+      </button>
+    </span>
+  </mat-toolbar>
+</nav>
+<main class="container vh-100">
+  <mat-card>
+    <mat-card-content>
+      Experimente mais liberdade no controle da sua vida financeira. Crie sua conta com a gente!
+    </mat-card-content>
+  </mat-card>
+  <p>Vantagens do nosso banco:</p>
+  <mat-card>
+    <mat-card-content>
+      Experimente mais liberdade no controle da sua vida financeira. Crie sua conta com a gente!
+    </mat-card-content>
+  </mat-card>
+</main>
+<footer class="sticky-bottom">
+  <mat-toolbar class="d-flex d-inline d-md-none justify-content-around">
+    <button matButton="tonal" (click)="openRegisterModal()">
+      <mat-icon>person_add</mat-icon>
+      Cadastrar
+    </button>
+    <button matButton="filled" (click)="openLoginModal()">
+      <mat-icon>login</mat-icon>
+      Entrar
+    </button>
+  </mat-toolbar>
+</footer>
