@@ -1,12 +1,15 @@
 {
   "name": "fiap-grupo-15-frontend",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "scripts": {
     "ng": "ng",
+    "prestart": "NODE_ENV=development pnpm run generate-env",
     "start": "ng serve",
+    "prebuild": "NODE_ENV=production pnpm run generate-env",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "generate-env": "node --env-file-if-exists=.env src/environments/generate-environment.js"
   },
   "prettier": {
     "printWidth": 100,
@@ -20,6 +23,7 @@
       }
     ]
   },
+  "type": "module",
   "private": true,
   "dependencies": {
     "@angular/cdk": "^21.0.0",
