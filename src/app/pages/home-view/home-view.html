@@ -1,10 +1,10 @@
-<nav class="navbar-custom">
+<nav class="navbar-custom mobile-fixed-header">
   <mat-toolbar color="primary" class="d-flex justify-content-between align-items-center px-4">
-    <span class="brand-logo mat-headline-6 mb-0">ByteBank Fiap</span>
+    <img src="assets/images/logo.svg" alt="ByteBank Logo" class="brand-logo mat-headline-6 mb-0">
 
     <div class="d-none d-md-block">
-      <button mat-flat-button color="accent" class="me-2 text-dark fw-bold" (click)="openRegisterModal()">
-        <mat-icon>person_add</mat-icon> Cadastrar
+      <button mat-raised-button color="accent" class="me-2 fw-bold " (click)="openRegisterModal()">
+        <mat-icon>person_add</mat-icon> Abrir conta agora
       </button>
       <button mat-stroked-button class="text-white border-white" (click)="openLoginModal()">
         <mat-icon>login</mat-icon> Entrar
@@ -31,11 +31,6 @@
           <p class="fs-5 text-white-50 mb-4">
             Crie sua conta com a gente e tenha o banco na palma da sua mão!
           </p>
-          <div class="d-grid gap-2 d-md-block">
-            <button mat-raised-button color="accent" class="py-2 px-4 fw-bold fs-6" (click)="openRegisterModal()">
-              Abrir conta agora
-            </button>
-          </div>
         </div>
 
         <div class="col-12 col-md-6 text-center mb-4">
@@ -45,7 +40,7 @@
     </div>
   </section>
 
-  <section class="features-section py-5">
+  <section class="features-section">
     <div class="container">
       <div class="row mb-5">
         <div class="col-12 text-center">
@@ -54,9 +49,10 @@
       </div>
 
       <div class="row g-4">
-        @for (benefit of benefits; track benefit.title) {
+        @for (benefit of benefits; track benefit.title; let i = $index) {
         <div class="col-12 col-md-6 col-lg-3">
-          <mat-card class="h-100 benefit-card text-center p-3">
+          <mat-card class="h-100 benefit-card text-center p-3" [style.animation-delay]="(i * 0.2) + 's'">
+
             <div class="icon-container mx-auto mt-3 mb-2">
               <mat-icon class="large-icon text-primary">{{ benefit.icon }}</mat-icon>
             </div>
@@ -74,21 +70,36 @@
   </section>
 </main>
 
-<footer class="footer py-4 text-center text-white-50">
+<footer class="footer-custom">
   <div class="container">
-    <p class="mb-1">Desenvolvido por Grupo 15 - FIAP</p>
-    <div class="social-icons mt-2">
-      <mat-icon class="mx-2">language</mat-icon>
-      <mat-icon class="mx-2">email</mat-icon>
+    <div class="row py-5">
+      <div class="col-12 col-md-4 mb-4 mb-md-0">
+        <h4 class="fw-bold text-white mb-3">Serviços</h4>
+        <ul class="list-unstyled text-white-50">
+          <li class="mb-2">Conta corrente</li>
+          <li class="mb-2">Conta PJ</li>
+          <li class="mb-2">Cartão de crédito</li>
+        </ul>
+      </div>
+      <div class="col-12 col-md-4 mb-4 mb-md-0">
+        <h4 class="fw-bold text-white mb-3">Contato</h4>
+        <ul class="list-unstyled text-white-50">
+          <li class="mb-2">0800 004 250 08</li>
+          <li class="mb-2">meajuda@bytebank.com.br</li>
+          <li class="mb-2">ouvidoria@bytebank.com.br</li>
+        </ul>
+      </div>
+      <div class="col-12 col-md-4 ">
+        <h4 class="fw-bold text-white mb-3">Desenvolvido por Alura</h4>
+        <div class="brand-logo mb-3 d-flex justify-content-center">
+          <img src="assets/images/logo.svg" alt="ByteBank Logo" class="brand-logo-footer">
+        </div>
+        <div class="social-icons d-flex gap-3 justify-content-center">
+          <mat-icon class="text-white pointer">photo_camera</mat-icon>
+          <mat-icon class="text-white pointer">chat</mat-icon>
+          <mat-icon class="text-white pointer">smart_display</mat-icon>
+        </div>
+      </div>
     </div>
-  </div>
-
-  <div class="d-md-none fixed-bottom bg-primary p-2 d-flex justify-content-around border-top border-white-50">
-    <button mat-button class="text-white" (click)="openRegisterModal()">
-      <mat-icon>person_add</mat-icon> Criar Conta
-    </button>
-    <button mat-button class="text-white" (click)="openLoginModal()">
-      <mat-icon>login</mat-icon> Entrar
-    </button>
   </div>
 </footer>

@@ -1,15 +1,12 @@
-/* Variáveis baseadas na paleta do Flutter (Imagem 1) */
 :host {
-    --bytebank-primary: #1a237e;
-    /* Azul escuro profundo */
-    --bytebank-secondary: #283593;
-    /* Azul um pouco mais claro */
+    --bytebank-primary: #8b9ab5;
+    --bytebank-secondary: #274c91;
+    --bytebank-terciary: #324566;
     --bytebank-accent: #4caf50;
     /* Verde para botões de ação (Call to Action) */
     --text-white: #ffffff;
 }
 
-/* Remove margens padrão e garante altura total */
 .main-content {
     background: linear-gradient(180deg, var(--bytebank-primary) 0%, var(--bytebank-secondary) 100%);
     min-height: 100vh;
@@ -17,13 +14,28 @@
     flex-direction: column;
 }
 
-/* Ajustes da Navbar */
 .navbar-custom mat-toolbar {
-    background-color: var(--bytebank-primary);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    background-color: var(--bytebank-terciary);
+    color: var(--text-white);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    position: relative;
+    z-index: 10;
 }
 
-/* Hero Section */
+@media (max-width: 768px) {
+    .mobile-fixed-header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        z-index: 1000;
+    }
+
+    .main-content {
+        padding-top: 60px;
+    }
+}
+
 .hero-section {
     padding-top: 60px;
     padding-bottom: 60px;
@@ -32,23 +44,20 @@
 .hero-image {
     max-height: 350px;
     object-fit: contain;
-    /* Animação suave de entrada */
     animation: fadeIn 1.5s ease-in-out;
 }
 
-/* Cards de Vantagens */
 .benefit-card {
     background-color: rgba(255, 255, 255, 0.95);
-    /* Quase branco */
     border: none;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     border-radius: 16px;
-    /* Bordas arredondadas como no Flutter */
+    opacity: 0;
+    animation: fadeIn 0.8s ease-out forwards;
 }
 
 .benefit-card:hover {
     transform: translateY(-10px);
-    /* Efeito de levitação ao passar o mouse */
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
 }
 
@@ -64,22 +73,25 @@
 
 .large-icon {
     transform: scale(1.5);
-    color: var(--bytebank-primary);
 }
 
 .text-primary {
-    color: var(--bytebank-primary) !important;
+    color: var(--bytebank-secondary) !important;
 }
 
-/* Footer mobile flutuante */
-.fixed-bottom {
-    background-color: var(--bytebank-primary);
-    z-index: 1000;
-    padding-bottom: env(safe-area-inset-bottom);
-    /* Para iPhones */
+.footer-custom {
+    background-color: var(--bytebank-terciary);
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    color: var(--text-white);
+    margin-top: auto;
+    position: relative;
 }
 
-/* Animação simples */
+.footer-custom ul {
+    list-style: none;
+    padding-left: 0;
+}
+
 @keyframes fadeIn {
     from {
         opacity: 0;

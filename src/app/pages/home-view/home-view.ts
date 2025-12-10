@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { CommonModule } from '@angular/common'; // Para diretivas comuns se necessário
+import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
@@ -8,7 +8,6 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { LoginModal } from '../../components/login-modal/login-modal';
 import { RegisterModal } from '../../components/register-modal/register-modal';
 
-// Interface para tipar as vantagens (Boas práticas)
 interface Benefit {
   icon: string;
   title: string;
@@ -17,7 +16,7 @@ interface Benefit {
 
 @Component({
   selector: 'app-home-view',
-  standalone: true, // Angular moderno
+  standalone: true,
   imports: [
     CommonModule,
     MatToolbarModule,
@@ -31,7 +30,6 @@ interface Benefit {
 export class HomeView {
   readonly authModal = inject(MatDialog);
 
-  // Dados migrados do Flutter (CustomCardVantagem) para um Array
   readonly benefits: Benefit[] = [
     {
       icon: 'credit_card',
@@ -39,7 +37,7 @@ export class HomeView {
       description: 'Isso mesmo, nossa conta é digital, sem custo fixo e mais que isso: sem tarifa de manutenção.'
     },
     {
-      icon: 'local_atm', // No Flutter era 'atm', no Material Web é 'local_atm'
+      icon: 'local_atm',
       title: 'Saques sem custo',
       description: 'Você pode sacar gratuitamente 4x por mês de qualquer Banco 24h.'
     },
@@ -58,7 +56,7 @@ export class HomeView {
   openRegisterModal() {
     this.authModal.open(RegisterModal, {
       id: 'RegisterModal',
-      minWidth: '350px', // Melhor controle de largura
+      minWidth: '350px',
       maxWidth: '90vw'
     });
   }
