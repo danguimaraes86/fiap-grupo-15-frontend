@@ -1,12 +1,15 @@
-import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component, effect, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { LoginModal } from '../../components/login-modal/login-modal';
 import { RegisterModal } from '../../components/register-modal/register-modal';
+import { SnackBar } from '../../components/snack-bar/snack-bar';
+import { AuthenticationService } from '../../services/authentication.service';
 
 interface Benefit {
   icon: string;
@@ -28,7 +31,10 @@ interface Benefit {
   styleUrl: './home-view.css',
 })
 export class HomeView {
+
+  readonly authService = inject(AuthenticationService)
   readonly authModal = inject(MatDialog);
+  readonly snackBar = inject(MatSnackBar)
 
   readonly benefits: Benefit[] = [
     {
@@ -53,19 +59,32 @@ export class HomeView {
     }
   ];
 
+  constructor() {
+    effect(() => {
+      const errorMessage = this.authService.authErrorMessage();
+      if (errorMessage) {
+        this.snackBar.openFromComponent(SnackBar, {
+          duration: 5000,
+          horizontalPosition: 'center',
+          verticalPosition: 'bottom',
+          panelClass: ['error-snackbar'],
+          data: errorMessage
+        })
+      }
+    })
+  }
+
   openRegisterModal() {
     this.authModal.open(RegisterModal, {
       id: 'RegisterModal',
-      minWidth: '350px',
-      maxWidth: '90vw'
+      minWidth: '50%',
     });
   }
 
   openLoginModal() {
     this.authModal.open(LoginModal, {
       id: 'LoginModal',
-      minWidth: '350px',
-      maxWidth: '90vw'
+      minWidth: '50%',
     });
   }
 }
