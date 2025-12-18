@@ -1,11 +1,13 @@
 import { CommonModule } from '@angular/common';
-import { Component, effect, inject } from '@angular/core';
+import { Component, computed, effect, inject, OnDestroy, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
+import { MatProgressSpinner } from "@angular/material/progress-spinner";
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatToolbarModule } from '@angular/material/toolbar';
+import { Router } from '@angular/router';
 import { LoginModal } from '../../components/login-modal/login-modal';
 import { RegisterModal } from '../../components/register-modal/register-modal';
 import { SnackBar } from '../../components/snack-bar/snack-bar';
@@ -25,16 +27,46 @@ interface Benefit {
     MatToolbarModule,
     MatCardModule,
     MatIconModule,
-    MatButtonModule
+    MatButtonModule,
+    MatProgressSpinner
   ],
   templateUrl: './home-view.html',
   styleUrl: './home-view.css',
 })
-export class HomeView {
+export class HomeView implements OnDestroy {
 
-  readonly authService = inject(AuthenticationService)
-  readonly authModal = inject(MatDialog);
-  readonly snackBar = inject(MatSnackBar)
+  private _authService = inject(AuthenticationService)
+  private _router = inject(Router)
+
+  private _modalRef = inject(MatDialog);
+  private _snackBarRef = inject(MatSnackBar)
+
+  private _hasOpenModals = signal(false);
+  readonly showLoading = computed(() => {
+    return this._authService.isLoading() && !this._hasOpenModals();
+  });
+
+  private _effectRef = effect(() => {
+    const user = this._authService.userSignal()
+    if (user) {
+      this._modalRef.getDialogById('RegisterModal')?.close()
+      this._modalRef.getDialogById('LoginModal')?.close()
+      this._router.navigate(['dashboard'])
+    }
+
+    const errorMessage = this._authService.authErrorMessage();
+    if (errorMessage) {
+      this._snackBarRef.openFromComponent(SnackBar, {
+        duration: 5000,
+        horizontalPosition: 'center',
+        verticalPosition: 'bottom',
+        panelClass: ['error-snackbar'],
+        data: errorMessage
+      })
+    }
+
+    this._authService.clearAuthError()
+  })
 
   readonly benefits: Benefit[] = [
     {
@@ -59,32 +91,27 @@ export class HomeView {
     }
   ];
 
-  constructor() {
-    effect(() => {
-      const errorMessage = this.authService.authErrorMessage();
-      if (errorMessage) {
-        this.snackBar.openFromComponent(SnackBar, {
-          duration: 5000,
-          horizontalPosition: 'center',
-          verticalPosition: 'bottom',
-          panelClass: ['error-snackbar'],
-          data: errorMessage
-        })
-      }
-    })
+  ngOnDestroy(): void {
+    this._effectRef.destroy()
   }
 
   openRegisterModal() {
-    this.authModal.open(RegisterModal, {
+    this._hasOpenModals.set(true)
+    this._modalRef.open(RegisterModal, {
       id: 'RegisterModal',
       minWidth: '50%',
-    });
+    }).afterClosed().subscribe(() => {
+      this._hasOpenModals.set(false)
+    })
   }
 
   openLoginModal() {
-    this.authModal.open(LoginModal, {
+    this._hasOpenModals.set(true)
+    this._modalRef.open(LoginModal, {
       id: 'LoginModal',
       minWidth: '50%',
-    });
+    }).afterClosed().subscribe(() => {
+      this._hasOpenModals.set(false)
+    })
   }
 }
