@@ -5,7 +5,7 @@
   </div>
 
   <mat-dialog-content>
-    <form [formGroup]="registerForm" class="d-flex flex-column gap-3">
+    <form [formGroup]="registerForm" class="d-flex flex-column gap-3" (submit)="onSubmit()">
       <mat-form-field appearance="outline">
         <mat-label>Nome</mat-label>
         <input matInput placeholder="Digite seu nome" formControlName="name" />
@@ -57,13 +57,19 @@
       registerForm.get('acceptTerms')?.touched) {
       <mat-error class="text-danger fs-6 ms-5">Você deve aceitar os termos e condições</mat-error>
       }
+
+      <button class="d-none" type="submit"></button>
     </form>
   </mat-dialog-content>
 
   <mat-dialog-actions align="center" class="p-3 gap-2">
+    @if (isLoading()) {
+    <mat-spinner diameter="40" />
+    } @else {
     <button matButton="" matDialogClose>Cancelar</button>
     <button matButton="filled" (click)="onSubmit()" [disabled]="!registerForm.valid">
       Cadastrar
     </button>
+    }
   </mat-dialog-actions>
 </div>
