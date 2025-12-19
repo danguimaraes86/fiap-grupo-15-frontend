@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { environment } from "../../environments/environment";
+import { environment } from "../../environments/environment.development";
 
 const firebaseConfig = {
   apiKey: environment.FIREBASE_API_KEY,

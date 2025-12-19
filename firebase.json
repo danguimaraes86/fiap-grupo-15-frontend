@@ -1,0 +1,22 @@
+{
+    "flutter": {
+        "platforms": {
+            "android": {
+                "default": {
+                    "projectId": "fiap-tech-challenge-grupo-15",
+                    "appId": "1:930991777624:android:b30fc798c731ecbba6e72d",
+                    "fileOutput": "android/app/google-services.json"
+                }
+            },
+            "dart": {
+                "lib/firebase_options.dart": {
+                    "projectId": "fiap-tech-challenge-grupo-15",
+                    "configurations": {
+                        "android": "1:930991777624:android:b30fc798c731ecbba6e72d",
+                        "web": "1:930991777624:web:3dbaf2551a4844cba6e72d"
+                    }
+                }
+            }
+        }
+    }
+}

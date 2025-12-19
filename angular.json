@@ -19,9 +19,16 @@
           "options": {
             "browser": "src/main.ts",
             "tsConfig": "tsconfig.app.json",
-            "assets": ["src/assets", { "glob": "**/*", "input": "public" }],
+            "assets": [
+              {
+                "glob": "**/*",
+                "input": "public"
+              },
+              "src/assets"
+            ],
             "styles": [
               "src/themes/app-theme.scss",
+              "src/themes/custom-components.scss",
               "node_modules/bootstrap/dist/css/bootstrap-grid.css",
               "node_modules/bootstrap/dist/css/bootstrap-utilities.css",
               "node_modules/bootstrap/dist/css/bootstrap-reboot.css"

@@ -24,9 +24,9 @@ $material-azure: mat.define-theme(
 );
 
 html {
-  @include mat.system-level-colors($material-azure);
-  @include mat.system-level-typography($material-azure);
+  @include mat.system-level-colors($custom-theme);
+  @include mat.system-level-typography($custom-theme);
   @include mat.system-classes();
 
-  @include mat.all-component-themes($material-azure);
+  @include mat.all-component-themes($custom-theme);
 }

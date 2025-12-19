@@ -1,0 +1,75 @@
+<div class="mat-bg-surface">
+  <div class="d-flex justify-content-center align-items-center mat-text-primary gap-3 p-3">
+    <mat-icon class="h-auto w-auto fs-1">person_add</mat-icon>
+    <h1 class="m-0">Cadastro</h1>
+  </div>
+
+  <mat-dialog-content>
+    <form [formGroup]="registerForm" class="d-flex flex-column gap-3" (submit)="onSubmit()">
+      <mat-form-field appearance="outline">
+        <mat-label>Nome</mat-label>
+        <input matInput placeholder="Digite seu nome" formControlName="name" />
+        <mat-icon matPrefix>person</mat-icon>
+        @if (registerForm.get('name')?.hasError('required') && registerForm.get('name')?.touched) {
+        <mat-error>Nome é obrigatório</mat-error>
+        } @if (registerForm.get('name')?.hasError('minlength')) {
+        <mat-error>Nome deve ter no mínimo 3 caracteres</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>E-mail</mat-label>
+        <input matInput type="email" placeholder="Digite seu e-mail" formControlName="email" />
+        <mat-icon matPrefix>email</mat-icon>
+        @if (registerForm.get('email')?.hasError('required') && registerForm.get('email')?.touched)
+        {
+        <mat-error>E-mail é obrigatório</mat-error>
+        } @if (registerForm.get('email')?.hasError('email')) {
+        <mat-error>E-mail inválido</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Senha</mat-label>
+        <input
+          matInput
+          [type]="hidePassword ? 'password' : 'text'"
+          placeholder="Digite sua senha"
+          formControlName="password"
+        />
+        <mat-icon matPrefix>lock</mat-icon>
+        <button matIconButton matSuffix (click)="togglePasswordVisibility()" type="button">
+          <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+        </button>
+        @if (registerForm.get('password')?.hasError('required') &&
+        registerForm.get('password')?.touched) {
+        <mat-error>Senha é obrigatória</mat-error>
+        } @if (registerForm.get('password')?.hasError('minlength')) {
+        <mat-error>Senha deve ter no mínimo 6 caracteres</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-checkbox formControlName="acceptTerms">
+        Li e estou ciente quanto às condições de tratamento dos meus dados conforme descrito na
+        Política de Privacidade do banco.
+      </mat-checkbox>
+      @if (registerForm.get('acceptTerms')?.hasError('required') &&
+      registerForm.get('acceptTerms')?.touched) {
+      <mat-error class="text-danger fs-6 ms-5">Você deve aceitar os termos e condições</mat-error>
+      }
+
+      <button class="d-none" type="submit"></button>
+    </form>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="center" class="p-3 gap-2">
+    @if (isLoading()) {
+    <mat-spinner diameter="40" />
+    } @else {
+    <button matButton="" matDialogClose>Cancelar</button>
+    <button matButton="filled" (click)="onSubmit()" [disabled]="!registerForm.valid">
+      Cadastrar
+    </button>
+    }
+  </mat-dialog-actions>
+</div>

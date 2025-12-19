@@ -1,0 +1,117 @@
+@if (showLoading()) {
+<div class="loading-overlay">
+  <mat-spinner />
+</div>
+}
+
+<nav class="navbar-custom mobile-fixed-header">
+  <mat-toolbar class="d-flex justify-content-between align-items-center px-4">
+    <img src="assets/images/logo.svg" alt="ByteBank Logo" class="brand-logo mat-headline-6 mb-0" />
+    <div class="d-none d-md-block">
+      <button mat-raised-button class="me-2 fw-bold" (click)="openRegisterModal()">
+        <mat-icon>person_add</mat-icon> Abrir conta agora
+      </button>
+      <button mat-stroked-button class="text-white border-white" (click)="openLoginModal()">
+        <mat-icon>login</mat-icon> Entrar
+      </button>
+    </div>
+    <div class="d-md-none">
+      <button mat-icon-button (click)="openRegisterModal()" class="me-2">
+        <mat-icon class="text-white">person_add</mat-icon>
+      </button>
+      <button mat-icon-button (click)="openLoginModal()">
+        <mat-icon class="text-white">login</mat-icon>
+      </button>
+    </div>
+  </mat-toolbar>
+</nav>
+
+<main class="main-content">
+  <section class="hero-section d-flex align-items-center">
+    <div class="container">
+      <div class="row align-items-center flex-column-reverse flex-md-row">
+        <div class="col-12 col-md-6 text-center text-md-start mb-4 mb-md-0">
+          <h1 class="display-5 fw-bold text-white mb-3">
+            Experimente mais liberdade no controle da sua vida financeira.
+          </h1>
+          <p class="fs-5 text-white-50 mb-4">
+            Crie sua conta com a gente e tenha o banco na palma da sua mão!
+          </p>
+        </div>
+
+        <div class="col-12 col-md-6 text-center mb-4">
+          <img
+            src="assets/images/home_hero.png"
+            alt="Gráfico financeiro"
+            class="img-fluid hero-image"
+          />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="features-section">
+    <div class="container">
+      <div class="row mb-5">
+        <div class="col-12 text-center">
+          <h2 class="section-title text-white fw-bold">Vantagens do nosso banco:</h2>
+        </div>
+      </div>
+
+      <div class="row g-4">
+        @for (benefit of benefits; track benefit.title; let i = $index) {
+        <div class="col-12 col-md-6 col-lg-3">
+          <mat-card
+            class="h-100 benefit-card text-center p-3"
+            [style.animation-delay]="i * 0.2 + 's'"
+          >
+            <div class="icon-container mx-auto mt-3 mb-2">
+              <mat-icon class="large-icon text-primary">{{ benefit.icon }}</mat-icon>
+            </div>
+            <mat-card-content>
+              <h3 class="mat-title-medium fw-bold mb-3 text-primary">{{ benefit.title }}</h3>
+              <p class="mat-body-medium text-secondary">
+                {{ benefit.description }}
+              </p>
+            </mat-card-content>
+          </mat-card>
+        </div>
+        }
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="footer-custom">
+  <div class="container">
+    <div class="row py-5">
+      <div class="col-12 col-md-4 mb-4 mb-md-0 text-center">
+        <h4 class="fw-bold text-white mb-3">Serviços</h4>
+        <ul class="list-unstyled text-white-50">
+          <li class="mb-2">Conta corrente</li>
+          <li class="mb-2">Conta PJ</li>
+          <li class="mb-2">Cartão de crédito</li>
+        </ul>
+      </div>
+      <div class="col-12 col-md-4 mb-4 mb-md-0 text-center">
+        <h4 class="fw-bold text-white mb-3">Contato</h4>
+        <ul class="list-unstyled text-white-50">
+          <li class="mb-2">0800 004 250 08</li>
+          <li class="mb-2">meajuda@bytebank.com.br</li>
+          <li class="mb-2">ouvidoria@bytebank.com.br</li>
+        </ul>
+      </div>
+      <div class="col-12 col-md-4 text-center">
+        <h4 class="fw-bold text-white mb-3">Desenvolvido por Alura</h4>
+        <div class="brand-logo mb-3 d-flex justify-content-center">
+          <img src="assets/images/logo.svg" alt="ByteBank Logo" class="brand-logo-footer" />
+        </div>
+        <div class="social-icons d-flex gap-3 justify-content-center">
+          <mat-icon class="text-white pointer">photo_camera</mat-icon>
+          <mat-icon class="text-white pointer">chat</mat-icon>
+          <mat-icon class="text-white pointer">smart_display</mat-icon>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
