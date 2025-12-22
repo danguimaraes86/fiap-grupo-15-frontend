@@ -3,13 +3,13 @@
   "version": "0.0.1",
   "scripts": {
     "ng": "ng",
-    "prestart": "set NODE_ENV=development && npm run generate-env",
+    "prestart": "NODE_ENV=development pnpm run generate-env",
     "start": "ng serve",
-    "prebuild": "set NODE_ENV=production && npm run generate-env",
+    "prebuild": "NODE_ENV=production pnpm run generate-env",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "generate-env": "node src/environments/generate-environment.js"
+    "generate-env": "node --env-file-if-exists=.env src/environments/generate-environment.js"
   },
   "prettier": {
     "printWidth": 100,

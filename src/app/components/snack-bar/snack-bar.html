@@ -1,0 +1,8 @@
+<div class="d-flex">
+  <span matSnackBarLabel> {{ message }} </span>
+  <span matSnackBarActions>
+    <button matButton matSnackBarAction (click)="snackBarRef.dismissWithAction()">
+      <mat-icon class="mat-text-on-primary mx-auto">close</mat-icon>
+    </button>
+  </span>
+</div>

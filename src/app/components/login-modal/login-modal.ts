@@ -1,14 +1,12 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatDialogActions, MatDialogClose, MatDialogContent } from '@angular/material/dialog';
 import { MatError, MatFormField, MatLabel, MatPrefix, MatSuffix } from '@angular/material/form-field';
 import { MatIcon } from '@angular/material/icon';
 import { MatInput } from '@angular/material/input';
-import { LoginRequest } from '../../models/request.model';
+import { MatProgressSpinner } from "@angular/material/progress-spinner";
 import { AuthenticationService } from '../../services/authentication.service';
-import { FirebaseError } from 'firebase/app';
-import { User } from 'firebase/auth';
 
 @Component({
   selector: 'app-login-modal',
@@ -25,28 +23,27 @@ import { User } from 'firebase/auth';
     MatButton,
     MatIconButton,
     MatError,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    MatProgressSpinner
   ],
   templateUrl: './login-modal.html',
   styleUrl: './login-modal.css',
 })
 export class LoginModal {
-  loginForm: FormGroup;
-  hidePassword = true;
+  private readonly _fb = inject(FormBuilder);
+  private readonly _authService = inject(AuthenticationService);
 
-  constructor(private fb: FormBuilder, private authService: AuthenticationService) {
-    this.loginForm = this.fb.group({
-      email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(6)]],
-    });
-  }
+  isLoading = this._authService.isLoading;
+
+  hidePassword = true;
+  readonly loginForm: FormGroup = this._fb.group({
+    email: ['', [Validators.required, Validators.email]],
+    password: ['', [Validators.required, Validators.minLength(6)]],
+  });
 
   onSubmit() {
     if (this.loginForm.valid) {
-      console.log('Cadastro:', this.loginForm.value);
-
-      this.authService.login(this.loginForm.value as LoginRequest)
-        .subscribe((user: User) => console.log(user))
+      this._authService.login(this.loginForm.value)
     }
   }
 

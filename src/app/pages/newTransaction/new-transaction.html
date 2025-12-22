@@ -1,0 +1,103 @@
+<div class="transaction-container">
+  <!-- Imagem canto superior direito -->
+  <img class="img-top-right" src="assets/images/New-transaction-pixels.svg" />
+
+  <!-- Imagem canto inferior esquerdo -->
+  <img class="img-bottom-left" src="assets/images/New-transaction-pixels.svg" />
+
+  <!-- Seu conteúdo com os estilos antigos preservados -->
+  <div class="container d-flex justify-content-center transaction-body">
+    <div class="row d-flex justify-content-center">
+      <h1 class="transaction-header">Nova Transação</h1>
+
+      <form
+        [formGroup]="form"
+        (ngSubmit)="submit()"
+        class="full form-container d-flex justify-content-center"
+        >
+        <!-- Tipo da Transação -->
+        <mat-form-field appearance="outline" class="full transaction-input">
+          <mat-label>Tipo de Transação</mat-label>
+          <mat-select formControlName="tipoTransacao">
+            @for (t of tipos; track t) {
+              <mat-option [value]="t.value">
+                {{ t.label }}
+              </mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+        <!-- Categoria -->
+        <mat-form-field appearance="outline" class="full transaction-input">
+          <mat-label>Categoria</mat-label>
+          <mat-select formControlName="categoria">
+            @for (c of categorias; track c) {
+              <mat-option [value]="c.value">
+                {{ c.label }}
+              </mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+        <!-- Valor -->
+        <mat-form-field appearance="outline" class="full transaction-input">
+          <mat-label>Valor</mat-label>
+          <input
+            matInput
+            type="text"
+            formControlName="valor"
+            (input)="maskCurrency($event)"
+            placeholder="R$ 0,00"
+            />
+        </mat-form-field>
+
+        <!-- Descrição -->
+        <mat-form-field appearance="outline" class="full transaction-input">
+          <mat-label>Descrição (opcional)</mat-label>
+          <input
+            matInput
+            type="text"
+            formControlName="descricao"
+            placeholder="Escreva uma descrição"
+            />
+        </mat-form-field>
+
+        <!-- Arquivo -->
+        <div class="full transaction-input file-input">
+          <label class="file-label">Anexo (imagem ou PDF)</label>
+
+          <input
+            type="file"
+            #fileInput
+            hidden
+            accept="image/*,application/pdf"
+            (change)="onFileSelected($event)"
+            />
+
+          <button
+            mat-raised-button
+            color="primary"
+            (click)="fileInput.click()"
+            >
+            Selecionar arquivo
+          </button>
+
+          @if (anexoNome) {
+            <p>Arquivo selecionado: {{ anexoNome }}</p>
+          }
+        </div>
+
+        <!-- Botão -->
+        <button
+          mat-raised-button
+          color="primary"
+          class="full transaction-button"
+          type="submit"
+          >
+          Concluir transação
+        </button>
+      </form>
+      <img src="assets/images/New-transaction-image.svg">
+    </div>
+  </div>
+</div>
