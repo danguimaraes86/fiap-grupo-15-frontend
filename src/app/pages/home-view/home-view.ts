@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { Component, computed, effect, inject, OnDestroy, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -23,13 +23,12 @@ interface Benefit {
   selector: 'app-home-view',
   standalone: true,
   imports: [
-    CommonModule,
     MatToolbarModule,
     MatCardModule,
     MatIconModule,
     MatButtonModule,
     MatProgressSpinner
-  ],
+],
   templateUrl: './home-view.html',
   styleUrl: './home-view.css',
 })

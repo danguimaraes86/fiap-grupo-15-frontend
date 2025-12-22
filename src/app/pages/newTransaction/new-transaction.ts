@@ -1,24 +1,23 @@
-import { CommonModule } from '@angular/common';
+
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
+import { TransactionModel } from '../../models/transaction.model';
 import { TransactionService } from '../../services/transaction.service';
-import { TransactionModel } from '../../models/transactionModel';
 
 @Component({
   selector: 'app-new-transaction',
   standalone: true,
   imports: [
-    CommonModule,
     ReactiveFormsModule,
     MatFormFieldModule,
     MatSelectModule,
     MatInputModule,
-    MatButtonModule,
-  ],
+    MatButtonModule
+],
   templateUrl: './new-transaction.html',
   styleUrl: './new-transaction.css',
 })

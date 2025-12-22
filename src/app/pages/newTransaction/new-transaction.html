@@ -14,14 +14,16 @@
         [formGroup]="form"
         (ngSubmit)="submit()"
         class="full form-container d-flex justify-content-center"
-      >
+        >
         <!-- Tipo da Transação -->
         <mat-form-field appearance="outline" class="full transaction-input">
           <mat-label>Tipo de Transação</mat-label>
           <mat-select formControlName="tipoTransacao">
-            <mat-option *ngFor="let t of tipos" [value]="t.value">
-              {{ t.label }}
-            </mat-option>
+            @for (t of tipos; track t) {
+              <mat-option [value]="t.value">
+                {{ t.label }}
+              </mat-option>
+            }
           </mat-select>
         </mat-form-field>
 
@@ -29,9 +31,11 @@
         <mat-form-field appearance="outline" class="full transaction-input">
           <mat-label>Categoria</mat-label>
           <mat-select formControlName="categoria">
-            <mat-option *ngFor="let c of categorias" [value]="c.value">
-              {{ c.label }}
-            </mat-option>
+            @for (c of categorias; track c) {
+              <mat-option [value]="c.value">
+                {{ c.label }}
+              </mat-option>
+            }
           </mat-select>
         </mat-form-field>
 
@@ -44,7 +48,7 @@
             formControlName="valor"
             (input)="maskCurrency($event)"
             placeholder="R$ 0,00"
-          />
+            />
         </mat-form-field>
 
         <!-- Descrição -->
@@ -55,7 +59,7 @@
             type="text"
             formControlName="descricao"
             placeholder="Escreva uma descrição"
-          />
+            />
         </mat-form-field>
 
         <!-- Arquivo -->
@@ -68,17 +72,19 @@
             hidden
             accept="image/*,application/pdf"
             (change)="onFileSelected($event)"
-          />
+            />
 
           <button
             mat-raised-button
             color="primary"
             (click)="fileInput.click()"
-          >
+            >
             Selecionar arquivo
           </button>
 
-          <p *ngIf="anexoNome">Arquivo selecionado: {{ anexoNome }}</p>
+          @if (anexoNome) {
+            <p>Arquivo selecionado: {{ anexoNome }}</p>
+          }
         </div>
 
         <!-- Botão -->
@@ -87,7 +93,7 @@
           color="primary"
           class="full transaction-button"
           type="submit"
-        >
+          >
           Concluir transação
         </button>
       </form>
