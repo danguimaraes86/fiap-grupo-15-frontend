@@ -1,13 +1,12 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { TransactionForm } from '../transaction-form/transaction-form';
-import { FirestoreService } from '../../services/firestore.service';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+
 import { MatCard, MatCardContent, MatCardHeader, MatCardTitle } from '@angular/material/card';
-import { MatTableModule } from '@angular/material/table';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { Graphic } from '../graphic/graphic';
+import { MatTableModule } from '@angular/material/table';
 import { finalize } from 'rxjs/operators';
+import { FirestoreService } from '../../services/firestore.service';
+import { TransactionForm } from '../transaction-form/transaction-form';
 
 interface Transaction {
   id: string;
@@ -23,7 +22,6 @@ interface Transaction {
   selector: 'app-list',
   standalone: true,
   imports: [
-    CommonModule,
     TransactionForm,
     MatCard,
     MatCardContent,
@@ -32,7 +30,6 @@ interface Transaction {
     MatTableModule,
     MatChipsModule,
     MatProgressSpinnerModule,
-    Graphic
   ],
   templateUrl: './list.html',
   styleUrl: './list.css',
@@ -49,7 +46,7 @@ export class List implements OnInit {
   constructor(
     private firestoreService: FirestoreService,
     private cdr: ChangeDetectorRef
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.loadTransactions();

@@ -9,13 +9,12 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { FirestoreService } from '../../services/firestore.service';
-import { CommonModule } from '@angular/common';
+
 
 @Component({
   selector: 'app-transaction-form',
   standalone: true,
   imports: [
-    CommonModule,
     ReactiveFormsModule,
     MatFormField,
     MatLabel,
@@ -30,7 +29,7 @@ import { CommonModule } from '@angular/common';
     MatError,
     MatDatepickerModule,
     MatNativeDateModule
-  ],
+],
   templateUrl: './transaction-form.html',
   styleUrl: './transaction-form.css',
 })
