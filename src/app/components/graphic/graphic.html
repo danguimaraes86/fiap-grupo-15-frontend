@@ -1,1 +1,15 @@
-<p>graphic works!</p>
+@if (transactions.length > 0) {
+  <div class="charts-container">
+    <div class="chart-wrapper">
+      <canvas #pieChartCanvas></canvas>
+    </div>
+    <div class="chart-wrapper">
+      <canvas #barChartCanvas></canvas>
+    </div>
+  </div>
+} @else {
+  <div class="no-data">
+    <p>Nenhuma transação disponível para exibir gráficos.</p>
+  </div>
+}
+
