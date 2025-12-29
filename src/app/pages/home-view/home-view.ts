@@ -9,6 +9,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { Router } from '@angular/router';
 import { LoginModal } from '../../components/login-modal/login-modal';
+import { NavBar } from "../../components/nav-bar/nav-bar";
 import { RegisterModal } from '../../components/register-modal/register-modal';
 import { SnackBar } from '../../components/snack-bar/snack-bar';
 import { AuthenticationService } from '../../services/authentication.service';
@@ -27,8 +28,9 @@ interface Benefit {
     MatCardModule,
     MatIconModule,
     MatButtonModule,
-    MatProgressSpinner
-],
+    MatProgressSpinner,
+    NavBar,
+  ],
   templateUrl: './home-view.html',
   styleUrl: './home-view.css',
 })

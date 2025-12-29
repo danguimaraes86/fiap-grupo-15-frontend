@@ -1,26 +1,9 @@
-:host {
-  --bytebank-primary: #8b9ab5;
-  --bytebank-secondary: #274c91;
-  --bytebank-tertiary: #324566;
-  --bytebank-accent: #4caf50;
-  /* Verde para botões de ação (Call to Action) */
-  --text-white: #ffffff;
-}
-
 .main-content {
   background: linear-gradient(180deg, var(--bytebank-primary) 0%, var(--bytebank-secondary) 100%);
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   padding-bottom: 100px;
-}
-
-.navbar-custom mat-toolbar {
-  background-color: var(--bytebank-tertiary);
-  color: var(--text-white);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-  position: relative;
-  z-index: 10;
 }
 
 @media (max-width: 768px) {

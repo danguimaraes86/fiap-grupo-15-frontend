@@ -1,0 +1,8 @@
+:host {
+  --bytebank-primary: #8b9ab5;
+  --bytebank-secondary: #274c91;
+  --bytebank-tertiary: #324566;
+  --bytebank-accent: #4caf50;
+  /* Verde para botões de ação (Call to Action) */
+  --text-white: #ffffff;
+}

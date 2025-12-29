@@ -1,0 +1,7 @@
+.navbar-custom mat-toolbar {
+  background-color: var(--bytebank-tertiary);
+  color: var(--text-white);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  position: relative;
+  z-index: 10;
+}
