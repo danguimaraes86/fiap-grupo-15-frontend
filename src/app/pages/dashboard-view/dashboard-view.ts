@@ -1,9 +1,11 @@
 import { Component, effect, signal } from '@angular/core';
+import { finalize } from 'rxjs/operators';
+import { Graphic } from '../../components/graphic/graphic';
+import { NavBar } from "../../components/nav-bar/nav-bar";
+import { SummaryCard } from '../../components/summary-card/summary-card';
 import { AuthenticationService } from '../../services/authentication.service';
 import { FirestoreService } from '../../services/firestore.service';
-import { SummaryCard } from '../../components/summary-card/summary-card';
-import { Graphic } from '../../components/graphic/graphic';
-import { finalize } from 'rxjs/operators';
+
 
 interface Transaction {
   id: string;
@@ -17,7 +19,7 @@ interface Transaction {
 
 @Component({
   selector: 'app-dashboard-view',
-  imports: [SummaryCard, Graphic],
+  imports: [SummaryCard, Graphic, NavBar],
   templateUrl: './dashboard-view.html',
   styleUrl: './dashboard-view.css',
 })
