@@ -3,31 +3,15 @@
   <app-transaction-form (transactionSaved)="loadTransactions()"></app-transaction-form>
 
   <!-- Resumo -->
-  <mat-card class="summary-card">
-    <mat-card-header>
-      <mat-card-title>Resumo</mat-card-title>
-    </mat-card-header>
-    <mat-card-content>
-      <div class="summary-grid">
-        <div class="summary-item receita">
-          <span class="label">Receitas</span>
-          <span class="value">{{ formatCurrency(totalReceitas) }}</span>
-        </div>
-        <div class="summary-item despesa">
-          <span class="label">Despesas</span>
-          <span class="value">{{ formatCurrency(totalDespesas) }}</span>
-        </div>
-        <div class="summary-item saldo" [class.negative]="saldo < 0">
-          <span class="label">Saldo</span>
-          <span class="value">{{ formatCurrency(saldo) }}</span>
-        </div>
-      </div>
-    </mat-card-content>
-  </mat-card>
+  <app-summary-card
+    [totalReceitas]="totalReceitas()"
+    [totalDespesas]="totalDespesas()"
+    [saldo]="saldo()">
+  </app-summary-card>
 
   <!-- Gráficos -->
-  @if (!loading && transactions.length > 0) {
-    <app-graphic [transactions]="transactions"></app-graphic>
+  @if (!loading() && transactions().length > 0) {
+    <app-graphic [transactions]="transactions()"></app-graphic>
   }
 
   <!-- Lista de Transações -->
@@ -36,21 +20,21 @@
       <mat-card-title>Transações</mat-card-title>
     </mat-card-header>
     <mat-card-content>
-      @if (loading) {
+      @if (loading()) {
         <div class="loading-container">
           <mat-spinner></mat-spinner>
           <p>Carregando transações...</p>
         </div>
       }
 
-      @if (!loading && transactions.length === 0) {
+      @if (!loading() && transactions().length === 0) {
         <div class="empty-state">
           <p>Nenhuma transação cadastrada ainda.</p>
         </div>
       }
 
-      @if (!loading && transactions.length > 0) {
-        <table mat-table [dataSource]="transactions" class="transactions-table">
+      @if (!loading() && transactions().length > 0) {
+        <table mat-table [dataSource]="transactions()" class="transactions-table">
           <!-- Coluna Data -->
           <ng-container matColumnDef="data">
             <th mat-header-cell *matHeaderCellDef>Data</th>

@@ -9,6 +9,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { FirestoreService } from '../../services/firestore.service';
+import { AuthenticationService } from '../../services/authentication.service';
 
 
 @Component({
@@ -53,6 +54,7 @@ export class TransactionForm {
   constructor(
     private fb: FormBuilder,
     private firestoreService: FirestoreService,
+    private authService: AuthenticationService,
     private snackBar: MatSnackBar
   ) {
     this.transactionForm = this.fb.group({
@@ -66,8 +68,20 @@ export class TransactionForm {
 
   onSubmit() {
     if (this.transactionForm.valid) {
+      const user = this.authService.userSignal();
+      if (!user) {
+        this.snackBar.open('Usuário não autenticado. Faça login para cadastrar transações.', 'Fechar', {
+          duration: 3000,
+          horizontalPosition: 'end',
+          verticalPosition: 'top',
+          panelClass: ['error-snackbar']
+        });
+        return;
+      }
+
       const transactionData = {
         ...this.transactionForm.value,
+        usuarioId: user.uid,
         data: this.transactionForm.value.data.toISOString(),
         criadoEm: new Date().toISOString()
       };

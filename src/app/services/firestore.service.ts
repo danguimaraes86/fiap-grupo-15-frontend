@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable, from } from 'rxjs';
-import { getFirestore, collection, getDocs, addDoc, CollectionReference } from 'firebase/firestore';
+import { getFirestore, collection, getDocs, addDoc, CollectionReference, query, where, Query } from 'firebase/firestore';
 import { firebaseApp } from '../config/firebase.config';
 
 @Injectable({
@@ -46,6 +46,20 @@ export class FirestoreService {
         });
         return allData;
       })
+    );
+  }
+
+  // Busca documentos de uma coleção com filtro
+  getCollectionWhere(collectionName: string, field: string, value: any): Observable<any[]> {
+    return from(
+      getDocs(query(collection(this.db, collectionName), where(field, '==', value)))
+        .then(querySnapshot => {
+          const data: any[] = [];
+          querySnapshot.forEach((doc) => {
+            data.push({ id: doc.id, ...doc.data() });
+          });
+          return data;
+        })
     );
   }
 

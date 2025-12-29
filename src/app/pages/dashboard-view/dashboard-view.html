@@ -1,2 +1,12 @@
-<p>dashboard-view works!</p>
+<h1>Dashboard</h1>
+
+<!-- aqui summary -->
+<app-summary-card
+  [totalReceitas]="totalReceitas()"
+  [totalDespesas]="totalDespesas()"
+  [saldo]="saldo()">
+</app-summary-card>
+
+<!-- aqui grafico -->
+<app-graphic [transactions]="transactions()"></app-graphic>   
 <button (click)="logout()">logout</button>

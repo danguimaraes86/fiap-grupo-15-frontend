@@ -23,17 +23,23 @@ export class Graphic implements OnInit, OnChanges, AfterViewInit {
   ngOnInit() {}
 
   ngAfterViewInit() {
-    this.createCharts();
+    // Após a view estar pronta, tente atualizar/criar os gráficos
+    this.updateCharts();
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes['transactions'] && !changes['transactions'].firstChange) {
-      this.updateCharts();
+    if (changes['transactions']) {
+      // Aguarda o próximo ciclo para garantir que os canvases existam
+      setTimeout(() => this.updateCharts(), 0);
     }
   }
 
   private createCharts() {
-    if (this.transactions.length > 0) {
+    if (
+      this.transactions.length > 0 &&
+      this.pieChartCanvas &&
+      this.barChartCanvas
+    ) {
       this.createPieChart();
       this.createBarChart();
     }
@@ -50,6 +56,11 @@ export class Graphic implements OnInit, OnChanges, AfterViewInit {
   }
 
   private createPieChart() {
+    if (!this.pieChartCanvas) {
+      console.warn('Pie chart canvas not available');
+      return;
+    }
+
     const totalReceitas = this.transactions
       .filter(t => t.tipo === 'Receita')
       .reduce((sum, t) => sum + Number(t.valor), 0);
@@ -121,6 +132,11 @@ export class Graphic implements OnInit, OnChanges, AfterViewInit {
   }
 
   private createBarChart() {
+    if (!this.barChartCanvas) {
+      console.warn('Bar chart canvas not available');
+      return;
+    }
+
     // Agrupa por categoria
     const categoriaMap = new Map<string, { receitas: number; despesas: number }>();
     
