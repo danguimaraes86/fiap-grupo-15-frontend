@@ -1,17 +1,8 @@
 import { Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { Chart, ChartConfiguration, registerables } from 'chart.js';
+import { ITransaction } from './interfaces/transaction.interface';
 
 Chart.register(...registerables);
-
-interface Transaction {
-  id: string;
-  descricao: string;
-  valor: number;
-  tipo: string;
-  categoria: string;
-  data: string;
-  criadoEm: string;
-}
 
 @Component({
   selector: 'app-graphic',
@@ -21,7 +12,7 @@ interface Transaction {
   styleUrl: './graphic.css',
 })
 export class Graphic implements OnInit, OnChanges, AfterViewInit {
-  @Input() transactions: Transaction[] = [];
+  @Input() transactions: ITransaction[] = [];
   
   @ViewChild('pieChartCanvas', { static: false }) pieChartCanvas!: ElementRef<HTMLCanvasElement>;
   @ViewChild('barChartCanvas', { static: false }) barChartCanvas!: ElementRef<HTMLCanvasElement>;
