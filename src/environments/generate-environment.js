@@ -1,6 +1,6 @@
 import { writeFile } from 'fs';
 
-const stageEnv = process.env.NODE_ENV ?? 'development';
+const stageEnv = process.env.STAGING ?? 'development';
 console.log(`STAGING = ${stageEnv}`)
 
 const environmentVariables = {
