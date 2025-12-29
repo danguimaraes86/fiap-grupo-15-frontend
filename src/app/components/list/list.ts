@@ -7,6 +7,7 @@ import { MatTableModule } from '@angular/material/table';
 import { finalize } from 'rxjs/operators';
 import { FirestoreService } from '../../services/firestore.service';
 import { TransactionForm } from '../transaction-form/transaction-form';
+import { Graphic } from '../graphic/graphic';
 
 interface Transaction {
   id: string;
@@ -23,6 +24,7 @@ interface Transaction {
   standalone: true,
   imports: [
     TransactionForm,
+    Graphic,
     MatCard,
     MatCardContent,
     MatCardHeader,

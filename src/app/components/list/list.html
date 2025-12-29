@@ -25,6 +25,11 @@
     </mat-card-content>
   </mat-card>
 
+  <!-- Gráficos -->
+  @if (!loading && transactions.length > 0) {
+    <app-graphic [transactions]="transactions"></app-graphic>
+  }
+
   <!-- Lista de Transações -->
   <mat-card>
     <mat-card-header>
