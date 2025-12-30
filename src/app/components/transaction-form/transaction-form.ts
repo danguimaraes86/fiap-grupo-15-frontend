@@ -1,8 +1,9 @@
 import { Component, EventEmitter, inject, Output } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { MatButton } from '@angular/material/button';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MAT_DIALOG_DATA, MatDialogContent } from "@angular/material/dialog";
+import { MAT_DIALOG_DATA, MatDialogActions, MatDialogClose, MatDialogContent } from "@angular/material/dialog";
 import { MatError, MatFormField, MatLabel, MatPrefix } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { MatOption, MatSelect } from '@angular/material/select';
@@ -25,7 +26,10 @@ import { FirestoreService } from '../../services/firestore.service';
     MatError,
     MatDatepickerModule,
     MatNativeDateModule,
-    MatDialogContent
+    MatDialogContent,
+    MatDialogActions,
+    MatButton,
+    MatDialogClose
   ],
   templateUrl: './transaction-form.html',
   styleUrl: './transaction-form.css',
@@ -61,10 +65,6 @@ export class TransactionForm {
       categoria: ['', Validators.required],
       data: [new Date(), Validators.required]
     });
-    this.firestoreService.getDocumentById('transactions', this.data?.transactionId ?? 'UewtIu8w0KrXHiRQioeh').subscribe(
-      documento => console.log(documento)
-    )
-    console.log(this.data)
   }
 
   onSubmit() {

@@ -1,8 +1,8 @@
 <div class="mat-bg-surface">
-  <h2 mat-dialog-title class="text-center mat-text-primary">Transação</h2>
+  <h2 mat-dialog-title class="text-center mat-text-primary mt-3">Transação</h2>
 
   <mat-dialog-content>
-    <form [formGroup]="transactionForm">
+    <form [formGroup]="transactionForm" class="d-flex flex-column gap-3" >
       <mat-form-field appearance="outline">
         <mat-label>Descrição</mat-label>
         <input matInput formControlName="descricao" placeholder="Ex: Compra no supermercado" />
@@ -69,6 +69,18 @@
       </mat-form-field>
     </form>
   </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-button matDialogClose>Cancelar</button>
+    <button
+      mat-raised-button
+      color="primary"
+      (click)="onSubmit()"
+      [disabled]="transactionForm.invalid"
+    >
+      Cadastrar
+    </button>
+  </mat-dialog-actions>
 </div>
 
 <!-- <mat-card>
