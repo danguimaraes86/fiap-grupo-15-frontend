@@ -1,5 +1,6 @@
 import { Component, effect, signal } from '@angular/core';
 import { finalize } from 'rxjs/operators';
+import { FloatingButton } from "../../components/floating-button/floating-button";
 import { Graphic } from '../../components/graphic/graphic';
 import { NavBar } from "../../components/nav-bar/nav-bar";
 import { SummaryCard } from '../../components/summary-card/summary-card';
@@ -19,7 +20,7 @@ interface Transaction {
 
 @Component({
   selector: 'app-dashboard-view',
-  imports: [SummaryCard, Graphic, NavBar],
+  imports: [SummaryCard, Graphic, NavBar, FloatingButton],
   templateUrl: './dashboard-view.html',
   styleUrl: './dashboard-view.css',
 })
