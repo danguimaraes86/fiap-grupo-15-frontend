@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, input, OnChanges, SimpleChanges, ViewChild } from '@angular/core';
 import { Chart, ChartConfiguration, registerables } from 'chart.js';
 import { ITransaction } from './interfaces/transaction.interface';
 
@@ -11,16 +11,14 @@ Chart.register(...registerables);
   templateUrl: './graphic.html',
   styleUrl: './graphic.css',
 })
-export class Graphic implements OnInit, OnChanges, AfterViewInit {
-  @Input() transactions: ITransaction[] = [];
-  
+export class Graphic implements OnChanges, AfterViewInit {
+  readonly transactions = input<ITransaction[]>([]);
+
   @ViewChild('pieChartCanvas', { static: false }) pieChartCanvas!: ElementRef<HTMLCanvasElement>;
   @ViewChild('barChartCanvas', { static: false }) barChartCanvas!: ElementRef<HTMLCanvasElement>;
-  
+
   private pieChart?: Chart;
   private barChart?: Chart;
-
-  ngOnInit() {}
 
   ngAfterViewInit() {
     // Após a view estar pronta, tente atualizar/criar os gráficos
@@ -36,7 +34,7 @@ export class Graphic implements OnInit, OnChanges, AfterViewInit {
 
   private createCharts() {
     if (
-      this.transactions.length > 0 &&
+      this.transactions().length > 0 &&
       this.pieChartCanvas &&
       this.barChartCanvas
     ) {
@@ -61,11 +59,11 @@ export class Graphic implements OnInit, OnChanges, AfterViewInit {
       return;
     }
 
-    const totalReceitas = this.transactions
+    const totalReceitas = this.transactions()
       .filter(t => t.tipo === 'Receita')
       .reduce((sum, t) => sum + Number(t.valor), 0);
 
-    const totalDespesas = this.transactions
+    const totalDespesas = this.transactions()
       .filter(t => t.tipo === 'Despesa')
       .reduce((sum, t) => sum + Number(t.valor), 0);
 
@@ -139,8 +137,8 @@ export class Graphic implements OnInit, OnChanges, AfterViewInit {
 
     // Agrupa por categoria
     const categoriaMap = new Map<string, { receitas: number; despesas: number }>();
-    
-    this.transactions.forEach(t => {
+
+    this.transactions().forEach(t => {
       if (!categoriaMap.has(t.categoria)) {
         categoriaMap.set(t.categoria, { receitas: 0, despesas: 0 });
       }

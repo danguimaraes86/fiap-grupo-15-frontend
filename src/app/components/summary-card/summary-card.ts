@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, input } from '@angular/core';
 import { MatCard, MatCardContent, MatCardHeader, MatCardTitle } from '@angular/material/card';
 
 @Component({
@@ -9,9 +9,9 @@ import { MatCard, MatCardContent, MatCardHeader, MatCardTitle } from '@angular/m
   styleUrl: './summary-card.css',
 })
 export class SummaryCard {
-  @Input() totalReceitas = 0;
-  @Input() totalDespesas = 0;
-  @Input() saldo = 0;
+  readonly totalReceitas = input(0);
+  readonly totalDespesas = input(0);
+  readonly saldo = input(0);
 
   formatCurrency(value: number): string {
     return new Intl.NumberFormat('pt-BR', {
