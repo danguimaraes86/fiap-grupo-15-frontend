@@ -131,4 +131,6 @@ export interface Transaction {
   categoria: string;
   data: string;
   criadoEm: string;
+  anexoUrl: string;
+  anexoNome: string;
 }

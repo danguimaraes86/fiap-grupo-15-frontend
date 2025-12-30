@@ -3,7 +3,13 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { MatButton } from '@angular/material/button';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MAT_DIALOG_DATA, MatDialogActions, MatDialogClose, MatDialogContent, MatDialogRef } from "@angular/material/dialog";
+import {
+  MAT_DIALOG_DATA,
+  MatDialogActions,
+  MatDialogClose,
+  MatDialogContent,
+  MatDialogRef,
+} from '@angular/material/dialog';
 import { MatError, MatFormField, MatLabel, MatPrefix } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { MatOption, MatSelect } from '@angular/material/select';
@@ -12,6 +18,7 @@ import { Subject, takeUntil } from 'rxjs';
 import { Transaction } from '../../models/transaction.model';
 import { AuthenticationService } from '../../services/authentication.service';
 import { FirestoreService } from '../../services/firestore.service';
+import { StorageService } from '../../services/storage.service';
 
 
 @Component({
@@ -31,7 +38,7 @@ import { FirestoreService } from '../../services/firestore.service';
     MatDialogContent,
     MatDialogActions,
     MatButton,
-    MatDialogClose
+    MatDialogClose,
   ],
   templateUrl: './transaction-form.html',
   styleUrl: './transaction-form.css',
@@ -44,7 +51,7 @@ export class TransactionForm implements OnDestroy {
   private dialogRef = inject<MatDialogRef<TransactionForm>>(MatDialogRef);
 
   readonly transactionSaved = output<void>();
-  payload = inject<{ transaction: Transaction } | null>(MAT_DIALOG_DATA)
+  payload = inject<{ transaction: Transaction } | null>(MAT_DIALOG_DATA);
 
   transactionForm: FormGroup;
 
@@ -57,10 +64,11 @@ export class TransactionForm implements OnDestroy {
     'Lazer',
     'Moradia',
     'Vestuário',
-    'Outros'
+    'Outros',
   ] as const;
 
   private destroy$ = new Subject<void>();
+  private storageService = inject(StorageService);
 
   constructor() {
     this.transactionForm = this.fb.group({
@@ -68,7 +76,8 @@ export class TransactionForm implements OnDestroy {
       valor: ['', [Validators.required, Validators.min(0.01)]],
       tipo: ['', Validators.required],
       categoria: ['', Validators.required],
-      data: [new Date(), Validators.required]
+      data: [new Date(), Validators.required],
+      anexo: [null],
     });
 
     if (this.payload) {
@@ -87,28 +96,35 @@ export class TransactionForm implements OnDestroy {
       valor: this.payload?.transaction.valor,
       tipo: this.payload?.transaction.tipo,
       categoria: this.payload?.transaction.categoria,
-      data: this.payload?.transaction.data ? new Date(this.payload?.transaction.data) : new Date()
+      data: this.payload?.transaction.data ? new Date(this.payload?.transaction.data) : new Date(),
     });
+    if (this.payload?.transaction.anexoUrl) {
+      this.imagePreview = this.payload.transaction.anexoUrl;
+      this.selectedFileName = this.payload.transaction.anexoNome ?? null;
+    }
   }
 
-  onSubmit() {
-    if (!this.transactionForm.valid) {
-      this.showValidationError();
+  selectedFile: File | null = null;
+  selectedFileName: string | null = null;
+  imagePreview: string | null = null;
+
+  onFileSelected(event: Event, fileInput: HTMLInputElement) {
+    const input = event.target as HTMLInputElement;
+
+    if (!input.files || input.files.length === 0) {
       return;
     }
 
-    const user = this.authService.userSignal()!;
+    const file = input.files[0];
 
-    const transactionData = {
-      ...this.transactionForm.value,
-      usuarioId: user.uid,
-      data: this.transactionForm.value.data.toISOString(),
-      criadoEm: new Date().toISOString()
+    this.selectedFile = file;
+    this.selectedFileName = file.name;
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      this.imagePreview = reader.result as string;
     };
-
-    this.payload
-      ? this.handleUpdateTransaction(transactionData)
-      : this.handleNewTransaction(transactionData);
+    reader.readAsDataURL(file);
 
   }
 
@@ -118,6 +134,40 @@ export class TransactionForm implements OnDestroy {
       'Fechar',
       this.getSnackBarConfig()
     );
+  }
+
+  async onSubmit() {
+    if (!this.transactionForm.valid) {
+      this.showValidationError();
+      return;
+    }
+
+    const user = this.authService.userSignal()!;
+
+    let anexoData = {};
+
+    if (this.selectedFile) {
+      const upload = await this.storageService.uploadTransactionImage(user.uid, this.selectedFile);
+
+      anexoData = {
+        anexoUrl: upload.url,
+        anexoNome: upload.name,
+      };
+    }
+
+    const transactionData: Partial<Transaction> = {
+      ...this.transactionForm.value,
+      ...anexoData,
+      usuarioId: user.uid,
+      data: this.transactionForm.value.data.toISOString(),
+      criadoEm: new Date().toISOString(),
+    };
+
+    delete (transactionData as any).anexo;
+
+    this.payload
+      ? this.handleUpdateTransaction(transactionData)
+      : this.handleNewTransaction(transactionData);
   }
 
   getErrorMessage(fieldName: string): string {
@@ -146,7 +196,7 @@ export class TransactionForm implements OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: () => this.handleSuccess('cadastrada'),
-        error: (error) => this.handleError('cadastrar', error)
+        error: (error) => this.handleError('cadastrar', error),
       });
   }
 
@@ -156,7 +206,7 @@ export class TransactionForm implements OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: () => this.handleSuccess('atualizada'),
-        error: (error) => this.handleError('atualizar', error)
+        error: (error) => this.handleError('atualizar', error),
       });
   }
 
@@ -185,8 +235,7 @@ export class TransactionForm implements OnDestroy {
       duration: 3000,
       horizontalPosition: 'end' as const,
       verticalPosition: 'top' as const,
-      ...(panelClass && { panelClass: [panelClass] })
+      ...(panelClass && { panelClass: [panelClass] }),
     };
   }
-
 }

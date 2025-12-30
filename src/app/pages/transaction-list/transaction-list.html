@@ -71,6 +71,16 @@
             >
               <mat-icon>edit</mat-icon>
             </button>
+
+            <button
+              mat-icon-button
+              color="primary"
+              *ngIf="transaction.anexoUrl"
+              (click)="downloadAnexo(transaction)"
+              title="Baixar anexo"
+            >
+              <mat-icon>download</mat-icon>
+            </button>
             <button
               mat-icon-button
               color="warn"
