@@ -1,8 +1,9 @@
-import { Component, computed, EventEmitter, inject, Output } from '@angular/core';
+import { Component, computed, inject, output } from '@angular/core';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatIcon } from "@angular/material/icon";
 import { MatToolbar } from "@angular/material/toolbar";
 import { AuthenticationService } from '../../services/authentication.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-nav-bar',
@@ -12,11 +13,21 @@ import { AuthenticationService } from '../../services/authentication.service';
 })
 export class NavBar {
   private authService = inject(AuthenticationService)
+  private router = inject(Router)
 
-  @Output() loginClick = new EventEmitter<void>();
-  @Output() registerClick = new EventEmitter<void>();
+  readonly loginClick = output<void>();
+  readonly registerClick = output<void>();
 
   isAuthenticated = computed(() => this.authService.userSignal() !== null);
+  isHistoricoRoute = computed(() => this.router.url.includes('/historico'));
+
+  goHistorico() {
+    this.router.navigate(['historico'])
+  }
+
+  goHome() {
+    this.router.navigate(['']);
+  }
 
   logout() {
     this.authService.logout()
