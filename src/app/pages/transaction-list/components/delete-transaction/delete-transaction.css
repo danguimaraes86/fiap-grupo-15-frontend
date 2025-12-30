@@ -1,0 +1,14 @@
+.transaction-details {
+  margin: 1rem 0;
+  padding: 1rem;
+  background-color: #f5f5f5;
+  border-radius: 4px;
+}
+
+.transaction-details p {
+  margin: 0.5rem 0;
+}
+
+mat-dialog-actions {
+  padding: 1rem;
+}

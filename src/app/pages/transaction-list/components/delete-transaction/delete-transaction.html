@@ -1,0 +1,14 @@
+<h2 mat-dialog-title>Confirmar Exclusão</h2>
+<mat-dialog-content>
+  <p>Tem certeza que deseja excluir esta transação?</p>
+  <div class="transaction-details">
+    <p><strong>Descrição:</strong> {{ data.transaction.descricao }}</p>
+    <p><strong>Valor:</strong> {{ formatCurrency(data.transaction.valor) }}</p>
+    <p><strong>Tipo:</strong> {{ data.transaction.tipo }}</p>
+    <p><strong>Categoria:</strong> {{ data.transaction.categoria }}</p>
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()">Cancelar</button>
+  <button mat-raised-button color="warn" (click)="onConfirm()">Excluir</button>
+</mat-dialog-actions>

@@ -1,4 +1,4 @@
-import { Component, EventEmitter, inject, Output } from '@angular/core';
+import { Component, computed, EventEmitter, inject, Output } from '@angular/core';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatIcon } from "@angular/material/icon";
 import { MatToolbar } from "@angular/material/toolbar";
@@ -16,7 +16,7 @@ export class NavBar {
   @Output() loginClick = new EventEmitter<void>();
   @Output() registerClick = new EventEmitter<void>();
 
-  isAuthenticated: boolean = this.authService.isAuthenticated();
+  isAuthenticated = computed(() => this.authService.userSignal() !== null);
 
   logout() {
     this.authService.logout()

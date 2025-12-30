@@ -18,7 +18,11 @@ export const routes: Routes = [
     path: 'nova-transacao',
     loadComponent: () => import('./pages/newTransaction/new-transaction').then(m => m.NewTransaction)
   },
-    {
+  {
+    path: 'transacoes',
+    loadComponent: () => import('./pages/transaction-list/transaction-list').then(c => c.TransactionList),
+  },
+  {
     path: 'list',
     loadComponent: () => import('./components/list/list').then(c => c.List),
   },
