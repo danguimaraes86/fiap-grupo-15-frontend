@@ -12,22 +12,10 @@ export const routes: Routes = [
   {
     path: 'dashboard',
     loadComponent: () => import('./pages/dashboard-view/dashboard-view').then(c => c.DashboardView),
-    canActivate: [authGuard]
+    // canActivate: [authGuard]
   },
   {
-    path: 'nova-transacao',
-    loadComponent: () => import('./pages/newTransaction/new-transaction').then(m => m.NewTransaction)
-  },
-  {
-    path: 'transacoes',
+    path: 'historico',
     loadComponent: () => import('./pages/transaction-list/transaction-list').then(c => c.TransactionList),
-  },
-  {
-    path: 'list',
-    loadComponent: () => import('./components/list/list').then(c => c.List),
-  },
-  {
-    path: 'transaction-form',
-    loadComponent: () => import('./components/transaction-form/transaction-form').then(c => c.TransactionForm),
   },
 ];

@@ -1,28 +1,21 @@
-import { Component, OnInit, effect, signal, inject } from '@angular/core';
+import { Component, computed, effect, inject, OnDestroy, signal } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
 import { MatCard, MatCardContent, MatCardHeader, MatCardTitle } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatTableModule } from '@angular/material/table';
-import { MatIconModule } from '@angular/material/icon';
-import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { finalize } from 'rxjs/operators';
-import { FirestoreService } from '../../services/firestore.service';
-import { AuthenticationService } from '../../services/authentication.service';
+import { MatTableModule } from '@angular/material/table';
+import { Subject } from 'rxjs';
+import { filter, finalize, map, switchMap, takeUntil } from 'rxjs/operators';
+import { FloatingButton } from "../../components/floating-button/floating-button";
 import { NavBar } from '../../components/nav-bar/nav-bar';
-import { UpdateTransaction } from './components/update-transaction/update-transaction';
+import { TransactionForm } from '../../components/transaction-form/transaction-form';
+import { Transaction } from '../../models/transaction.model';
+import { AuthenticationService } from '../../services/authentication.service';
+import { FirestoreService } from '../../services/firestore.service';
 import { DeleteTransaction } from './components/delete-transaction/delete-transaction';
-
-interface Transaction {
-  id: string;
-  descricao: string;
-  valor: number;
-  tipo: string;
-  categoria: string;
-  data: string;
-  criadoEm: string;
-}
 
 @Component({
   selector: 'app-transaction-list',
@@ -38,65 +31,73 @@ interface Transaction {
     MatProgressSpinnerModule,
     MatIconModule,
     MatButtonModule,
+    FloatingButton
   ],
   templateUrl: './transaction-list.html',
   styleUrl: './transaction-list.css',
 })
-export class TransactionList implements OnInit {
+export class TransactionList implements OnDestroy {
+
+  private destroy$ = new Subject<void>();
+
   private _modalRef = inject(MatDialog);
   private snackBar = inject(MatSnackBar);
+  private firestoreService = inject(FirestoreService)
+  private authService = inject(AuthenticationService)
 
   transactions = signal<Transaction[]>([]);
   loading = signal(true);
-  displayedColumns: string[] = ['data', 'descricao', 'categoria', 'tipo', 'valor', 'acoes'];
+  readonly displayedColumns: string[] = ['data', 'descricao', 'categoria', 'tipo', 'valor', 'acoes'];
+
+  hasTransactions = computed(() => this.transactions().length > 0);
+  isEmpty = computed(() => !this.loading() && this.transactions().length === 0);
 
   constructor(
-    private firestoreService: FirestoreService,
-    private authService: AuthenticationService
   ) {
     effect(() => {
       const user = this.authService.userSignal();
       const isLoading = this.authService.isLoading();
-      
+
       if (!isLoading && user) {
         this.loadTransactions();
       }
     });
   }
 
-  ngOnInit() {
-    // O efeito cuidará de carregar as transações quando o usuário estiver autenticado
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   loadTransactions() {
     this.loading.set(true);
-    
-    const user = this.authService.userSignal();
-    if (!user) {
-      console.error('Usuário não autenticado');
-      this.loading.set(false);
-      return;
-    }
-
-    this.firestoreService.getCollectionWhere('transactions', 'usuarioId', user.uid)
+    const user = this.authService.userSignal()!;
+    this.firestoreService
+      .getCollectionWhere('transactions', 'usuarioId', user.uid)
       .pipe(
-        finalize(() => {
-          this.loading.set(false);
-          console.log('Loading finalizado');
-        })
+        map(data => this.sortTransactionsByDate(data)),
+        finalize(() => this.loading.set(false)),
+        takeUntil(this.destroy$)
       )
       .subscribe({
-        next: (data) => {
-          const sortedData = data.sort((a, b) => {
-            return new Date(b.data).getTime() - new Date(a.data).getTime();
-          });
-          this.transactions.set(sortedData);
-          console.log('Transações carregadas:', this.transactions());
-        },
-        error: (error) => {
-          console.error('Erro ao carregar transações:', error);
-        }
+        next: (data) => this.transactions.set(data),
+        error: (error) => this.handleLoadError(error)
       });
+  }
+
+  private sortTransactionsByDate(transactions: Transaction[]): Transaction[] {
+    return [...transactions].sort((a, b) =>
+      new Date(b.data).getTime() - new Date(a.data).getTime()
+    );
+  }
+
+  private handleLoadError(error: any): void {
+    console.error('Erro ao carregar transações:', error);
+    this.snackBar.open(
+      'Erro ao carregar transações',
+      'Fechar',
+      this.getSnackBarConfig()
+    );
   }
 
   formatDate(dateString: string): string {
@@ -112,16 +113,18 @@ export class TransactionList implements OnInit {
   }
 
   openEditDialog(transaction: Transaction): void {
-    const dialogRef = this._modalRef.open(UpdateTransaction, {
+    const dialogRef = this._modalRef.open(TransactionForm, {
       width: '500px',
-      data: { transaction }
+      data: { transaction },
     });
 
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this.updateTransaction(result);
-      }
-    });
+    dialogRef.afterClosed()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(result => {
+        if (result) {
+          this.loadTransactions();
+        }
+      });
   }
 
   openDeleteDialog(transaction: Transaction): void {
@@ -130,56 +133,41 @@ export class TransactionList implements OnInit {
       data: { transaction }
     });
 
-    dialogRef.afterClosed().subscribe(result => {
-      if (result === true) {
-        this.deleteTransaction(transaction.id);
-      }
-    });
-  }
-
-  updateTransaction(transaction: Transaction): void {
-    const { id, ...transactionData } = transaction;
-    
-    this.firestoreService.updateDocument('transactions', id, transactionData)
+    dialogRef.afterClosed()
+      .pipe(
+        filter(result => result === true),
+        switchMap(() => this.firestoreService.deleteDocument('transactions', transaction.id)),
+        takeUntil(this.destroy$)
+      )
       .subscribe({
-        next: () => {
-          this.snackBar.open('Transação atualizada com sucesso!', 'Fechar', {
-            duration: 3000,
-            horizontalPosition: 'end',
-            verticalPosition: 'top',
-          });
-          this.loadTransactions();
-        },
-        error: (error) => {
-          console.error('Erro ao atualizar transação:', error);
-          this.snackBar.open('Erro ao atualizar transação', 'Fechar', {
-            duration: 3000,
-            horizontalPosition: 'end',
-            verticalPosition: 'top',
-          });
-        }
+        next: () => this.handleDeleteSuccess(),
+        error: (error) => this.handleDeleteError(error)
       });
   }
 
-  deleteTransaction(id: string): void {
-    this.firestoreService.deleteDocument('transactions', id)
-      .subscribe({
-        next: () => {
-          this.snackBar.open('Transação excluída com sucesso!', 'Fechar', {
-            duration: 3000,
-            horizontalPosition: 'end',
-            verticalPosition: 'top',
-          });
-          this.loadTransactions();
-        },
-        error: (error) => {
-          console.error('Erro ao excluir transação:', error);
-          this.snackBar.open('Erro ao excluir transação', 'Fechar', {
-            duration: 3000,
-            horizontalPosition: 'end',
-            verticalPosition: 'top',
-          });
-        }
-      });
+  private handleDeleteSuccess(): void {
+    this.snackBar.open(
+      'Transação excluída com sucesso!',
+      'Fechar',
+      this.getSnackBarConfig()
+    );
+    this.loadTransactions();
+  }
+
+  private handleDeleteError(error: any): void {
+    console.error('Erro ao excluir transação:', error);
+    this.snackBar.open(
+      'Erro ao excluir transação',
+      'Fechar',
+      this.getSnackBarConfig()
+    );
+  }
+
+  private getSnackBarConfig() {
+    return {
+      duration: 3000,
+      horizontalPosition: 'end' as const,
+      verticalPosition: 'top' as const
+    };
   }
 }

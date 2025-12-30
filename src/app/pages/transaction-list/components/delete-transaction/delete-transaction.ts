@@ -1,6 +1,7 @@
-import { Component, inject, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef, MatDialogModule } from '@angular/material/dialog';
+import { Component, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
+import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import { Transaction } from '../../../../models/transaction.model';
 
 @Component({
   selector: 'app-delete-transaction',
@@ -10,9 +11,9 @@ import { MatButtonModule } from '@angular/material/button';
   styleUrl: './delete-transaction.css',
 })
 export class DeleteTransaction {
-  readonly dialogRef = inject(MatDialogRef<DeleteTransaction>);
+  data = inject<{ transaction: Transaction }>(MAT_DIALOG_DATA);
 
-  constructor(@Inject(MAT_DIALOG_DATA) public data: { transaction: any }) {}
+  readonly dialogRef = inject(MatDialogRef<DeleteTransaction>);
 
   onCancel(): void {
     this.dialogRef.close(false);

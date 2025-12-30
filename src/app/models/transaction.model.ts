@@ -122,3 +122,13 @@ export class TransactionModel {
     this.valor = value;
   }
 }
+
+export interface Transaction {
+  id: string;
+  descricao: string;
+  valor: number;
+  tipo: string;
+  categoria: string;
+  data: string;
+  criadoEm: string;
+}

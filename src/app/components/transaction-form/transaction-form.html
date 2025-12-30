@@ -2,7 +2,7 @@
   <h2 mat-dialog-title class="text-center mat-text-primary mt-3">Transação</h2>
 
   <mat-dialog-content>
-    <form [formGroup]="transactionForm" class="d-flex flex-column gap-3" >
+    <form [formGroup]="transactionForm" class="d-flex flex-column gap-3">
       <mat-form-field appearance="outline">
         <mat-label>Descrição</mat-label>
         <input matInput formControlName="descricao" placeholder="Ex: Compra no supermercado" />
@@ -78,7 +78,7 @@
       (click)="onSubmit()"
       [disabled]="transactionForm.invalid"
     >
-      Cadastrar
+      {{ this.payload ? 'Editar' : 'Cadastrar' }}
     </button>
   </mat-dialog-actions>
 </div>
