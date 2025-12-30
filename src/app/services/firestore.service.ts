@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
+import { addDoc, collection, deleteDoc, doc, getDoc, getDocs, getFirestore, query, updateDoc, where } from 'firebase/firestore';
 import { Observable, from } from 'rxjs';
-import { getFirestore, collection, getDocs, addDoc, CollectionReference, query, where, Query } from 'firebase/firestore';
 import { firebaseApp } from '../config/firebase.config';
 
 @Injectable({
@@ -69,5 +69,31 @@ export class FirestoreService {
       addDoc(collection(this.db, collectionName), data)
         .then(docRef => docRef.id)
     );
+  }
+
+  // Busca um documento por ID
+  getDocumentById(collectionName: string, docId: string): Observable<any> {
+    const docRef = doc(this.db, collectionName, docId);
+    return from(
+      getDoc(docRef).then(docSnap => {
+        if (docSnap.exists()) {
+          return { id: docSnap.id, ...docSnap.data() };
+        } else {
+          throw new Error('Documento não encontrado');
+        }
+      })
+    );
+  }
+
+  // Atualiza um documento existente
+  updateDocument(collectionName: string, docId: string, data: any): Observable<void> {
+    const docRef = doc(this.db, collectionName, docId);
+    return from(updateDoc(docRef, data));
+  }
+
+  // Deleta um documento
+  deleteDocument(collectionName: string, docId: string): Observable<void> {
+    const docRef = doc(this.db, collectionName, docId);
+    return from(deleteDoc(docRef));
   }
 }

@@ -1,15 +1,14 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, inject, Output } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatFormField, MatLabel, MatError } from '@angular/material/form-field';
-import { MatInput } from '@angular/material/input';
-import { MatButton } from '@angular/material/button';
-import { MatCard, MatCardContent, MatCardHeader, MatCardTitle } from '@angular/material/card';
-import { MatSelect, MatOption } from '@angular/material/select';
-import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MAT_DIALOG_DATA, MatDialogContent } from "@angular/material/dialog";
+import { MatError, MatFormField, MatLabel, MatPrefix } from '@angular/material/form-field';
+import { MatInput } from '@angular/material/input';
+import { MatOption, MatSelect } from '@angular/material/select';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { FirestoreService } from '../../services/firestore.service';
 import { AuthenticationService } from '../../services/authentication.service';
+import { FirestoreService } from '../../services/firestore.service';
 
 
 @Component({
@@ -20,22 +19,20 @@ import { AuthenticationService } from '../../services/authentication.service';
     MatFormField,
     MatLabel,
     MatInput,
-    MatButton,
-    MatCard,
-    MatCardContent,
-    MatCardHeader,
-    MatCardTitle,
+    MatPrefix,
     MatSelect,
     MatOption,
     MatError,
     MatDatepickerModule,
-    MatNativeDateModule
-],
+    MatNativeDateModule,
+    MatDialogContent
+  ],
   templateUrl: './transaction-form.html',
   styleUrl: './transaction-form.css',
 })
 export class TransactionForm {
   @Output() transactionSaved = new EventEmitter<void>();
+  data = inject(MAT_DIALOG_DATA)
 
   transactionForm: FormGroup;
 
@@ -64,6 +61,10 @@ export class TransactionForm {
       categoria: ['', Validators.required],
       data: [new Date(), Validators.required]
     });
+    this.firestoreService.getDocumentById('transactions', this.data?.transactionId ?? 'UewtIu8w0KrXHiRQioeh').subscribe(
+      documento => console.log(documento)
+    )
+    console.log(this.data)
   }
 
   onSubmit() {

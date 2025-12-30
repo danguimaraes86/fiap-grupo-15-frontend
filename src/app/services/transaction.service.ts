@@ -8,7 +8,7 @@ export class TransactionService {
 
   private transactions: TransactionModel[] = [];
 
-  constructor() {}
+  constructor() { }
 
   addTransaction(transaction: TransactionModel): void {
     this.transactions.push(transaction);
