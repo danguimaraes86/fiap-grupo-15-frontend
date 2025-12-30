@@ -1,14 +1,16 @@
 <app-nav-bar></app-nav-bar>
 
-<!-- aqui summary -->
-<app-summary-card
-  [totalReceitas]="totalReceitas()"
-  [totalDespesas]="totalDespesas()"
-  [saldo]="saldo()"
->
-</app-summary-card>
+<div class="p-3">
+  <!-- aqui summary -->
+  <app-summary-card
+    [totalReceitas]="totalReceitas()"
+    [totalDespesas]="totalDespesas()"
+    [saldo]="saldo()"
+  >
+  </app-summary-card>
 
-<!-- aqui grafico -->
-<app-graphic [transactions]="transactions()"></app-graphic>
+  <!-- aqui grafico -->
+  <app-graphic [transactions]="transactions()"></app-graphic>
+</div>
 
 <app-floating-button />

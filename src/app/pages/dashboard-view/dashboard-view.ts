@@ -1,4 +1,4 @@
-import { Component, effect, signal } from '@angular/core';
+import { Component, effect, inject, signal } from '@angular/core';
 import { finalize } from 'rxjs/operators';
 import { FloatingButton } from "../../components/floating-button/floating-button";
 import { Graphic } from '../../components/graphic/graphic';
@@ -25,8 +25,8 @@ interface Transaction {
   styleUrl: './dashboard-view.css',
 })
 export class DashboardView {
-  authService: AuthenticationService;
-  private firestoreService: FirestoreService;
+  authService = inject(AuthenticationService)
+  private firestoreService = inject(FirestoreService)
 
   transactions = signal<Transaction[]>([]);
   loading = signal(true);
@@ -35,12 +35,7 @@ export class DashboardView {
   saldo = signal(0);
 
   constructor(
-    authService: AuthenticationService,
-    firestoreService: FirestoreService
   ) {
-    this.authService = authService;
-    this.firestoreService = firestoreService;
-
     effect(() => {
       const user = this.authService.userSignal();
       const isLoading = this.authService.isLoading();
@@ -65,7 +60,6 @@ export class DashboardView {
       .pipe(
         finalize(() => {
           this.loading.set(false);
-          console.log('Loading finalizado');
         })
       )
       .subscribe({
