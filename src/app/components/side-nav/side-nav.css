@@ -1,0 +1,4 @@
+.sidenav-header {
+  background-color: var(--mat-sidenav-container-background-color);
+  padding: 24px 16px;
+}
