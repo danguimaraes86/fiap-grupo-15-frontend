@@ -1,99 +1,55 @@
 import { Injectable } from '@angular/core';
-import { addDoc, collection, deleteDoc, doc, getDoc, getDocs, getFirestore, query, updateDoc, where } from 'firebase/firestore';
-import { Observable, from } from 'rxjs';
+import { addDoc, collection, deleteDoc, doc, getDocs, getFirestore, limit, orderBy, query, updateDoc, where } from 'firebase/firestore';
 import { firebaseApp } from '../config/firebase.config';
+import { ITransaction } from '../models/transaction.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class FirestoreService {
-  private db = getFirestore(firebaseApp);
+  private _db = getFirestore(firebaseApp);
+  private _transactionsDB = collection(this._db, 'transactions')
 
-  // Busca todos os documentos de uma coleção
-  getCollection(collectionName: string): Observable<any[]> {
-    return from(
-      getDocs(collection(this.db, collectionName))
-        .then(querySnapshot => {
-          const data: any[] = [];
-          querySnapshot.forEach((doc) => {
-            data.push({ id: doc.id, ...doc.data() });
-          });
-          return data;
-        })
+  async getAllTransactionsByUserId(usuarioId: string) {
+    const querySnapshot = await getDocs(query(
+      this._transactionsDB,
+      where('usuarioId', '==', usuarioId),
+      orderBy('data', 'desc')
+    ));
+    const transactions: ITransaction[] = [];
+    querySnapshot.forEach((doc) => {
+      transactions.push({ id: doc.id, ...doc.data() } as unknown as ITransaction);
+    });
+    return transactions;
+  }
+
+  async getRecentTransactionsByUserId(usuarioId: string, limitCount: number = 5) {
+    const querySnapshot = await getDocs(
+      query(
+        this._transactionsDB,
+        where('usuarioId', '==', usuarioId),
+        orderBy('data', 'desc'),
+        limit(limitCount)
+      )
     );
+    const transactions: ITransaction[] = [];
+    querySnapshot.forEach((doc) => {
+      transactions.push({ id: doc.id, ...doc.data() } as unknown as ITransaction);
+    });
+    return transactions;
   }
 
-  // Busca todas as coleções (requer listCollections do Admin SDK)
-  // Para listar todas as coleções, você precisaria usar o Admin SDK no backend
-  // Aqui vou criar um método que busca coleções específicas conhecidas
-  getAllData(collectionNames: string[]): Observable<Record<string, any[]>> {
-    return from(
-      Promise.all(
-        collectionNames.map(name =>
-          getDocs(collection(this.db, name))
-            .then(querySnapshot => {
-              const data: any[] = [];
-              querySnapshot.forEach((doc) => {
-                data.push({ id: doc.id, ...doc.data() });
-              });
-              return { collection: name, data };
-            })
-        )
-      ).then(results => {
-        const allData: Record<string, any[]> = {};
-        results.forEach(result => {
-          allData[result.collection] = result.data;
-        });
-        return allData;
-      })
-    );
+  async createTransaction(transaction: ITransaction) {
+    return await addDoc(this._transactionsDB, transaction)
   }
 
-  // Busca documentos de uma coleção com filtro
-  getCollectionWhere(collectionName: string, field: string, value: any): Observable<any[]> {
-    return from(
-      getDocs(query(collection(this.db, collectionName), where(field, '==', value)))
-        .then(querySnapshot => {
-          const data: any[] = [];
-          querySnapshot.forEach((doc) => {
-            data.push({ id: doc.id, ...doc.data() });
-          });
-          return data;
-        })
-    );
+  async updateTransaction(docId: string, data: any) {
+    const docRef = doc(this._transactionsDB, docId);
+    return await updateDoc(docRef, data)
   }
 
-  // Adiciona um novo documento em uma coleção
-  addDocument(collectionName: string, data: any): Observable<string> {
-    return from(
-      addDoc(collection(this.db, collectionName), data)
-        .then(docRef => docRef.id)
-    );
-  }
-
-  // Busca um documento por ID
-  getDocumentById(collectionName: string, docId: string): Observable<any> {
-    const docRef = doc(this.db, collectionName, docId);
-    return from(
-      getDoc(docRef).then(docSnap => {
-        if (docSnap.exists()) {
-          return { id: docSnap.id, ...docSnap.data() };
-        } else {
-          throw new Error('Documento não encontrado');
-        }
-      })
-    );
-  }
-
-  // Atualiza um documento existente
-  updateDocument(collectionName: string, docId: string, data: any): Observable<void> {
-    const docRef = doc(this.db, collectionName, docId);
-    return from(updateDoc(docRef, data));
-  }
-
-  // Deleta um documento
-  deleteDocument(collectionName: string, docId: string): Observable<void> {
-    const docRef = doc(this.db, collectionName, docId);
-    return from(deleteDoc(docRef));
+  async deleteTransaction(docId: string) {
+    const docRef = doc(this._transactionsDB, docId);
+    return await deleteDoc(docRef)
   }
 }

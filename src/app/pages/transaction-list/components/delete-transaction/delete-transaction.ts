@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
-import { Transaction } from '../../../../models/transaction.model';
+import { ITransaction } from '../../../../models/transaction.model';
 
 @Component({
   selector: 'app-delete-transaction',
@@ -11,7 +11,7 @@ import { Transaction } from '../../../../models/transaction.model';
   styleUrl: './delete-transaction.css',
 })
 export class DeleteTransaction {
-  data = inject<{ transaction: Transaction }>(MAT_DIALOG_DATA);
+  data = inject<{ transaction: ITransaction }>(MAT_DIALOG_DATA);
 
   readonly dialogRef = inject(MatDialogRef<DeleteTransaction>);
 

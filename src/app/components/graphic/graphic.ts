@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, ElementRef, input, OnChanges, SimpleChanges, ViewChild } from '@angular/core';
 import { Chart, ChartConfiguration, registerables } from 'chart.js';
-import { ITransaction } from './interfaces/transaction.interface';
+import { ITransaction } from '../../models/transaction.model';
 
 Chart.register(...registerables);
 
