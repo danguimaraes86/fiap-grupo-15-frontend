@@ -1,18 +1,16 @@
 <nav class="navbar-custom mobile-fixed-header">
   <mat-toolbar class="d-flex justify-content-between align-items-center px-4">
-    <div>
+    <div class="d-flex align-items-center gap-2">
+      @if (this.isAuthenticated()) {
+      <button matIconButton (click)="toggleSideNav()" class="">
+        <mat-icon class="text-white">menu</mat-icon>
+      </button>
+      }
       <img
         src="assets/images/logo.svg"
         alt="ByteBank Logo"
         class="brand-logo mat-headline-6 mb-0"
       />
-      @if (this.isAuthenticated()) { @if (this.isHistoricoRoute()) {
-      <button matButton="outlined" class="mat-bg-surface ms-3" (click)="this.goHome()">Home</button>
-      } @else {
-      <button matButton="outlined" class="mat-bg-surface ms-3" (click)="this.goHistorico()">
-        Histórico
-      </button>
-      } }
     </div>
 
     @if (this.isAuthenticated()) {
