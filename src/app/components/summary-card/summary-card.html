@@ -6,15 +6,15 @@
     <div class="summary-grid">
       <div class="summary-item receita">
         <span class="label">Receitas</span>
-        <span class="value">{{ formatCurrency(totalReceitas()) }}</span>
+        <span class="value">{{ totalReceitas() | currency : 'BRL' }}</span>
       </div>
       <div class="summary-item despesa">
         <span class="label">Despesas</span>
-        <span class="value">{{ formatCurrency(totalDespesas()) }}</span>
+        <span class="value">{{ totalDespesas() | currency : 'BRL' }}</span>
       </div>
       <div class="summary-item saldo" [class.negative]="saldo() < 0">
         <span class="label">Saldo</span>
-        <span class="value">{{ formatCurrency(saldo()) }}</span>
+        <span class="value">{{ saldo() | currency : 'BRL' }}</span>
       </div>
     </div>
   </mat-card-content>
