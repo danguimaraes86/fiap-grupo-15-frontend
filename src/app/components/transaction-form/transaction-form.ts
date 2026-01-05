@@ -1,4 +1,4 @@
-import { Component, inject, OnDestroy, output } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, OnDestroy, output } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatNativeDateModule } from '@angular/material/core';
@@ -19,7 +19,6 @@ import { Transaction } from '../../models/transaction.model';
 import { AuthenticationService } from '../../services/authentication.service';
 import { FirestoreService } from '../../services/firestore.service';
 import { StorageService } from '../../services/storage.service';
-
 
 @Component({
   selector: 'app-transaction-form',
@@ -49,6 +48,7 @@ export class TransactionForm implements OnDestroy {
   private authService = inject(AuthenticationService);
   private snackBar = inject(MatSnackBar);
   private dialogRef = inject<MatDialogRef<TransactionForm>>(MatDialogRef);
+  private cdr = inject(ChangeDetectorRef);
 
   readonly transactionSaved = output<void>();
   payload = inject<{ transaction: Transaction } | null>(MAT_DIALOG_DATA);
@@ -123,9 +123,9 @@ export class TransactionForm implements OnDestroy {
     const reader = new FileReader();
     reader.onload = () => {
       this.imagePreview = reader.result as string;
+      this.cdr.detectChanges(); // ✅ Forçar detecção de mudanças
     };
     reader.readAsDataURL(file);
-
   }
 
   private showValidationError(): void {
@@ -146,12 +146,19 @@ export class TransactionForm implements OnDestroy {
 
     let anexoData = {};
 
+    // ✅ Só faz upload quando há um novo arquivo selecionado
     if (this.selectedFile) {
       const upload = await this.storageService.uploadTransactionImage(user.uid, this.selectedFile);
-
       anexoData = {
         anexoUrl: upload.url,
         anexoNome: upload.name,
+      };
+    }
+    // ✅ Se está editando sem nova imagem, mantém os dados antigos
+    else if (this.payload?.transaction.anexoUrl) {
+      anexoData = {
+        anexoUrl: this.payload.transaction.anexoUrl,
+        anexoNome: this.payload.transaction.anexoNome,
       };
     }
 
