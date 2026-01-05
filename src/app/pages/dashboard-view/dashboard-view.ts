@@ -1,22 +1,10 @@
-import { Component, effect, inject, signal } from '@angular/core';
-import { finalize } from 'rxjs/operators';
+import { Component, effect, inject, OnDestroy } from '@angular/core';
 import { FloatingButton } from "../../components/floating-button/floating-button";
 import { Graphic } from '../../components/graphic/graphic';
 import { NavBar } from "../../components/nav-bar/nav-bar";
 import { SummaryCard } from '../../components/summary-card/summary-card';
 import { AuthenticationService } from '../../services/authentication.service';
-import { FirestoreService } from '../../services/firestore.service';
-
-
-interface Transaction {
-  id: string;
-  descricao: string;
-  valor: number;
-  tipo: string;
-  categoria: string;
-  data: string;
-  criadoEm: string;
-}
+import { TransactionService } from '../../services/transaction.service';
 
 @Component({
   selector: 'app-dashboard-view',
@@ -24,76 +12,26 @@ interface Transaction {
   templateUrl: './dashboard-view.html',
   styleUrl: './dashboard-view.css',
 })
-export class DashboardView {
-  authService = inject(AuthenticationService)
-  private firestoreService = inject(FirestoreService)
+export class DashboardView implements OnDestroy {
+  private _authService = inject(AuthenticationService)
+  private _transactionService = inject(TransactionService)
 
-  transactions = signal<Transaction[]>([]);
-  loading = signal(true);
-  totalReceitas = signal(0);
-  totalDespesas = signal(0);
-  saldo = signal(0);
+  readonly transactions = this._transactionService.transactionsSignal
+  readonly totalReceitas = this._transactionService.receita
+  readonly totalDespesas = this._transactionService.despesas
+  readonly saldo = this._transactionService.saldo
 
-  constructor(
-  ) {
-    effect(() => {
-      const user = this.authService.userSignal();
-      const isLoading = this.authService.isLoading();
+  private readonly _effectRef = effect(() => {
+    const user = this._authService.userSignal();
+    const isLoading = this._authService.isLoading();
 
-      if (!isLoading && user) {
-        this.loadTransactions();
-      }
-    });
-  }
-
-  loadTransactions() {
-    this.loading.set(true);
-
-    const user = this.authService.userSignal();
-    if (!user) {
-      console.error('Usuário não autenticado');
-      this.loading.set(false);
-      return;
+    if (!isLoading && user) {
+      this._transactionService.getAllTransactions(user.uid);
     }
+  });
 
-    this.firestoreService.getCollectionWhere('transactions', 'usuarioId', user.uid)
-      .pipe(
-        finalize(() => {
-          this.loading.set(false);
-        })
-      )
-      .subscribe({
-        next: (data) => {
-          const sortedData = data.sort((a, b) => {
-            return new Date(b.data).getTime() - new Date(a.data).getTime();
-          });
-          this.transactions.set(sortedData);
-          this.calculateTotals();
-          console.log('Transações carregadas:', this.transactions());
-        },
-        error: (error) => {
-          console.error('Erro ao carregar transações:', error);
-        }
-      });
+  ngOnDestroy(): void {
+    this._effectRef.destroy()
   }
 
-  calculateTotals() {
-    const data = this.transactions();
-    const totalReceitas = data
-      .filter(t => t.tipo === 'Receita')
-      .reduce((sum, t) => sum + Number(t.valor), 0);
-
-    const totalDespesas = data
-      .filter(t => t.tipo === 'Despesa')
-      .reduce((sum, t) => sum + Number(t.valor), 0);
-
-    this.totalReceitas.set(totalReceitas);
-    this.totalDespesas.set(totalDespesas);
-    this.saldo.set(totalReceitas - totalDespesas);
-  }
-
-  logout() {
-    this.authService.logout()
-  }
 }
-
