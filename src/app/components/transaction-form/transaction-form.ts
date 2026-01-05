@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, inject, OnDestroy, output } from '@angular/core';
+import { ChangeDetectorRef, Component, inject } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatNativeDateModule } from '@angular/material/core';
@@ -14,11 +14,11 @@ import { MatError, MatFormField, MatLabel, MatPrefix } from '@angular/material/f
 import { MatInput } from '@angular/material/input';
 import { MatOption, MatSelect } from '@angular/material/select';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { Subject, takeUntil } from 'rxjs';
-import { Transaction } from '../../models/transaction.model';
+import { ITransaction } from '../../models/transaction.model';
 import { AuthenticationService } from '../../services/authentication.service';
-import { FirestoreService } from '../../services/firestore.service';
 import { StorageService } from '../../services/storage.service';
+import { TransactionService } from '../../services/transaction.service';
+
 
 @Component({
   selector: 'app-transaction-form',
@@ -42,16 +42,18 @@ import { StorageService } from '../../services/storage.service';
   templateUrl: './transaction-form.html',
   styleUrl: './transaction-form.css',
 })
-export class TransactionForm implements OnDestroy {
-  private fb = inject(FormBuilder);
-  private firestoreService = inject(FirestoreService);
-  private authService = inject(AuthenticationService);
-  private snackBar = inject(MatSnackBar);
-  private dialogRef = inject<MatDialogRef<TransactionForm>>(MatDialogRef);
-  private cdr = inject(ChangeDetectorRef);
+export class TransactionForm {
 
-  readonly transactionSaved = output<void>();
-  payload = inject<{ transaction: Transaction } | null>(MAT_DIALOG_DATA);
+  private _transactionService = inject(TransactionService)
+  private _authService = inject(AuthenticationService);
+  private _storageService = inject(StorageService);
+
+  private _snackBar = inject(MatSnackBar);
+  private _dialogRef = inject<MatDialogRef<TransactionForm>>(MatDialogRef);
+
+  private fb = inject(FormBuilder);
+  private cdr = inject(ChangeDetectorRef);
+  payload = inject<{ transaction: ITransaction } | null>(MAT_DIALOG_DATA);
 
   transactionForm: FormGroup;
 
@@ -63,21 +65,21 @@ export class TransactionForm implements OnDestroy {
     'Educação',
     'Lazer',
     'Moradia',
-    'Vestuário',
     'Outros',
   ] as const;
-
-  private destroy$ = new Subject<void>();
-  private storageService = inject(StorageService);
 
   constructor() {
     this.transactionForm = this.fb.group({
       descricao: ['', [Validators.required, Validators.minLength(3)]],
       valor: ['', [Validators.required, Validators.min(0.01)]],
       tipo: ['', Validators.required],
-      categoria: ['', Validators.required],
+      categoria: [''],
       data: [new Date(), Validators.required],
       anexo: [null],
+    });
+
+    this.transactionForm.get('tipo')?.valueChanges.subscribe(tipo => {
+      this.categoriaRequiredValidator(tipo)
     });
 
     if (this.payload) {
@@ -85,12 +87,7 @@ export class TransactionForm implements OnDestroy {
     }
   }
 
-  ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
-  }
-
-  populateForm() {
+  private populateForm() {
     this.transactionForm.patchValue({
       descricao: this.payload?.transaction.descricao,
       valor: this.payload?.transaction.valor,
@@ -123,17 +120,9 @@ export class TransactionForm implements OnDestroy {
     const reader = new FileReader();
     reader.onload = () => {
       this.imagePreview = reader.result as string;
-      this.cdr.detectChanges(); // ✅ Forçar detecção de mudanças
+      this.cdr.detectChanges();
     };
     reader.readAsDataURL(file);
-  }
-
-  private showValidationError(): void {
-    this.snackBar.open(
-      'Por favor, preencha todos os campos obrigatórios.',
-      'Fechar',
-      this.getSnackBarConfig()
-    );
   }
 
   async onSubmit() {
@@ -142,35 +131,27 @@ export class TransactionForm implements OnDestroy {
       return;
     }
 
-    const user = this.authService.userSignal()!;
+    const user = this._authService.userSignal()!;
 
     let anexoData = {};
-
-    // ✅ Só faz upload quando há um novo arquivo selecionado
     if (this.selectedFile) {
-      const upload = await this.storageService.uploadTransactionImage(user.uid, this.selectedFile);
+      const upload = await this._storageService.uploadTransactionImage(user.uid, this.selectedFile);
       anexoData = {
         anexoUrl: upload.url,
         anexoNome: upload.name,
       };
     }
-    // ✅ Se está editando sem nova imagem, mantém os dados antigos
-    else if (this.payload?.transaction.anexoUrl) {
-      anexoData = {
-        anexoUrl: this.payload.transaction.anexoUrl,
-        anexoNome: this.payload.transaction.anexoNome,
-      };
-    }
 
-    const transactionData: Partial<Transaction> = {
-      ...this.transactionForm.value,
+    const { anexo, tipo, categoria, ...formData } = this.transactionForm.value;
+    const transactionData: Partial<ITransaction> = {
+      ...formData,
       ...anexoData,
       usuarioId: user.uid,
+      tipo,
+      categoria: tipo == 'Receita' ? 'Entrada' : categoria,
       data: this.transactionForm.value.data.toISOString(),
       criadoEm: new Date().toISOString(),
     };
-
-    delete (transactionData as any).anexo;
 
     this.payload
       ? this.handleUpdateTransaction(transactionData)
@@ -197,44 +178,54 @@ export class TransactionForm implements OnDestroy {
     this.transactionForm.patchValue({ data: new Date() });
   }
 
-  private handleNewTransaction(transactionData: Partial<Transaction>): void {
-    this.firestoreService
-      .addDocument('transactions', transactionData)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: () => this.handleSuccess('cadastrada'),
-        error: (error) => this.handleError('cadastrar', error),
-      });
+  private async handleNewTransaction(transactionData: Partial<ITransaction>) {
+    const transaction = await this._transactionService.addTransaction(transactionData as ITransaction)
+    transaction ? this.handleSuccess('cadastrada') : this.handleError('cadastrar')
   }
 
-  private handleUpdateTransaction(transactionData: Partial<Transaction>): void {
-    this.firestoreService
-      .updateDocument('transactions', this.payload!.transaction.id!, transactionData)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: () => this.handleSuccess('atualizada'),
-        error: (error) => this.handleError('atualizar', error),
-      });
+  private async handleUpdateTransaction(transactionData: Partial<ITransaction>) {
+    const success = await this._transactionService.updateTransaction(this.payload!.transaction.id!, transactionData as ITransaction)
+    success ? this.handleSuccess('atualizada') : this.handleError('atualizar')
   }
 
   private handleSuccess(action: string): void {
-    this.snackBar.open(
+    this._snackBar.open(
       `Transação ${action} com sucesso!`,
       'Fechar',
       this.getSnackBarConfig('success-snackbar')
     );
     this.clearForm();
-    this.transactionSaved.emit();
-    this.dialogRef.close(true);
+    this._dialogRef.close(true);
   }
 
-  private handleError(action: string, error: any): void {
-    console.error(`Erro ao ${action} transação:`, error);
-    this.snackBar.open(
+  private handleError(action: string): void {
+    console.error(`Erro ao ${action} transação:`);
+    this._snackBar.open(
       `Erro ao ${action} transação. Tente novamente.`,
       'Fechar',
       this.getSnackBarConfig('error-snackbar')
     );
+  }
+
+  private showValidationError(): void {
+    this._snackBar.open(
+      'Por favor, preencha todos os campos obrigatórios.',
+      'Fechar',
+      this.getSnackBarConfig()
+    );
+  }
+
+  private categoriaRequiredValidator(tipo: string) {
+    const categoriaControl = this.transactionForm.get('categoria');
+
+    if (tipo === 'Despesa') {
+      categoriaControl?.setValidators([Validators.required]);
+    } else {
+      categoriaControl?.clearValidators();
+      categoriaControl?.setValue('');
+    }
+
+    categoriaControl?.updateValueAndValidity();
   }
 
   private getSnackBarConfig(panelClass?: string) {

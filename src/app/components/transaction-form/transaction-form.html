@@ -40,6 +40,7 @@
         }
       </mat-form-field>
 
+      @if (transactionForm.get('tipo')?.value == 'Despesa') {
       <mat-form-field appearance="outline">
         <mat-label>Categoria</mat-label>
         <mat-select formControlName="categoria">
@@ -55,6 +56,7 @@
         </mat-error>
         }
       </mat-form-field>
+      }
 
       <mat-form-field appearance="outline">
         <mat-label>Data</mat-label>
@@ -78,11 +80,7 @@
         />
 
         @if (imagePreview) {
-        <img
-          [src]="imagePreview"
-          alt="Preview"
-          style="max-height: 200px; border-radius: 8px"
-        />
+        <img [src]="imagePreview" alt="Preview" style="max-height: 200px; border-radius: 8px" />
         } @if (selectedFileName) {
         <small class="text-muted">{{ selectedFileName }}</small>
         }
