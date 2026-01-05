@@ -1,16 +1,14 @@
-<app-nav-bar></app-nav-bar>
+<app-nav-bar (menuToggle)="sidenav.toggle()"></app-nav-bar>
+<app-side-nav #sidenav>
+  <div class="vh-100 p-3">
+    <app-summary-card
+      [totalReceitas]="totalReceitas()"
+      [totalDespesas]="totalDespesas()"
+      [saldo]="saldo()"
+    >
+    </app-summary-card>
 
-<div class="p-3">
-  <!-- aqui summary -->
-  <app-summary-card
-    [totalReceitas]="totalReceitas()"
-    [totalDespesas]="totalDespesas()"
-    [saldo]="saldo()"
-  >
-  </app-summary-card>
-
-  <!-- aqui grafico -->
-  <app-graphic [transactions]="transactions()"></app-graphic>
-</div>
-
-<app-floating-button />
+    <app-graphic [transactions]="transactions()"></app-graphic>
+  </div>
+  <app-floating-button />
+</app-side-nav>

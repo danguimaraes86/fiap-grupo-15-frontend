@@ -2,13 +2,15 @@ import { Component, effect, inject, OnDestroy } from '@angular/core';
 import { FloatingButton } from "../../components/floating-button/floating-button";
 import { Graphic } from '../../components/graphic/graphic';
 import { NavBar } from "../../components/nav-bar/nav-bar";
+import { SideNav } from "../../components/side-nav/side-nav";
 import { SummaryCard } from '../../components/summary-card/summary-card';
 import { AuthenticationService } from '../../services/authentication.service';
 import { TransactionService } from '../../services/transaction.service';
 
+
 @Component({
   selector: 'app-dashboard-view',
-  imports: [SummaryCard, Graphic, NavBar, FloatingButton],
+  imports: [SummaryCard, Graphic, NavBar, FloatingButton, SideNav],
   templateUrl: './dashboard-view.html',
   styleUrl: './dashboard-view.css',
 })
