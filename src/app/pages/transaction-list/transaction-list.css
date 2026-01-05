@@ -65,3 +65,75 @@ mat-card-title {
   font-size: 1.5rem;
   margin-bottom: 1rem;
 }
+
+.mobile-view {
+  display: none;
+}
+
+.desktop-view {
+  display: block;
+}
+
+@media (max-width: 425px) {
+  .desktop-view {
+    display: none;
+  }
+
+  .mobile-view {
+    display: block;
+  }
+
+  .transaction-card {
+    margin-bottom: 16px;
+
+    .transaction-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+
+      .transaction-date {
+        font-size: 14px;
+        color: rgba(0, 0, 0, 0.6);
+      }
+    }
+
+    .transaction-info {
+      h3 {
+        margin: 0 0 8px 0;
+        font-size: 16px;
+        font-weight: 500;
+      }
+
+      .categoria {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin: 8px 0;
+        font-size: 14px;
+        color: rgba(0, 0, 0, 0.7);
+
+        mat-icon {
+          font-size: 18px;
+          width: 18px;
+          height: 18px;
+        }
+      }
+
+      .valor {
+        font-size: 20px;
+        font-weight: 600;
+        margin: 12px 0 0 0;
+      }
+    }
+
+    .transaction-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid rgba(0, 0, 0, 0.1);
+    }
+  }
+}

@@ -12,6 +12,7 @@ import { Subject } from 'rxjs';
 import { filter, switchMap, takeUntil } from 'rxjs/operators';
 import { FloatingButton } from '../../components/floating-button/floating-button';
 import { NavBar } from '../../components/nav-bar/nav-bar';
+import { SideNav } from '../../components/side-nav/side-nav';
 import { TransactionForm } from '../../components/transaction-form/transaction-form';
 import { ITransaction } from '../../models/transaction.model';
 import { AuthenticationService } from '../../services/authentication.service';
@@ -34,7 +35,8 @@ import { DeleteTransaction } from './components/delete-transaction/delete-transa
     MatButtonModule,
     FloatingButton,
     DatePipe,
-    CurrencyPipe
+    CurrencyPipe,
+    SideNav
   ],
   templateUrl: './transaction-list.html',
   styleUrl: './transaction-list.css',
