@@ -1,4 +1,5 @@
-import { Component, computed, effect, inject, OnDestroy, signal } from '@angular/core';
+import { CurrencyPipe, DatePipe } from '@angular/common';
+import { Component, effect, inject, OnDestroy, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCard, MatCardContent, MatCardHeader, MatCardTitle } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
@@ -8,13 +9,13 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTableModule } from '@angular/material/table';
 import { Subject } from 'rxjs';
-import { filter, finalize, map, switchMap, takeUntil } from 'rxjs/operators';
+import { filter, switchMap, takeUntil } from 'rxjs/operators';
 import { FloatingButton } from '../../components/floating-button/floating-button';
 import { NavBar } from '../../components/nav-bar/nav-bar';
 import { TransactionForm } from '../../components/transaction-form/transaction-form';
-import { Transaction } from '../../models/transaction.model';
+import { ITransaction } from '../../models/transaction.model';
 import { AuthenticationService } from '../../services/authentication.service';
-import { FirestoreService } from '../../services/firestore.service';
+import { TransactionService } from '../../services/transaction.service';
 import { DeleteTransaction } from './components/delete-transaction/delete-transaction';
 
 @Component({
@@ -32,6 +33,8 @@ import { DeleteTransaction } from './components/delete-transaction/delete-transa
     MatIconModule,
     MatButtonModule,
     FloatingButton,
+    DatePipe,
+    CurrencyPipe
   ],
   templateUrl: './transaction-list.html',
   styleUrl: './transaction-list.css',
@@ -40,11 +43,12 @@ export class TransactionList implements OnDestroy {
   private destroy$ = new Subject<void>();
 
   private _modalRef = inject(MatDialog);
-  private snackBar = inject(MatSnackBar);
-  private firestoreService = inject(FirestoreService);
-  private authService = inject(AuthenticationService);
+  private _snackBar = inject(MatSnackBar);
 
-  transactions = signal<Transaction[]>([]);
+  private _authService = inject(AuthenticationService);
+  private _transactionService = inject(TransactionService)
+
+  transactions = this._transactionService.transactionsSignal
   loading = signal(true);
   readonly displayedColumns: string[] = [
     'data',
@@ -55,44 +59,35 @@ export class TransactionList implements OnDestroy {
     'acoes',
   ];
 
-  hasTransactions = computed(() => this.transactions().length > 0);
-  isEmpty = computed(() => !this.loading() && this.transactions().length === 0);
+  private readonly _effectRef = effect(() => {
+    const user = this._authService.userSignal();
+    const isAuthLoading = this._authService.isLoading();
 
-  constructor() {
-    effect(() => {
-      const user = this.authService.userSignal();
-      const isLoading = this.authService.isLoading();
-
-      if (!isLoading && user) {
-        this.loadTransactions();
-      }
-    });
-  }
+    if (!isAuthLoading && user) {
+      this.loadTransactions();
+    } else if (!isAuthLoading && !user) {
+      this.loading.set(false);
+    }
+  });
 
   ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
+    this._effectRef.destroy()
   }
 
-  loadTransactions() {
-    this.loading.set(true);
-    const user = this.authService.userSignal()!;
-    this.firestoreService
-      .getCollectionWhere('transactions', 'usuarioId', user.uid)
-      .pipe(
-        map((data) => this.sortTransactionsByDate(data)),
-        finalize(() => this.loading.set(false)),
-        takeUntil(this.destroy$)
-      )
-      .subscribe({
-        next: (data) => this.transactions.set(data),
-        error: (error) => this.handleLoadError(error),
-      });
+  async loadTransactions() {
+    try {
+      this.loading.set(true);
+      await this._transactionService.getAllTransactions(this._authService.userSignal()!.uid)
+    } catch (error) {
+      this.handleLoadError(error)
+    } finally {
+      this.loading.set(false);
+    }
   }
 
-  downloadAnexo(transaction: Transaction): void {
+  downloadAnexo(transaction: ITransaction): void {
     if (!transaction.anexoUrl) {
-      this.snackBar.open('Esta transação não possui anexo.', 'Fechar', this.getSnackBarConfig());
+      this._snackBar.open('Esta transação não possui anexo.', 'Fechar', this.getSnackBarConfig());
       return;
     }
 
@@ -106,30 +101,12 @@ export class TransactionList implements OnDestroy {
     document.body.removeChild(link);
   }
 
-  private sortTransactionsByDate(transactions: Transaction[]): Transaction[] {
-    return [...transactions].sort(
-      (a, b) => new Date(b.data).getTime() - new Date(a.data).getTime()
-    );
-  }
-
   private handleLoadError(error: any): void {
     console.error('Erro ao carregar transações:', error);
-    this.snackBar.open('Erro ao carregar transações', 'Fechar', this.getSnackBarConfig());
+    this._snackBar.open('Erro ao carregar transações', 'Fechar', this.getSnackBarConfig());
   }
 
-  formatDate(dateString: string): string {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('pt-BR');
-  }
-
-  formatCurrency(value: number): string {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL',
-    }).format(value);
-  }
-
-  openEditDialog(transaction: Transaction): void {
+  openEditDialog(transaction: ITransaction): void {
     const dialogRef = this._modalRef.open(TransactionForm, {
       width: '500px',
       data: { transaction },
@@ -145,7 +122,7 @@ export class TransactionList implements OnDestroy {
       });
   }
 
-  openDeleteDialog(transaction: Transaction): void {
+  openDeleteDialog(transaction: ITransaction): void {
     const dialogRef = this._modalRef.open(DeleteTransaction, {
       width: '400px',
       data: { transaction },
@@ -155,7 +132,7 @@ export class TransactionList implements OnDestroy {
       .afterClosed()
       .pipe(
         filter((result) => result === true),
-        switchMap(() => this.firestoreService.deleteDocument('transactions', transaction.id)),
+        switchMap(() => this._transactionService.deleteTransaction(transaction.id)),
         takeUntil(this.destroy$)
       )
       .subscribe({
@@ -165,13 +142,13 @@ export class TransactionList implements OnDestroy {
   }
 
   private handleDeleteSuccess(): void {
-    this.snackBar.open('Transação excluída com sucesso!', 'Fechar', this.getSnackBarConfig());
+    this._snackBar.open('Transação excluída com sucesso!', 'Fechar', this.getSnackBarConfig());
     this.loadTransactions();
   }
 
   private handleDeleteError(error: any): void {
     console.error('Erro ao excluir transação:', error);
-    this.snackBar.open('Erro ao excluir transação', 'Fechar', this.getSnackBarConfig());
+    this._snackBar.open('Erro ao excluir transação', 'Fechar', this.getSnackBarConfig());
   }
 
   private getSnackBarConfig() {
