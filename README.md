@@ -1,12 +1,13 @@
-# ByteBank - Gerenciamento Financeiro Mobile
+﻿# ByteBank - Gerenciamento Financeiro Web
 
 <div align="center">
 
-_Aplicação mobile desenvolvida com Flutter para controle financeiro pessoal_
+_Aplicação Web desenvolvida com Angular para controle financeiro pessoal_
 
 </div>
 
 ### 🔗 Repositório
+
 - [fiap-grupo-15-frontend](https://github.com/danguimaraes86/fiap-grupo-15-frontend/)
 
 ### 🎓 FIAP Group 15 - Membros
@@ -21,35 +22,45 @@ _Aplicação mobile desenvolvida com Flutter para controle financeiro pessoal_
 
 ## 📖 Descrição
 
-**ByteBank** é uma aplicação mobile multiplataforma desenvolvida com **Flutter** para gerenciamento financeiro pessoal. O sistema oferece uma experiência nativa para Android, iOS e Web, com integração completa ao Firebase para autenticação, banco de dados e armazenamento de arquivos.
+**ByteBank** é uma aplicação Web multiplataforma desenvolvida com **Angular** para gerenciamento financeiro pessoal. O sistema oferece uma experiência nativa para Web sendo responsivo para smarthphones, com integração completa ao Firebase para autenticação, banco de dados e armazenamento de arquivos.
 
 ### 🏗️ Arquitetura
 
-- **Flutter SDK 3.24.5** com **Dart 3.5.4**
-- **Firebase** como Backend-as-a-Service (Authentication, Firestore, Storage)
-- **Provider Pattern** para gerenciamento de estado reativo
-- **Material Design** seguindo guidelines do Google
+- **Angular 21.0.0** utilizando arquitetura de **Single Page Application (SPA)** e **Standalone Components**, reduzindo acoplamento e simplificando a manutenção
+- Organização baseada em **componentes reutilizáveis** e **camada de services**, promovendo separação clara de responsabilidades
+- Gerenciamento de estado realizado por meio de **Services + RxJS**, com comunicação reativa entre componentes
+- **Firebase** como Backend-as-a-Service:
+  - **Authentication** com login e senha, utilizando **token** para controle de sessão
+  - **Firestore** como banco de dados NoSQL
+  - **Storage** para armazenamento de arquivos
+- Implementação de **Guards de rota** para proteção de áreas autenticadas
+- Camada dedicada de **services** para comunicação com o backend
+- Interface construída com **Angular Material** seguindo as guidelines do Google, em conjunto com **Bootstrap**, garantindo responsividade e consistência visual
 
 ## ✨ Funcionalidades
 
 ### 💰 Gestão de Saldo
+
 - Visualização em tempo real do saldo bancário atual
 - Dashboard intuitivo com gráficos e métricas
 - Cálculo automático de receitas e despesas
 
 ### 📊 Controle de Transações
+
 - Histórico completo de todas as transações
 - Filtros avançados por mês e categoria
 - Paginação infinita para melhor performance
 - Atualização em tempo real após edições/exclusões
 
 ### 💸 Operações Financeiras
+
 - Criar transações com validação de dados
 - Categorização inteligente (Alimentação, Transporte, Moradia, Lazer, Saúde)
 - Tipos de transação (Receitas e Despesas)
 - Seleção de data com calendário interativo
 
 ### 📎 Gerenciamento de Anexos
+
 - Upload de arquivos (PDF, imagens, documentos)
 - Armazenamento seguro no Firebase Storage
 - Download/visualização de anexos
@@ -57,12 +68,14 @@ _Aplicação mobile desenvolvida com Flutter para controle financeiro pessoal_
 - Content-type correto para cada tipo de arquivo
 
 ### ✏️ Edição e Exclusão
+
 - Modal de edição com validação completa
 - Substituição de anexos durante edição
 - Exclusão segura com confirmação
 - Limpeza automática de arquivos no Storage
 
 ### 🔐 Segurança e Autenticação
+
 - Firebase Authentication com email/senha
 - Cadastro de novos usuários
 - Sessões persistentes e seguras
@@ -70,35 +83,49 @@ _Aplicação mobile desenvolvida com Flutter para controle financeiro pessoal_
 
 ## 🛠️ Tecnologias Utilizadas
 
-### 📱 Framework
-| Tecnologia | Versão  | Descrição                        |
-| ---------- | ------- | -------------------------------- |
-| Flutter    | 3.24.5  | Framework multiplataforma Google |
-| Dart       | 3.5.4   | Linguagem de programação         |
+### 📱 Framework e Linguagem
 
-### 🔥 Firebase
-| Dependência      | Versão   | Descrição                    |
-| ---------------- | -------- | ---------------------------- |
-| firebase_core    | ^4.1.1   | Inicialização do Firebase    |
-| firebase_auth    | ^6.1.0   | Autenticação de usuários     |
-| cloud_firestore  | ^6.0.2   | Banco de dados NoSQL         |
-| firebase_storage | ^13.0.2  | Armazenamento de arquivos    |
+| Tecnologia | Versão | Descrição                                      |
+| ---------- | ------ | ---------------------------------------------- |
+| Angular    | 21.0.0 | Framework front-end para SPA                   |
+| TypeScript | 5.9.2  | Linguagem principal da aplicação               |
+| RxJS       | 7.8.0  | Programação reativa e gerenciamento de streams |
 
-### 📦 Dependências Principais
-| Dependência     | Versão    | Descrição                   |
-| --------------- | --------- | --------------------------- |
-| provider        | ^6.1.5+1  | Gerenciamento de estado     |
-| intl            | ^0.20.2   | Formatação de datas/valores |
-| file_picker     | ^8.1.6    | Seleção de arquivos         |
-| url_launcher    | ^6.3.1    | Abertura de arquivos e URLs |
-| http            | ^1.5.0    | Requisições HTTP            |
-| cupertino_icons | ^1.0.8    | Ícones iOS                  |
+---
 
-### 🧪 Desenvolvimento
-| Dependência   | Versão  | Descrição                     |
-| ------------- | ------- | ----------------------------- |
-| flutter_lints | ^5.0.0  | Regras de qualidade de código |
-| flutter_test  | SDK     | Testes unitários e widgets    |
+### 🎨 UI / UX
+
+| Tecnologia       | Versão | Descrição                                    |
+| ---------------- | ------ | -------------------------------------------- |
+| Angular Material | 21.0.0 | Biblioteca de componentes UI                 |
+| Angular CDK      | 21.0.0 | Utilitários e padrões de acessibilidade      |
+| Bootstrap        | 5.3.8  | Layout responsivo e estilização complementar |
+
+---
+
+### 📊 Visualização de Dados
+
+| Tecnologia | Versão | Descrição                       |
+| ---------- | ------ | ------------------------------- |
+| Chart.js   | 4.5.1  | Criação de gráficos interativos |
+
+---
+
+### 🔥 Backend / Integrações
+
+| Tecnologia | Versão | Descrição                                  |
+| ---------- | ------ | ------------------------------------------ |
+| Firebase   | 12.6.0 | Authentication, Firestore e Storage (BaaS) |
+
+---
+
+### 🧪 Desenvolvimento e Qualidade
+
+| Tecnologia  | Versão | Descrição                             |
+| ----------- | ------ | ------------------------------------- |
+| Angular CLI | 21.0.0 | Ferramenta de build e desenvolvimento |
+| Vitest      | 4.0.8  | Testes unitários                      |
+| Prettier    | —      | Padronização e formatação de código   |
 
 ## 📥 Como Clonar o Repositório
 
@@ -114,86 +141,117 @@ cd fiap-grupo-15-frontend
 
 ### 📋 Pré-requisitos
 
-- **Flutter SDK 3.24.5** ou superior ([Download](https://flutter.dev/docs/get-started/install))
-- **Dart SDK 3.5.4** (incluído no Flutter)
-- **Editor**: VS Code ou Android Studio
-- **Dispositivo/Emulador**: Android, iOS ou Chrome
+Antes de iniciar o projeto, certifique-se de ter instalado:
 
-### ⚙️ Configuração do Firebase
+- **Node.js** (versão LTS recomendada)
+- **NPM** (instalado junto com o Node.js)
+- **Angular CLI 21.0.0** ou superior
+- **Editor de código**: VS Code (recomendado)
 
-1. **Crie um projeto no [Firebase Console](https://console.firebase.google.com)**
+---
 
-2. **Configure os serviços**
-   - **Authentication**: Ative Email/Password
-   - **Firestore Database**: Crie um banco de dados
-   - **Storage**: Ative o Firebase Storage
+### 🔥 Configuração do Firebase
 
-3. **Baixe os arquivos de configuração**
-   - **Android**: `google-services.json` → `android/app/`
-   - **iOS**: `GoogleService-Info.plist` → Adicione no Xcode
-   - **Web**: Configure no código
+1. **Crie um projeto no Firebase**
 
-4. **Gere firebase_options.dart**
+   Acesse o [Firebase Console](https://console.firebase.google.com) e crie um novo projeto.
 
-   ```bash
-   flutter pub global activate flutterfire_cli
-   flutterfire configure
+2. **Configure os serviços necessários**
+
+   - **Authentication**: habilite o provedor **Email/Password**
+   - **Firestore Database**: crie um banco de dados
+   - **Storage**: habilite o Firebase Storage para upload de arquivos
+
+3. **Crie um app Web no Firebase**
+
+   - No painel do Firebase, adicione um **Web App**
+   - Copie as credenciais de configuração (`apiKey`, `authDomain`, etc.)
+
+4. **Configure as variáveis de ambiente**
+
+   Crie um arquivo `.env` na raiz do projeto com as variáveis do Firebase:
+
+   ```env
+   FIREBASE_API_KEY=xxxx
+   FIREBASE_AUTH_DOMAIN=xxxx
+   FIREBASE_PROJECT_ID=xxxx
+   FIREBASE_STORAGE_BUCKET=xxxx
+   FIREBASE_MESSAGING_SENDER_ID=xxxx
+   FIREBASE_APP_ID=xxxx
    ```
 
 ### 🔧 Instalação e Execução
 
+Siga os passos abaixo para executar o projeto localmente:
+
 ```bash
 # 1. Instale as dependências
-flutter pub get
+npm install
 
-# 2. Verifique dispositivos disponíveis
-flutter devices
+# 2. Gere os arquivos de ambiente (caso utilize .env)
+npm run generate-env
 
 # 3. Execute a aplicação
-
-# Web (Chrome)
-flutter run -d chrome
-
-# Android
-flutter run -d android
-
-# iOS (apenas macOS)
-flutter run -d ios
-
-# Acesso via IP (celular na mesma rede)
-flutter run -d chrome --web-hostname=0.0.0.0 --web-port=8080
+npm start
 ```
 
-### 🔥 Hot Reload
+## 📦 Scripts Disponíveis
 
-Durante o desenvolvimento:
-- **`r`** - Hot reload (recarrega alterações)
-- **`R`** - Hot restart (reinicia app)
-- **`q`** - Quit (encerra)
+| Comando                | Descrição                                       |
+|------------------------|-------------------------------------------------|
+| `npm start`            | Inicia o servidor de desenvolvimento            |
+| `npm run build`        | Gera o build de produção                        |
+| `npm run watch`        | Build em modo watch                             |
+| `npm test`             | Executa os testes                               |
+| `npm run generate-env` | Gera os arquivos de ambiente a partir do `.env` |
+
 
 ## 📁 Estrutura do Projeto
 
 ```text
-lib/
-├── configs/          # Configurações (rotas, Firebase, cores)
-├── models/           # Modelos de dados
-├── pages/            # Telas da aplicação
-│   ├── dashboard/    # Dashboard com gráficos
-│   ├── home/         # Autenticação
-│   ├── shared/       # Componentes compartilhados
-│   └── transactions/ # CRUD de transações
-├── providers/        # Gerenciamento de estado
-├── services/         # Serviços (Auth, Firestore, Storage)
-└── utils/            # Utilitários e validators
+src/
+├── app/
+│   ├── components/            # Componentes reutilizáveis
+│   │   ├── floating-button/
+│   │   ├── graphic/
+│   │   ├── login-modal/
+│   │   ├── nav-bar/
+│   │   ├── register-modal/
+│   │   ├── side-nav/
+│   │   ├── snack-bar/
+│   │   ├── summary-card/
+│   │   └── transaction-form/
+│   ├── config/                # Configurações da aplicação
+│   ├── guards/                # Route guards de autenticação
+│   ├── models/                # Interfaces e modelos de dados
+│   ├── pages/                 # Páginas (views)
+│   │   ├── dashboard-view/
+│   │   ├── home-view/
+│   │   └── transaction-list/
+│   │       └── components/    # Componentes específicos da página
+│   │           └── delete-transaction/
+│   ├── pipes/                 # Pipes customizados
+│   ├── services/              # Camada de serviços e integrações
+│   └── utils/                 # Funções utilitárias
+├── assets/
+│   └── images/                # Imagens estáticas
+├── environments/              # Configurações de ambiente
+└── themes/                    # Temas e estilos globais
+
 ```
 
 ## 🔗 Links Úteis
 
-- [Flutter](https://flutter.dev/) - Framework multiplataforma
-- [Dart](https://dart.dev/) - Linguagem de programação
+- [Angular](https://angular.dev/) - Framework front-end
+- [TypeScript](https://www.typescriptlang.org/) - Linguagem de programação
+- [Angular Material](https://material.angular.io/) - Biblioteca de componentes UI
+- [Bootstrap](https://getbootstrap.com/) - Framework de layout responsivo
 - [Firebase](https://firebase.google.com/docs) - Backend-as-a-Service
-- [Provider](https://pub.dev/packages/provider) - Gerenciamento de estado
-- [Pub.dev](https://pub.dev/) - Repositório de pacotes Dart
+- [Chart.js](https://www.chartjs.org/docs/latest/) - Biblioteca de gráficos
+- [Node.js](https://nodejs.org/) - Ambiente de execução JavaScript
+- [NPM](https://www.npmjs.com/) - Gerenciador de pacotes
+
+---
 
 ## 📄 Licença
 
@@ -207,14 +265,14 @@ Este projeto está licenciado sob a **[Creative Commons Attribution-NonCommercia
 
 ### Condições
 
-- **Não Comercial** — você não pode usar o material para fins comerciais
+- **Uso não comercial** — o material não pode ser utilizado para fins comerciais
 - **Atribuição** — você deve fornecer crédito apropriado e indicar se mudanças foram feitas
 
 ### É Proibido
 
-- Usar para **fins comerciais** sem autorização
+- Utilizar o projeto para **fins comerciais** sem autorização
 - Remover ou alterar os **créditos dos autores**
-- Usar para **treinamento de IA comercial** sem consentimento
+- Usar o projeto para **treinamento de IA comercial** sem consentimento
 
 ---
 
