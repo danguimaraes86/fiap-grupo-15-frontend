@@ -18,9 +18,51 @@
         </div>
         } @if (!loading() && transactions().length > 0) {
 
+        <!-- Botão Toggle Filtros -->
+        <div class="filter-toggle">
+          <button mat-raised-button (click)="toggleFiltros()" color="primary">
+            <mat-icon>{{ mostrarFiltros() ? 'filter_list_off' : 'filter_list' }}</mat-icon>
+            {{ mostrarFiltros() ? 'Ocultar Filtros' : 'Exibir Filtros' }}
+          </button>
+        </div>
+
+        <!-- Filtros -->
+        @if(mostrarFiltros()){
+
+        <mat-card class="filter-card">
+          <mat-card-content>
+            <div class="filter-container">
+              <mat-form-field appearance="outline">
+                <mat-label>Categoria</mat-label>
+                <mat-select [(value)]="filtroCategoria" (selectionChange)="aplicarFiltros()">
+                  <mat-option value="">Todas</mat-option>
+                  @for (categoria of categorias; track categoria) {
+                  <mat-option [value]="categoria">{{ categoria }}</mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>Tipo</mat-label>
+                <mat-select [(value)]="filtroTipo" (selectionChange)="aplicarFiltros()">
+                  <mat-option value="">Todos</mat-option>
+                  <mat-option value="Receita">Receita</mat-option>
+                  <mat-option value="Despesa">Despesa</mat-option>
+                </mat-select>
+              </mat-form-field>
+
+              <button mat-raised-button color="accent" (click)="limparFiltros()">
+                <mat-icon>clear</mat-icon>
+                Limpar Filtros
+              </button>
+            </div>
+          </mat-card-content>
+        </mat-card>
+        }
+
         <!-- Desktop Table -->
         <div class="desktop-view">
-          <table mat-table [dataSource]="transactions()" class="transactions-table">
+          <table mat-table [dataSource]="transactionsFiltradas()" class="transactions-table">
             <!-- Coluna Data -->
             <ng-container matColumnDef="data">
               <th mat-header-cell *matHeaderCellDef>Data</th>
@@ -104,7 +146,7 @@
 
         <!-- Mobile Cards -->
         <div class="mobile-view">
-          @for (transaction of transactions(); track transaction.id) {
+          @for (transaction of transactionsFiltradas(); track transaction.id) {
           <mat-card class="transaction-card">
             <mat-card-content>
               <div class="transaction-header">

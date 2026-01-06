@@ -4,8 +4,10 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCard, MatCardContent, MatCardHeader, MatCardTitle } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatDialog } from '@angular/material/dialog';
+import { MatFormField, MatLabel } from "@angular/material/form-field";
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatOption, MatSelect } from "@angular/material/select";
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTableModule } from '@angular/material/table';
 import { Subject } from 'rxjs';
@@ -36,7 +38,11 @@ import { DeleteTransaction } from './components/delete-transaction/delete-transa
     FloatingButton,
     DatePipe,
     CurrencyPipe,
-    SideNav
+    SideNav,
+    MatFormField,
+    MatLabel,
+    MatSelect,
+    MatOption
   ],
   templateUrl: './transaction-list.html',
   styleUrl: './transaction-list.css',
@@ -52,6 +58,13 @@ export class TransactionList implements OnDestroy {
 
   transactions = this._transactionService.transactionsSignal
   loading = signal(true);
+
+  filtroCategoria = '';
+  filtroTipo = '';
+  categorias: string[] = [];
+  transactionsFiltradas = signal<ITransaction[]>([]);
+  mostrarFiltros = signal(false);
+
   readonly displayedColumns: string[] = [
     'data',
     'descricao',
@@ -72,8 +85,17 @@ export class TransactionList implements OnDestroy {
     }
   });
 
+  private readonly _transactionsEffect = effect(() => {
+    const transactions = this.transactions();
+    if (!this.filtroCategoria && !this.filtroTipo) {
+      this.transactionsFiltradas.set(transactions);
+      this.carregarCategorias();
+    }
+  });
+
   ngOnDestroy(): void {
     this._effectRef.destroy()
+    this._transactionsEffect.destroy()
   }
 
   async loadTransactions() {
@@ -85,6 +107,35 @@ export class TransactionList implements OnDestroy {
     } finally {
       this.loading.set(false);
     }
+  }
+
+  carregarCategorias() {
+    const categoriasUnicas = [...new Set(this.transactions().map(t => t.categoria))];
+    this.categorias = categoriasUnicas.filter(c => c !== 'Entrada').sort();
+  }
+
+  aplicarFiltros() {
+    let resultado = this.transactions();
+
+    if (this.filtroCategoria) {
+      resultado = resultado.filter(t => t.categoria === this.filtroCategoria);
+    }
+
+    if (this.filtroTipo) {
+      resultado = resultado.filter(t => t.tipo === this.filtroTipo);
+    }
+
+    this.transactionsFiltradas.set(resultado);
+  }
+
+  limparFiltros() {
+    this.filtroCategoria = '';
+    this.filtroTipo = '';
+    this.transactionsFiltradas.set(this.transactions());
+  }
+
+  toggleFiltros() {
+    this.mostrarFiltros.update(value => !value);
   }
 
   downloadAnexo(transaction: ITransaction): void {
