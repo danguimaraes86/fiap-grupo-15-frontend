@@ -18,4 +18,8 @@ export const routes: Routes = [
     path: 'historico',
     loadComponent: () => import('./pages/transaction-list/transaction-list').then(c => c.TransactionList),
   },
+  {
+    path: '**',
+    redirectTo: ''
+  },
 ];
