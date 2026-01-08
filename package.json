@@ -40,7 +40,7 @@
   },
   "devDependencies": {
     "@angular/build": "^21.0.0",
-    "@angular/cli": "^21.0.0",
+    "@angular/cli": "^21.0.5",
     "@angular/compiler-cli": "^21.0.0",
     "bootstrap": "^5.3.8",
     "firebase": "^12.6.0",
